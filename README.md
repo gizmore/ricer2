@@ -26,17 +26,29 @@ Future plans
 
 Install guide
 =============
+Clone the project
 > git clone https://github.com/gizmore/ricer2
+
+Install gems
 > bundle install --path vendor/bundle
+
+Update them (skip maybe)
 > bundle update
+
 Configure your database
 > bundle exec rake db:migrate
+
 Check db/seed.rb for creating your first server.
 More servers can be added via irc later.
 > bundle exec rake db:seed
+
+Start the bot...
 > bundle exec rake ricer:start
-It will currently fail on first dry run, but a second start fixes it.
+
+...but it will currently fail on first dry run, but a second start fixes it.
 > bundle exec rake ricer:start
+
+Rice Up!
 
 Usage guide
 ===========
