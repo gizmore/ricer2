@@ -3,6 +3,8 @@
 module Ricer::Net::Queue
   class Object
     
+    attr_reader :lines
+    
     MAX_WEIGHT = 2987654321 # Empty queue is not wanted to process at all
     
     WEIGHT_USER = 9

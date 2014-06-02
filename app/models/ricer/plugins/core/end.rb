@@ -7,7 +7,6 @@ module Ricer::Plugins::Core
 
     has_usage
     def execute
-      byebug
       get_plugin('Core/Begin').finish
     end
     

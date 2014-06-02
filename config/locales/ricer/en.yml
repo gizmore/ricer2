@@ -57,6 +57,9 @@ en:
         boolean:
           label: 'bool'
           error: 'Not a boolean value.'
+        channel:
+          label: 'channel'
+          error: 'Unknown channel.'
         channel_name:
           label: 'channel'
           error: 'Invalid channel name.'

@@ -1,8 +1,6 @@
 module Pile
   class Base
 
-    require 'uri'
-    
     def initialize(options={})
       @options = options
     end
@@ -12,7 +10,7 @@ module Pile
         title: title,
         content: content,
         size: content.length,
-        user_id: options[:user_id],
+        user_id: @options[:user_id],
         url: do_upload(title, content, highlighting),
         lang: highlighting,
       })

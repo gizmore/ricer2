@@ -268,7 +268,7 @@ module Ricer
     def tr(key, *args); tt "ricer.#{key}", *args; end
     def tt(key, *args); rt I18n.t(key, *args); end
     def rt(response)
-      response.
+      response.to_s.
       gsub('$BOT$', server.nickname.name).
       gsub('$TRIGGER$', trigger.to_s)
     end

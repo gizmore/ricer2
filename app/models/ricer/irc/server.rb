@@ -24,6 +24,7 @@ module Ricer::Irc
     scope :in_domain, lambda { |url| joins(:server_url).where('url LIKE ?', "%.#{URI::Generic.domain(url)}:%") }
     
     def bot; Ricer::Bot.instance; end
+    def lib; Ricer::Irc::Lib.instance; end
     
     def uri; server_url.uri; end
     def url; server_url.url; end

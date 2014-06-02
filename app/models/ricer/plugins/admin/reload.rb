@@ -18,7 +18,9 @@ module Ricer::Plugins::Admin
     def clear_plugin_class_variables
       bot.plugins.each do |plugin|
         Ricer::Plugin.registered_class_variables.each do |varname|
-          plugin.class.remove_instance_variable(varname) if instance_variable_defined?(varname)
+          if plugin.class.instance_variable_defined?(varname)
+            plugin.class.remove_instance_variable(varname)
+          end
         end
       end
       Ricer::Plugin.clear_registered_class_variables

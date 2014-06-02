@@ -38,9 +38,12 @@ module Ricer::Net::Irc
     end
 
     def flush_queue_for(user)
+      return [] if @queue[user].nil?
       @semaphore.synchronize do
-        @queue[user].flush unless @queue[user].nil?
-      end 
+        messages = @queue[user].lines.clone
+        @queue[user].flush
+        return messages
+      end
     end
     
     def disconnect(message); disconnect!(message||fake_message) if @socket; end

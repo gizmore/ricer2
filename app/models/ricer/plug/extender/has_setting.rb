@@ -162,7 +162,7 @@ module Ricer::Plug::Extender::HasSetting
         return server.id if scope == :server
         return sender.id if scope == :user
         return channel.id if channel && (scope == :channel)
-        byebug
+        #byebug
         throw Exception.new("#{self.class.name}.default_scope_id(#{scope}) failed in has_setting.")
       end
       
