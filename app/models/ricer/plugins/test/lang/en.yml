@@ -1,0 +1,12 @@
+en:
+  ricer:
+    plugins:
+      test:
+        exception:
+          description: 'Causes an exception to test the error handling.'
+        ping:
+          description: 'Test your connection by requesting a repsonse.'
+          pong: 'This is pong number %{count} since last reload, and pong number %{global} in total.'
+        timer:
+          description: 'Simple test for threaded triggers.'
+          timeout: 'Wake Up! Little Suuuzy... WAKEUP!'

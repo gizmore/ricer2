@@ -1,0 +1,15 @@
+en:
+  ricer:
+    plugin:
+      log:
+        msg_show_server: 'Loggin for %{server} is %{state}.'
+        msg_show_channel: 'Loggin in %{channel} is %{state}.'
+        log_channel_show:
+          usage: ''
+          description: 'Show the logging options for this channel.'
+        log_channel:
+          usage: '[<$ON$|$OFF$>]'
+          description: 'Show or set logging options for this channel.'
+        log_server:
+          usage: '[<$ON$|$OFF$>]'
+          description: 'Show or set logging options for this server.'

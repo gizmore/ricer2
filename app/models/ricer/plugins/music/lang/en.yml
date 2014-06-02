@@ -1,0 +1,6 @@
+en:
+  ricer:
+    plugins:
+      music:
+        audacious:
+          msg_next_song: '%{who} is now listening to "%{song}".'

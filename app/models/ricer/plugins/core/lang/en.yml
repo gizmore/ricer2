@@ -1,0 +1,21 @@
+en:
+  ricer:
+    plugins:
+      core:
+        begin:
+          trigger: 'begin'
+          description: 'Start a multiline command. End the command with $TRIGGER$end.'
+          err_no_begin: 'You need to start a multiline command with $TROGGER$begin first.'
+        end:
+          trigger: 'end'
+          description: 'End a multiline command started with $TRIGGER$begin and execute it.'
+        in:
+          trigger: 'in'
+          description: 'Execute a comand after a delay.'
+        pasteout:
+          pastebin_title: '%{user}´s paste from %{date}'
+          pasteout_title: '$BOT$ response to %{user} for %{command} at %{date}'
+          pastebin_content: '%{lines}'
+          msg_pasted_this:
+            one: 'I have flushed and pasted your response queue to: %{url} - %{size} in just one line'
+            other: 'I have flushed and pasted your response queue to: %{url} - %{size} with %{count} lines'

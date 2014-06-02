@@ -1,0 +1,44 @@
+en:
+  ricer:
+    plugins:
+      auth:
+        err_wrong_password: 'Your submitted password is wrong.'
+        autologin:
+          description: 'Offers autologin features via WHOIS and NickServ.'
+          msg_logged_in: 'You just have been logged in by NickServ.'
+        channelmod:
+          description: 'Show or set channel permissions for a user.'
+          msg_show_chan: '%{user} has %{bitstring} in %{channel} on %{server}.'
+        email:
+          description: 'Manage or show your email address.'
+          msg_show: 'Your email address is set to %{email}.'
+          msg_none: 'You don´t have an email address set yet.'
+          msg_sent: 'A confirmation email has been sent to %{email}. The confirmation code is valid for %{duration}.'
+          err_address: 'The entered email address is invalid.'
+          err_code: 'The entered confirmation code does not match.'
+          msg_set: 'Your email address is now set to %{email}.'
+          mail_subj: 'Ricer Bot Registration'
+          mail_body: "Hello %{user}\n\nThank you very much for registering with the ricer IRC bot.\n\nTo confirm your mail address, type: $TRIGGER$$COMMAND$ %{email} %{code}\n\nKind Regards\nThe ricer staff"
+        login:
+          trigger: 'login'
+          description: 'Authenticates you with $BOT$.'
+          err_already_authenticated: 'You are already authenticated. Maybe by Autologin?'
+          msg_authenticated: 'Welcome back, you are now authenticated.'
+        logout:
+          description: 'Logs you out.'
+          msg_logged_out: 'You are now logged out.'
+        register:
+          trigger: 'register'
+          description: 'Register you with $BOT$ or change your password.'
+          err_already_registered: 'You are already registered. Use "$TRIGGER$$COMMAND$ <new_password> <old_password>" to change your password.'
+          msg_registered: 'You are now registered and authenticated.'
+          msg_changed_pass: 'Your password has been changed and you are now authenticated.'
+        servermod:
+          description: 'Show or set server permissions for a user.'
+          msg_mods: '%{user} has +%{permission} permissions on %{server}.'
+          msg_changed: '%{user} got changed to %{permission} on %{server}.'
+        super:
+          trigger: 'super'
+          description: 'Elevates your permissions serverwide.'
+          msg_elevated: 'Your permissions on this server and all known channels have been lifted to %{permission}.'
+          

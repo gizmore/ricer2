@@ -1,0 +1,28 @@
+en:
+  ricer:
+    plugins:
+      debug:
+        chandebug:
+          description: 'Show logical info of a channel object.'
+          msg_chaninfo: '%{id}-%{name} is located on server %{server}. Memory Address: %{channel}'
+        console:
+          description: 'Execute system commands via $BOT$. This is a security hole and for the lulz only.'
+        dbtrace:
+          description: 'Toggle database console logging on and off.'
+          msg_on: 'Database query inspector enabled.'
+          msg_off: 'Database query inspector disabled.'
+        debugger:
+          description: 'Run into a breakpoint to be able to play in console.'
+        plugdebug:
+          description: 'Print logical info about a plugin.'
+          msg_plug_info: 'Plugin %{modulename}/%{classname}. Path: %{path}. Trigger: %{trigger}. Scope: %{plugscope}. Permission: %{permission}.'
+        railsc:
+          description: 'Execute ruby commands inside the $BOT$ environment. This is a security hole and for debugging only.'
+        servdebug:
+          description: 'Show logical info of a server object'
+        userdebug:
+          description: 'Show logical info of a user object.'
+          msg_userinfo: '%{id}-%{user} is known as %{hostmask} on %{server} Mode: %{usermode}. Perm: %{servpriv}.'
+        userdebugc:
+          description: 'Show logical info of a user object and his channel permissions.'
+          msg_userinfo: '%{id}-%{user} is known as %{hostmask} on %{server} Mode: %{usermode}. Perm: %{servpriv}. In %{channel} he got mode %{chanmode} with %{chanpriv}.'

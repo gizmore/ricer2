@@ -1,0 +1,14 @@
+en:
+  ricer:
+    plugins:
+      abbos:
+        err_abbo_item: 'Unknown %{classname}.'
+        err_invalid_target: 'You cannot abbonement this %{classname} here.'
+        err_not_abboed: 'The %{classname} is not abbonemented here.'
+        err_abbo_twice: 'The %{classname} is already abbonemented here.'
+        msg_abbonemented: 'Updates about this %{classname} will now be announced here.'
+        msg_unabbonemented: 'Updates about this %{classname} will not be announced here anymore.'
+        add_abbo:
+          description: 'Abbonement a %{classname} here and receive updates.'
+        remove_abbo:
+          description: 'Cancel a the abbonement of a %{classname}.'

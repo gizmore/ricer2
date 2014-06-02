@@ -1,0 +1,41 @@
+en:
+  activerecord:
+    models:
+      ricer/plugin/cvs/repo: 'Repository'
+  ricer:
+    plugin:
+      cvs:
+        err_permission: 'You are not allowed to do that.'
+        msg_show_item: '%{repo_id}-%{name}(%{path})'
+        msg_show_list_item: '%{repo_id}-%{name}'
+        cvs:
+          trigger: 'repo'
+          description: 'Manage cvs repositories.'
+          msg_announce: '[%{repo_name}] Commit %{revision} from %{commiter}: %{comment}'
+        add:
+          trigger: 'add'
+          usage: '<name> <url> [<public:yes|no>] [<sshpubkey|username:password>]'
+          description: 'Checkout a repository from a version control system.'
+          err_dup_name: 'This repository name is already taken.'
+          err_dup_url: 'This repository URI already exists.'
+          err_system: 'Could not detect the underlying cvs system for your repository.'
+          msg_repo_added: 'Successfully added new %{type} repository as %{name} from %{url}.'
+        show:
+          trigger: 'show'
+        delete:
+          trigger: 'delete'
+          usage: '<name|id>'
+          description: 'Purge a repository and mark it deleted.'
+        find:
+          trigger: 'find'
+          usage: '<repo> <filename>'
+          description: 'Search for a file with a given name in a repository.'
+        ifind:
+          trigger: 'findi'
+          usage: '<repo> <filename>'
+          description: 'Search for a file with a given name, case insensitive, in a repository.'
+        abbo:
+        unabbo:
+        info:
+        status:
+        grant:

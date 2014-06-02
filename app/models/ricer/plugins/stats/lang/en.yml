@@ -1,0 +1,23 @@
+en:
+  ricer:
+    plugins:
+      stats:
+        perf:
+          description: 'Show performance statistics of $BOT$.'
+          perf: 'Memory: %{memory} (%{max_memory} max). DB: %{queries} queries in %{uptime} (%{qps} queries per second). Threads: %{threads} (%{max_threads} max). PID: %{pid}. CPU usage: %{cpu}%'
+        plugstats:
+          description: 'Show plugin usage statistics.'
+          all_plugins: '%{plugins} plugins registered with $Bot$. In total %{total} commands have been processed.'
+          one_plugin:
+            one: 'The %{plugin} plugin has been executed once.'
+            other: 'The %{plugin} plugin has been executed %{count} times.'
+          toptenpage: 'Top users for %{plugin}, page %{page}/%{pages}: %{out}.'
+          one_plugin_and_user:
+            one: '%{user} has executed %{plugin} once.'
+            other: '%{user} has executed %{plugin} %{count} times.'
+        stats:
+          description: 'Show connectivity statistics for $BOT$.'
+          stats: 'Connected to %{active_servers}/%{total_servers} servers and %{channels} channels, seeing %{users} users. %{plugins} plugins and %{events} event handlers registered.'
+        version:
+          description: 'Show version information for $BOT$.'
+          version: '%{owner} runs Ricer v%{version} - %{builddate}. Ruby: %{ruby}. Platform: %{os}. Local time: %{time}.'
