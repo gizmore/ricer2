@@ -105,6 +105,8 @@ en:
           scopeinfo_scope: 'This works only in %{scopelabel}.'
           scopeinfo_perm: 'This requires %{permission} permissions.'
           scopeinfo_both: 'This works in %{scopelabel} and requires %{permission} permissions.'
+        has_connectors:
+          err_connector_unsupported: 'This plugin does not work in #{connector}.'
         permission_is:
           err_permission: 'This requires %{permission} permissions.'
         scope_is:

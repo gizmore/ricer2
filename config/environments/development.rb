@@ -1,10 +1,19 @@
 Ricer::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # RICER2 STUFF. THERE IS ANOTHER SECTION AT THE BOTTOM FOR MAIL #
   # Initial seed for random generator (non crypto)
   config.rice_seeds = 3133735
   # Set to true for more debug output
   config.chop_sticks = true
+  # owner, but for display only
+  config.ricer_owner = 'gizmore'
+  # Default server_nickname settings
+  config.ricer_hostname = 'ricer2.gizmore.org'
+  config.ricer_nickname = 'ricer2'
+  config.ricer_realname = 'Ricer2 - ruby IRCbot'
+  # END OF RICER2 STUFF
+  
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
@@ -42,19 +51,20 @@ Ricer::Application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   # Mail SMTP settings  
+  # RICER2 STUFF. THIS IS THE SECTION FOR MAIL #
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     :address => 'ricer.gizmore.org',
     :port => 587,
     :domain => 'ricer.gizmore.org',
     :authentication => :login,
-    :user_name => 'ricer@ricer.gizmore.org',
-    :password => 'therice',
-    :openssl_verify_mode => OpenSSL::SSL::VERIFY_NONE, 
+    :user_name => Ricer::Application.secrets.mail_smtp_source,
+    :password => Ricer::Application.secrets.mail_smtp_password,
+    :openssl_verify_mode => OpenSSL::SSL::VERIFY_NONE,
   }
    # Exception notifier  
   config.middleware.use ExceptionNotifier,
     :email_prefix => "[RicerDev] ",
     :sender_address => %{"RicerBot" <ricer@ricer.gizmore.org>},
-    :exception_recipients => %w{gizmore@gizmore.org}
+    :exception_recipients => (Ricer::Application.secrets.mail_error_rec)
 end

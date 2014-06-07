@@ -3,6 +3,10 @@ module Ricer::Net
     
     attr_reader :server
     
+    def self.connector_symbol; name.to_s.rsubstr_from('::').downcase.to_sym; end
+    def connector_symbol; self.class.connector_symbol; end
+    
+    
     def initialize(server); @server = server;  end
     def connected?; @connected ? true : false; end
     def encrypted?; uri.sheme == 'ircs'; end

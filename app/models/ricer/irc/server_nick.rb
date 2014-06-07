@@ -1,5 +1,4 @@
 # t.integer  "server_id",                                null: false
-# t.integer  "sort_order", default: 0,                   null: false
 # t.string   "nickname",                                 null: false
 # t.string   "hostname",   default: "ricer.gizmore.org", null: false
 # t.string   "username",   default: "Ricer",             null: false
@@ -10,7 +9,7 @@
 module Ricer::Irc
   class ServerNick < ActiveRecord::Base
     
-    scope :sorted, -> { order('server_nicks.sort_order ASC') }
+    scope :sorted, -> { order('server_nicks.updated_at DESC') }
     
     def name
       next_nickname

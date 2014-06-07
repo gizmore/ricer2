@@ -5,6 +5,8 @@ module Ricer::Plugins::Core
     permission_is :voice
     has_priority 3
 
+    has_usage :execute_begin, '<trigger> [<..command..args..>]'
+
     def on_privmsg
       if has_line? # something to operate on?
         if @message.is_trigger_char? # Explicit triggered with!.,?
@@ -34,13 +36,12 @@ module Ricer::Plugins::Core
     end
     
     def append_line
-      set_line(get_line + argline)
+      set_line(get_line + line)
     end
     
-    has_usage :execute_begin, '<trigger> [<..command..args..>]'
     def execute_begin(plugin, arguments)
       line = plugin.trigger + ' '
-      line += arguments unless arguments.nil?
+      line += (arguments + ' ') unless arguments.nil?
       set_line(line)
     end
     

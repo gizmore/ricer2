@@ -5,13 +5,15 @@ module Ricer::Plugins::Quote::Model
     belongs_to :channel, :class_name => 'Ricer::Irc::Channel'
     delegate :server, to: :user
     
+    validates_length_of :message, :minimum => 1, :maximum => 400, :allow_blank => false
+    
     def self.upgrade_1
       m = ActiveRecord::Migration
       m.create_table table_name do |t|
-        t.integer :user_id,    :null => false
-        t.integer :channel_id, :null => true
-        t.text    :message,    :null => false
-        t.timestamps 
+        t.integer   :user_id,    :null => false
+        t.integer   :channel_id, :null => true
+        t.text      :message,    :null => false, :length => 400
+        t.timestamp :created_at
       end
     end
 

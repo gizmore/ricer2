@@ -59,7 +59,7 @@ module Ricer::Plug::Extender::TriggerIs
       def nrplyr(key, *args); nreply tr(key, *args); end
       
       def reply_exception(e)
-        return reply e.to_s if e.is_a?(Ricer::ExecutionException)
+        return reply e.to_s if e.is_a?(Ricer::ExecutionException) || e.is_a?(ActiveRecord::RecordInvalid)
         bot.log_exception(e)
         return reply e.to_s if e.is_a?(Ricer::TriggerException)
         return reply(exception_message(e))

@@ -135,7 +135,8 @@ module Ricer::Net
     end
     
     def privmsg_args
-      args[1].split(/ +/)
+      @argv ||= args[1].split(/ +/)
+      @argv
     end
     
     def privmsg_line

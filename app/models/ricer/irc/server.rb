@@ -34,6 +34,7 @@ module Ricer::Irc
     def displayname; "#{self.id}-#{name}"; end
     def guid; "*:#{self.id}"; end
     def peer_verify; server_url.peer_verify; end
+    def connector_symbol; self.connector.to_sym; end
     
     def channels; Ricer::Irc::Channel.where(:server_id => self.id); end
     def joined_channels; channels.where(:online => true);  end
@@ -64,7 +65,7 @@ module Ricer::Irc
       @nicknames = server_nicks.each
       @nickname = @nicknames.peek
       @nick_cycle = ''
-      @connection = Ricer::Net::Irc::Connection.new(self)
+      @connection = bot.get_connector(self.connector).new(self)
       unless @connection.connect!
         process_event('ricer_on_connection_error', fake_message)
       else
@@ -144,28 +145,37 @@ module Ricer::Irc
       
       is_privmsg = event == 'on_privmsg'
       
-      bot.plugins.each do |plugin|
-        # bot.log_debug "Checking if #{plugin.plugin_name} responds to #{event}"
-        if plugin.respond_to?(event)
+      # all plugins that have this event registered
+      # sorted by priority
+      bot.plugins_for_event(event).each do |plugin|
+        # sieve out unsupported connectors
+        if plugin.connector_supported?(self.connector)
+
+          # EVENT
+          # Simply call the func after cloning the plugin
           begin
-            # bot.log_debug "Calling #{plugin.plugin_name}.#{event}"
             plugin.clone_plugin(message).send(event)
           rescue Exception => e
             bot.log_exception e
           end
-        end
-        if message.unprocessed? && is_privmsg
-          triggered ||= message.is_triggered?
-          if triggered
-            argline ||= message.privmsg_line.ltrim(message.trigger_chars)
-            if plugin.triggered_by?(argline)
-              plug = plugin.clone_plugin(message)
-              plug.exec_plugin(plug)
-            end
-          end 
-        end
-      end
-    end
+          
+          # PRIVMSG trigger has_usage
+          # Done via calling plugin.exec_plugin which
+          # calls the exec_function chain of a plugin
+          if message.unprocessed? && is_privmsg
+            triggered ||= message.is_triggered?
+            if triggered
+              argline ||= message.privmsg_line.ltrim(message.trigger_chars)
+              if plugin.triggered_by?(argline)
+                plug = plugin.clone_plugin(message)
+                plug.exec_plugin(plug)
+              end
+            end 
+          end
+          
+        end # .connector_supported?
+      end # .plugins_for_event
+    end # def process_event
     
     #####################
     ### Communication ###

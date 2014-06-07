@@ -24,7 +24,7 @@ module Ricer::Plugins::Log
       end
     end
     
-    has_usage execute:'[<boolean>]'
+    has_usage :execute, '[<boolean>]'
     def execute(boolean)
       return show if boolean.nil?
       

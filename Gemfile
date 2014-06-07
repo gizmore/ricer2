@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'rails'
+gem 'rails', '4.1.1'
 gem 'mysql2'
+
 gem 'sass-rails'
 gem 'uglifier'
 gem 'therubyracer',  platforms: :ruby
@@ -13,7 +14,7 @@ gem 'exception_notification', git: 'git://github.com/alanjds/exception_notificat
 gem 'os'
 gem 'foreigner'
 gem 'strip_attributes'
-gem 'validate_as_email'
+gem 'validate_as_email', github: 'gizmore/validate_as_email'
 gem 'kaminari'
 gem 'dusen'
 gem 'nokogiri'

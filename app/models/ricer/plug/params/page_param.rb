@@ -1,4 +1,4 @@
-module Ricer::Plug::Param
+module Ricer::Plug::Params
   class PageParam < IdParam
   end
 end

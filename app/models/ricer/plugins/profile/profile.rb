@@ -1,7 +1,7 @@
 module Ricer::Plugins::Profile
   class Profile < Ricer::Plugin
     
-    def on_upgrade_1
+    def upgrade_1
       ProfileEntry.upgrade_1
     end
     

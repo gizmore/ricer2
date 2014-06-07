@@ -12,7 +12,7 @@ module Ricer::Plugins::Note
     def self.unread; where("#{table_name}.read_at IS NULL"); end
     def self.read; where("#{table_name}.read_at IS NOT NULL"); end
     
-    def self.on_upgrade_1
+    def self.upgrade_1
       m = ActiveRecord::Migration
       m.create_table table_name do |t|
         t.integer   :sender_id,    :null => false

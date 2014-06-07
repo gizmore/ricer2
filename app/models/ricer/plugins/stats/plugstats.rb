@@ -3,7 +3,7 @@ module Ricer::Plugins::Stats
     
     trigger_is :plugstats
     
-    def on_upgrade_1; TriggerCounter.on_upgrade_1; end
+    def upgrade_1; TriggerCounter.upgrade_1; end
     def ricer_on_trigger; TriggerCounter.count(@message.plugin_id, user.id); end
     
     has_usage

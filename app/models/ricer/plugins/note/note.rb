@@ -1,7 +1,7 @@
 module Ricer::Plugins::Note
   class Note < Ricer::Plugin
 
-    def on_upgrade_1; Message.on_upgrade_1; end
+    def upgrade_1; Message.upgrade_1; end
     
     trigger_is :notes
 

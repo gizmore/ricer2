@@ -11,7 +11,7 @@ module Ricer::Plugins::Cvs
     validates :name, named_id:true
     validates :url, uri:{ping:true, trust:false, connect:false, exist:false, schemes: [:ssh, :git, :svn, :http, :https]}
     
-    scope :working, where('revision IS NOT NULL')
+    scope :working, -> { where('revision IS NOT NULL') }
     
     def self.upgrade_1
       FileUtils.mkdir_p(root_dir)

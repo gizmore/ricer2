@@ -1,7 +1,7 @@
 module Ricer::Plugins::Auth
   class Email < Ricer::Plugin
   
-    def on_upgrade_1; EmailConfirmation.on_upgrade_1; end
+    def upgrade_1; EmailConfirmation.upgrade_1; end
 
     trigger_is :email
     

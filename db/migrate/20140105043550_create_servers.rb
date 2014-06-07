@@ -2,7 +2,7 @@ class CreateServers < ActiveRecord::Migration
   def change
     create_table :servers do |t|
       t.integer :bot_id,      :null => false
-      t.string  :connector,   :default => 'Ricer::Net::Irc',  :null => false
+      t.string  :connector,   :default => 'irc', :null => false
       t.string  :triggers,    :default => ',',   :null => false, :length => 4
       t.integer :throttle,    :default => 3,     :null => false
       t.float   :cooldown,    :default => 0.8,   :null => false

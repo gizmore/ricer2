@@ -10,6 +10,7 @@ module Ricer
     attr_accessor :message
     
     Ricer::Plugin.extend Ricer::Plug::Extender::BruteforceProtected
+    Ricer::Plugin.extend Ricer::Plug::Extender::ConnectorIs
     Ricer::Plugin.extend Ricer::Plug::Extender::DefaultEnabled
     Ricer::Plugin.extend Ricer::Plug::Extender::FloodingProtected
     Ricer::Plugin.extend Ricer::Plug::Extender::ForcesAuthentication
@@ -18,8 +19,8 @@ module Ricer
     Ricer::Plugin.extend Ricer::Plug::Extender::HasSetting
     Ricer::Plugin.extend Ricer::Plug::Extender::HasSubcommand
     Ricer::Plugin.extend Ricer::Plug::Extender::HasUsage
+    Ricer::Plugin.extend Ricer::Plug::Extender::IsDescription
     Ricer::Plugin.extend Ricer::Plug::Extender::IsListTrigger
-  # Ricer::Plugin.extend Ricer::Plug::Extender::MaxCharacters
     Ricer::Plugin.extend Ricer::Plug::Extender::PermissionIs
     Ricer::Plugin.extend Ricer::Plug::Extender::RequiresConfirmation
     Ricer::Plugin.extend Ricer::Plug::Extender::RequiresRetype
@@ -157,6 +158,10 @@ module Ricer
       false
     end
     
+    def self.merge_options(options, default_options, check_unknowns=false)
+      Ricer::Plug::Param.merge_options(options, default_options, check_unknowns)
+    end
+    
     ##############
     ### Static ###
     ##############
@@ -189,6 +194,10 @@ module Ricer
     ###################
     ### Exec Bridge ###
     ###################
+    def connector_supported?(server)
+      true
+    end
+
     def ricer_itself?
       @message.is_ricer?
     end
@@ -227,10 +236,7 @@ module Ricer
     end
     
     def plugins_for_line(line, check_scope=true)
-      bot.plugins.select { |plugin|
-#        return false unless (!check_scope) || plugin.in_scope?(current_scope)
-        plugin.triggered_by?(line)
-      }
+      bot.plugins.select { |plugin|; plugin.triggered_by?(line); }
     end
     
     def plugin_for_line(line, check_scope=true)
@@ -260,7 +266,7 @@ module Ricer
     ############
     ### I18n ###
     ############
-    def i18n_key; self.class.name.gsub('::', '.').downcase; end
+    def i18n_key; self.class.name.gsub('::', '.').underscore; end
     def i18n_pkey; i18n_key.rsubstr_to('.'); end
     def description; t(:description); end
     def t(key, *args); tt "#{i18n_key}.#{key}", *args; end
@@ -270,7 +276,8 @@ module Ricer
     def rt(response)
       response.to_s.
       gsub('$BOT$', server.nickname.name).
-      gsub('$TRIGGER$', trigger.to_s)
+      gsub('$COMMAND$', trigger.to_s).
+      gsub('$TRIGGER$', server.triggers[0]||'')
     end
     
     def l(date)
@@ -289,8 +296,6 @@ module Ricer
     ### IrcLib ###
     ##############
     def bold(text); lib.bold(text); end
-    
-    
         
   end
 end

@@ -4,7 +4,7 @@ module Ricer::Plugins::Server
     trigger_is :join_server
     permission_is :ircop
     
-    has_setting name: :default_nick, type: :string, scope: :bot, permission: :responsible, default: 'ricer'
+    has_setting name: :default_nick, type: :string, scope: :bot, permission: :responsible, default: Rails.configuration.ricer_nickname
     
     has_usage :execute_rejoin, '<server>'
     has_usage :execute_create, '<server_url>'
@@ -23,7 +23,9 @@ module Ricer::Plugins::Server
         }),
         server_nicks: [
           Ricer::Irc::ServerNick.new({
-            nickname: get_setting(:default_nick)
+            nickname: get_setting(:default_nick),
+            hostname: Rails.configuration.ricer_hostname,
+            realname: Rails.configuration.ricer_realname,
           }),
         ],
       })

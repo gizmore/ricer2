@@ -1,7 +1,7 @@
 module Ricer::Plugins::Cvs
   class Cvs < Ricer::Plugin
     
-    def on_upgrade_1; Repo.upgrade_1; Permission.upgrade_1; end
+    def upgrade_1; Repo.upgrade_1; Permission.upgrade_1; end
     
     has_subcommand :abbo
     has_subcommand :abbos
@@ -13,7 +13,7 @@ module Ricer::Plugins::Cvs
       Ricer::Thread.execute do
         while true
           sleep 15.seconds
-          Repo.all.working.each do |repo|
+          Repo.working.each do |repo|
             check_repo repo
             sleep 15.seconds
           end

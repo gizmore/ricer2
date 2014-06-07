@@ -49,13 +49,22 @@ module Ricer
     
     def load_path(path)
       plugins = []
-      
+
+      # Exports first      
       @plugdirs.each do |plugdir|
         Dir[plugdir].each do |dir|
-          load_model_dir dir
           load_export_dir dir
         end
       end
+      
+      # Then models
+      @plugdirs.each do |plugdir|
+        Dir[plugdir].each do |dir|
+          load_model_dir dir
+        end
+      end
+      
+      # Then the rest
       @plugdirs.each do |plugdir|
         Dir[plugdir].each do |dir|
           plugins += load_plugin_dir dir
@@ -82,12 +91,11 @@ module Ricer
       throw Exception.new("Plugin #{parent.plugin_name} has an unknown subcommand: #{cmdname}")
     end
     
-    
-    def load_model_dir(plugdir)
-      load_files(plugdir+'/model/*')
-    end
     def load_export_dir(plugdir)
       load_files(plugdir+'/export/*')
+    end
+    def load_model_dir(plugdir)
+      load_files(plugdir+'/model/*')
     end
     def load_files(dir_pattern)
       begin
@@ -138,7 +146,10 @@ module Ricer
             classobject = Object.const_get('Ricer').const_get('Plugins').const_get(modulename).const_get(classname)
             if classobject < Ricer::Plugin
               plugin = install_plugin(classobject)
+              PluginMap.instance.load_plugin(plugin)
               plugins.push(plugin)
+            elsif classobject < Ricer::Net::Connection
+              PluginMap.instance.load_connector(classobject)
             end
           rescue Exception => e
             @bot.log_error("Error in #{path}")
@@ -178,8 +189,8 @@ module Ricer
         begin
           while db_version < plug_version
             dbv = db_version + 1
-            if db_plugin.respond_to?("on_upgrade_#{dbv}")
-              db_plugin.send("on_upgrade_#{dbv}")
+            if db_plugin.respond_to?("upgrade_#{dbv}")
+              db_plugin.send("upgrade_#{dbv}")
             end
             db_version = dbv
           end

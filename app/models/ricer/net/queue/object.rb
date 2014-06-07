@@ -36,6 +36,7 @@ module Ricer::Net::Queue
     
     def flush
       @penalty -= @weight * @lines.length
+      @penalty = [@penalty, 0].max
       @lines = []
     end
     

@@ -6,7 +6,7 @@ module Ricer::Plugins::Auth
     validates :user, :presence => true  
     validates_as_email :email    
     
-    def self.on_upgrade_1
+    def self.upgrade_1
       m = ActiveRecord::Migration
       m.drop_table table_name if connection.table_exists? table_name
       m.create_table table_name do |t|

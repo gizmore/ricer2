@@ -6,7 +6,7 @@ module Ricer::Plugins::Rss
     has_subcommand :abbos
     has_subcommand :unabbo
 
-    def on_upgrade_1
+    def upgrade_1
       Feed.upgrade_1
     end
 

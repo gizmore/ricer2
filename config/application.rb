@@ -10,6 +10,7 @@ module Ricer
   class Application < Rails::Application
     
     config.autoload_paths += %W["#{config.root}/app/validators/"]
+    
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -24,8 +25,9 @@ module Ricer
     config.i18n.enforce_available_locales = false
     
     config.ricer_name = 'Ricer'
-    config.ricer_version = '0.94a'
-    config.ricer_version_date = Time.new(2014, 5, 17, 20, 55, 29)
+    config.ricer_owner = 'gizmore'
+    config.ricer_version = '0.95a'
+    config.ricer_version_date = Time.new(2014, 6, 3, 11, 33, 27)
 
   end
 end

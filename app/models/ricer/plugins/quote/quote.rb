@@ -7,7 +7,7 @@ module Ricer::Plugins::Quote
     has_subcommand :votedown
     has_subcommand :voteup
    
-    def on_upgrade_1
+    def upgrade_1
       Ricer::Plugins::Quote::Model::Quote.upgrade_1
     end
     

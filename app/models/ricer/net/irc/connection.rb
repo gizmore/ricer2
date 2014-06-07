@@ -57,7 +57,7 @@ module Ricer::Net::Irc
     def send_join(message, channelname); send_queued(message.reply_text("JOIN #{channelname}")); end
     def send_part(message, channelname); send_queued(message.reply_text("PART #{channelname}")); end
     def send_quit(message, quitmessage); send_line(message.reply_text("QUIT :#{quitmessage}")); end
-    def send_notice(message, text); send_splitted(message, "NOTICE #{message.reply_to.name} :#{message.reply_prefix}", text); end
+    def send_notice(message, text); send_splitted(message, "NOTICE #{message.reply_to.name} :", text); end
     def send_privmsg(message, text); send_splitted(message, "PRIVMSG #{message.reply_to.name} :#{message.reply_prefix}", text); end
     def send_action(message, text); send_splitted(message, "NOTICE #{message.reply_to.name} :\x01", text, "\x01"); end
     def login(message, nickname)
@@ -105,10 +105,10 @@ module Ricer::Net::Irc
     def send_line(message)
 #      puts "IRC::Connection.send_line(#{message.reply_data})"
       begin
-        @frame.sent
+        @server.ricer_replies_to(message)
         text = message.reply_data.gsub("\n", '').gsub("\r", '')
         @socket.write "#{text}\r\n"
-        @server.ricer_replies_to(message)
+        @frame.sent
       rescue => e
         bot.log_info("Disconnect from #{server.hostname}: #{e.message}")
         bot.log_exception e

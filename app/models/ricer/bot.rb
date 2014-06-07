@@ -45,6 +45,10 @@ module Ricer
       log_info "Seeded random generator with #{seed}"
     end
     
+    
+    ### XXX: Horrible slow? because online attribute is in the db?
+    ### but this way we get ActiveRecord syntax and maybe later
+    ### there is a nice fast solution.
     def save_all_offline
       Ricer::Irc::User.update_all(:online => false)
       Ricer::Irc::Server.update_all(:online => false)
@@ -53,12 +57,10 @@ module Ricer
     end
     
     def load_plugins(reload=false)
+      PluginMap.instance.clear_cache
       @plugins = @loader.load_all
-      unless reload
-        init_plugins
-      else
-        reloaded_plugins
-      end
+      reload ? reloaded_plugins : init_plugins
+      PluginMap.instance.sort_plugins
     end
     
     def init_plugins
@@ -79,6 +81,18 @@ module Ricer
         return plugin if plugin.id == id
       end
       nil
+    end
+    
+    def get_connector(symbol)
+      PluginMap.instance.get_connector(symbol)
+    end
+    
+    def connector_symbols
+      PluginMap.instance.connector_symbols
+    end
+    
+    def plugins_for_event(event_name)
+      PluginMap.instance.plugins_for_event(event_name)
     end
     
     def reloaded_plugins
