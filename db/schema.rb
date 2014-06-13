@@ -66,12 +66,11 @@ ActiveRecord::Schema.define(version: 20140307133735) do
   end
 
   create_table "server_nicks", force: true do |t|
-    t.integer  "server_id",                                null: false
-    t.integer  "sort_order", default: 0,                   null: false
-    t.string   "nickname",                                 null: false
-    t.string   "hostname",   default: "ricer.gizmore.org", null: false
-    t.string   "username",   default: "Ricer",             null: false
-    t.string   "realname",   default: "Ricer IRC Bot",     null: false
+    t.integer  "server_id",                                   null: false
+    t.string   "nickname",                                    null: false
+    t.string   "hostname",   default: "ricer2.gizmore.org",   null: false
+    t.string   "username",   default: "ricer2",               null: false
+    t.string   "realname",   default: "Ricer2 - ruby IRCbot", null: false
     t.string   "password"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -91,13 +90,13 @@ ActiveRecord::Schema.define(version: 20140307133735) do
   add_index "server_urls", ["server_id"], name: "server_urls_server_id_fk", using: :btree
 
   create_table "servers", force: true do |t|
-    t.integer  "bot_id",                                 null: false
-    t.string   "connector",  default: "Ricer::Net::Irc", null: false
-    t.string   "triggers",   default: ",",               null: false
-    t.integer  "throttle",   default: 3,                 null: false
-    t.float    "cooldown",   default: 0.8,               null: false
-    t.boolean  "enabled",    default: true,              null: false
-    t.boolean  "online",     default: false,             null: false
+    t.integer  "bot_id",                     null: false
+    t.string   "connector",  default: "irc", null: false
+    t.string   "triggers",   default: ",",   null: false
+    t.integer  "throttle",   default: 3,     null: false
+    t.float    "cooldown",   default: 0.8,   null: false
+    t.boolean  "enabled",    default: true,  null: false
+    t.boolean  "online",     default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

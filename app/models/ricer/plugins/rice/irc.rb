@@ -1,6 +1,6 @@
 module Ricer::Plugins::Rice
-  class Irc < Ricer::Net::Connection
-    
+  class Irc < Ricer::Net::Connection    
+  
     MAXLEN = 255
     
     require 'uri'

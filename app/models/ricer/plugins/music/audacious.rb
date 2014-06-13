@@ -35,6 +35,7 @@ module Ricer::Plugins::Music
         announce_new_song
       end
     end
+    
     def announce_new_song
       Ricer::Irc::Channel.online.each do |channel|
         if get_channel_setting(channel, :announce)

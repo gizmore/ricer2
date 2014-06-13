@@ -1,5 +1,6 @@
 module Ricer
 
+  class SilentCancel < Exception; end
   class TriggerException < Exception; end
   class ExecutionException < Exception; end
 
@@ -52,6 +53,7 @@ module Ricer
     def plugin_author; 'gizmore@wechall.net'; end
     def plugin_module; self.class.name.split('::')[-2]; end
     def plugin_name; self.class.name.split('::').slice(-2, 2).join('/'); end
+    def plugin_shortname; self.class.name.rsubstr_from('::').undescore.to_sym; end
 
     def on_init; end
     def on_exit; end

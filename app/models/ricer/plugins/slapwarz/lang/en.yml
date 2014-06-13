@@ -2,4 +2,9 @@ en:
   ricer:
     plugins:
       slapwarz:
-        
+        items:
+          wrench:
+        adjectives:
+          small:
+        adverbs:
+          slightly:

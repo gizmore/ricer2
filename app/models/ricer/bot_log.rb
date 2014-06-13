@@ -29,6 +29,7 @@ module Ricer
     
     # Mail first exception after a message
     def mail_exception(exception)
+      byebug
       return if @failed; @failed = true
       Ricer::Thread.execute do
         BotMailer.exception(exception).deliver

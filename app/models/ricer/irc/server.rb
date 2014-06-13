@@ -23,6 +23,10 @@ module Ricer::Irc
     scope :enabled, -> { where(:enabled => 1) }
     scope :in_domain, lambda { |url| joins(:server_url).where('url LIKE ?', "%.#{URI::Generic.domain(url)}:%") }
     
+    validates_numericality_of :cooldown, :larger_than => 0.0, :max => 2.0
+    validates_numericality_of :throttle, :min => 1.0, :max => 800, :float => false
+    validates_format_of :triggers, :with => /[-.,*!\"\''§$%&]/
+    
     def bot; Ricer::Bot.instance; end
     def lib; Ricer::Irc::Lib.instance; end
     

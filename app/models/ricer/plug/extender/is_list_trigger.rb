@@ -41,10 +41,10 @@ module Ricer::Plug::Extender::IsListTrigger
       has_usage :execute_search, '<search_term> [<page>]'
       
       def execute_welcome
-        execute_list
+        execute_list(1)
       end
       
-      def execute_list(page=1)
+      def execute_list(page)
         show_items(visible_relation(search_class.all).order("created_at"), page)
       end
 

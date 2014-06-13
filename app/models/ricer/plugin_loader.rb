@@ -14,12 +14,13 @@ module Ricer
     end
     
     def load_all
+      
       @bot.log_debug "PluginLoader.load_all"
 
       @valid = true
       
-      load_i18n_dir('config/locales/rails/*')
-      load_i18n_dir('config/locales/ricer/*')
+      load_i18n_dir('config/locales/rails/')
+      load_i18n_dir('config/locales/ricer/')
 
       plugins = []
       @plugdirs.each do |path|
@@ -125,7 +126,7 @@ module Ricer
     # end
     
     def load_i18n_dir(plugdir)
-      Dir[plugdir].each do |path|
+      Filewalker.traverse_files(plugdir, '*.yml', true) do |path, dir|
         I18n.load_path.push(path)
       end
     end
@@ -158,7 +159,11 @@ module Ricer
           end
         end
       end
-      load_i18n_dir(plugdir+'/lang/*')
+      begin
+        load_i18n_dir(plugdir+'/lang/')
+      rescue Exception => e
+        @bot.log_error("Lang files missing: '#{plugdir}/lang/'.")
+      end
       plugins
     end
     

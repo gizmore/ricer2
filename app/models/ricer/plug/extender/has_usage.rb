@@ -5,7 +5,25 @@ module Ricer::Plug::Extender::HasUsage
     allow_trailing: false,
   }
   
-  # Extender!
+  # Extender after_use
+  def before_execution(&proc)
+    class_eval do |klass|
+      def execute_before_usage
+        yield proc(self)
+      end
+    end
+  end
+  
+  # Extender after_use
+  def after_execution(&proc)
+    class_eval do |klass|
+      def execute_after_usage
+        yield proc(self)
+      end
+    end
+  end
+  
+  # Extender has_usage
   def has_usage(function=:execute, pattern=nil, options={})
     class_eval do |klass|
 
@@ -29,7 +47,13 @@ module Ricer::Plug::Extender::HasUsage
       klass.instance_variable_set('@usages', usages)
       
       # Register connector event handler by defining this here
-      def on_privmsg; end
+      # It w
+      unless klass.respond_to?(:on_privmsg)
+        def on_privmsg; end
+      end
+
+      def trigger_visible?; true; end
+      def trigger_possible?; true; end
       
       # Register Exec Handler
       if usage_on_error
@@ -50,25 +74,29 @@ module Ricer::Plug::Extender::HasUsage
       #####################      
       private
       def try_handlers
+        return unless trigger_possible?
         not_even_failed_one = true
-        usages.usages.each do |pattern, usage|
-          if matches_scope_and_permission?(usage)
-            args = usage.parse_args(self, @message)
-            unless args.nil?
-              @message.plugin_id = plugin_id
-              process_event('ricer_on_trigger')
-              send(usage.function, *args)
-              return true
-            end
-            not_even_failed_one = false
+        usages = usages_in_scope
+        return if usages.empty?
+        throw_error = usages.length
+        usages.each do |pattern, usage|
+          throw_error -= 1
+          args = usage.parse_args(self, @message, (throw_error == 0))
+          unless args.nil?
+            @message.plugin_id = plugin_id
+            process_event('ricer_on_trigger')
+            send(:execute_after_usage) if self.class.respond_to?(:execute_before_usage)
+            send(usage.function, *args)
+            send(:execute_after_usage) if self.class.respond_to?(:execute_after_usage)
+            return true
           end
+          not_even_failed_one = false
         end
         not_even_failed_one
       end
       
-      def matches_scope_and_permission?(usage)
-        return false unless usage.scope.nil? || @message.scope.in_scope?(usage.scope)
-        return true
+      def usages_in_scope
+        self.usages.usages_in_scope(@message)
       end
       
       ################
@@ -76,7 +104,7 @@ module Ricer::Plug::Extender::HasUsage
       ################
       def show_usage
         reply I18n.t('ricer.plug.extender.has_usage.msg_usage',
-          trigger: trigger, usage: usages.combined_pattern_text(@message.scope), description: description,
+          trigger: trigger, usage: usages.combined_pattern_text(usages_in_scope), description: description,
           permission: scope_and_permission_text) 
       end
       

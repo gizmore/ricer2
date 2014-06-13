@@ -1,7 +1,7 @@
 module Ricer::Plug::Params
-  class VariableParam < Base
-    def self.get_arg(server, arg, message)
-      arg.to_sym
+  class VariableParam < StringParam
+    def convert_in!(input, options, message)
+      super(input, options, message).to_sym
     end
   end
 end

@@ -32,8 +32,8 @@ module Ricer::Plug::Params
     def failed_output; fail_default; end
     
     ## Failsafe calls
-    def convert_in!(input, options, message); convert_in!(input, options, message) rescue nil; end
-    def convert_out!(value, options, message); convert_out!(value, options, message) rescue nil; end
+    def convert_in(input, options, message); convert_in!(input, options, message) rescue nil; end
+    def convert_out(value, options, message); convert_out!(value, options, message) rescue nil; end
     def convert_hint(value, options, message); convert_hint!(value, options, message) rescue nil; end
    
     ################

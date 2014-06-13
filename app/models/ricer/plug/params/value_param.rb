@@ -1,4 +1,4 @@
 module Ricer::Plug::Params
-  class ValueParam < Base
+  class ValueParam < StringParam
   end
 end

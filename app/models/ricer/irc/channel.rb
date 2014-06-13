@@ -27,8 +27,8 @@ module Ricer::Irc
 #    def displayname; "#{self.name}:#{self.server_id}"; end
     def guid; "#{self.name}:#{self.server_id}"; end
     
-    def self.by_arg(server, arg)
-      Ricer::Plug::Param::ChannelParam.get_arg(server, arg, nil)
+    def self.by_arg(arg)
+      Ricer::Plug::Params::ChannelParam.convert_in!(arg)
     end
     
     #########################

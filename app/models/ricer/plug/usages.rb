@@ -20,7 +20,21 @@ module Ricer::Plug
       @usages[pattern] = usage
     end
     
-
+    def usages_in_scope(message)
+      @usages.select do |pattern, usage|
+        matches_scope_and_permission?(usage, message)
+      end
+    end
+    
+    def matches_scope_and_permission?(usage, message)
+      return false unless usage.scope.nil? || message.scope.in_scope?(usage.scope)
+      return true
+    end
+      
+    def combined_pattern_text(usages)
+      combined_pattern_text_columns(usages).join(' ')
+    end
+    
     ###
     ### Combine all usages in a single usage pattern, translated.
     ### We do it column wise for all usage patterns at once.
@@ -45,12 +59,6 @@ module Ricer::Plug
     ####---
     ### One can identify nasty usages and simply OR_append them after the easy ones have been condensed.
     #---------
-    def combined_pattern_text(scope)
-      usages = @usages.select do |pattern, usage|
-        usage.scope.nil? || scope.in_scope?(usage.scope)
-      end
-      combined_pattern_text_columns(usages).join(' ')
-    end
     def combined_pattern_text_columns(usages)
       
       out = []

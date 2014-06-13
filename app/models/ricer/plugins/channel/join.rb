@@ -7,10 +7,13 @@ module Ricer::Plugins::Channel
     
     has_setting name: :autojoin, type: :boolean, scope: :channel, default: true
 
+    has_usage :execute_already_there, '<channel>'
+    def execute_already_there(channel)
+      rply :err_already_joined
+    end
+
     has_usage :execute, '<channel_name>'
     def execute(channel_name)
-      channel = Ricer::Irc::Channel.by_arg(server, channel_name)
-      return rply :err_already_joined if channel && channel.online?
       rply :msg_trying_to_join
       server.connection.send_join(message, channel_name)
     end

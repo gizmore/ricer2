@@ -33,7 +33,7 @@ module Ricer::Plug
     #######################
     ### Argument Parser ###
     #######################
-    def parse_args(plugin, message)
+    def parse_args(plugin, message, throw_errors)
       # empty params
       if @params.nil?
         if allows_trailing?
@@ -45,10 +45,10 @@ module Ricer::Plug
         end
       end
       # non empty params
-      parse_param_args(plugin, message)
+      parse_param_args(plugin, message, throw_errors)
     end
 
-    def parse_param_args(plugin, message)
+    def parse_param_args(plugin, message, throw_errors)
       
       back = []
       args = plugin.argv # Read from pre-splitted argv
@@ -71,10 +71,15 @@ module Ricer::Plug
           return back     # return immediately
         else
           # Single arg
-          arg = args[i] == nil ? nil : param.parse(args[i], @options, message)
-          return nil if arg.nil? && param.is_mandatory?
-          i += 1         # Add arg :)
-          back.push(arg) # Add arg :)
+          begin
+            arg = args[i] == nil ? nil : param.parse(args[i], @options, message)
+            return nil if arg.nil? && param.is_mandatory?
+            i += 1         # Add arg :)
+            back.push(arg) # Add arg :)
+          rescue Ricer::ExecutionException => e
+            raise e if throw_errors
+            return nil
+          end
         end
       end
       

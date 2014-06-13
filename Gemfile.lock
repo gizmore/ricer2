@@ -55,17 +55,18 @@ GEM
     dusen (0.4.10)
       activerecord
       edge_rider (>= 0.2.5)
-    edge_rider (0.2.5)
+    edge_rider (0.3.0)
       activerecord
     erubis (2.7.0)
     eventmachine (1.0.3)
-    execjs (2.1.0)
+    execjs (2.2.0)
     faraday (0.8.9)
       multipart-post (~> 1.2.0)
     faraday_middleware (0.9.1)
       faraday (>= 0.7.4, < 0.10)
     foreigner (1.6.1)
       activerecord (>= 3.0.0)
+    geocoder (1.2.1)
     hashie (2.1.1)
     hike (1.2.3)
     http_parser.rb (0.5.3)
@@ -166,6 +167,7 @@ DEPENDENCIES
   dusen
   exception_notification!
   foreigner
+  geocoder
   kaminari
   mysql2
   nokogiri

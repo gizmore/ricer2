@@ -3,8 +3,8 @@ module Ricer::Plug::Params
 
     def convert_in!(input, options, message)
       min,max = min_length(options),max_length(options)
-      fail(:err_too_short, min, max) if min != nil || input.length < min
-      fail(:err_too_long, min, max) if max != nil || input.length > max
+      fail(:err_too_short, min, max) if min != nil && input.length < min
+      fail(:err_too_long, min, max) if max != nil && input.length > max
       input
     end
     
@@ -14,10 +14,12 @@ module Ricer::Plug::Params
     end
     
     def min_length(options)
-      options[:min].to_i rescue nil
+      return nil if options[:min].nil?
+      options[:min].to_i
     end
     def max_length(options)
-      options[:max].to_i rescue nil
+      return nil if options[:max].nil?
+      options[:max].to_i
     end
     
   end
