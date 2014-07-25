@@ -60,7 +60,29 @@ module Ricer
       PluginMap.instance.clear_cache
       @plugins = @loader.load_all
       reload ? reloaded_plugins : init_plugins
+      I18n.reload!
+      sort_plugins
       PluginMap.instance.sort_plugins
+    end
+    
+    def sort_plugins
+      @plugins.sort! do |a,b|
+        b.trigger_permission.bit - a.trigger_permission.bit rescue 0
+      end
+      @plugins.sort! do |a,b|
+        b.scope.bit - a.scope.bit
+      end
+      @plugins.sort! do |a,b|
+        a.priority - b.priority
+      end
+#      plugins.each do |p|; puts p.plugin_name; end; byebug
+    end
+    
+    def load_plugin(klass, reload=false)
+      plugin = @loader.install_plugin(klass)
+      @plugins.push(plugin)
+      PluginMap.instance.load_plugin(plugin)
+      plugin
     end
     
     def init_plugins

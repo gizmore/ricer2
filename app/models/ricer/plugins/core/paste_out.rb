@@ -18,7 +18,7 @@ module Ricer::Plugins::Core
     end
     
     def on_privmsg
-      send_queue_as_pastebin if user.get_queue.length > max_length
+      send_queue_as_pastebin if user.get_queue.length > max_length rescue nil
     end
     
     def send_queue_as_pastebin

@@ -31,20 +31,6 @@ module Ricer
         gather_subcommands(plugins, plugin)
       end
       
-      plugins.sort! do |a,b|
-        b.trigger_permission.bit - a.trigger_permission.bit rescue 0
-      end
-      plugins.sort! do |a,b|
-        b.scope.bit - a.scope.bit
-      end
-      plugins.sort! do |a,b|
-        a.priority - b.priority
-      end
-
-#      plugins.each do |p|; puts p.plugin_name; end; byebug
-      
-      I18n.reload!
-
       plugins
     end
     

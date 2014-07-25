@@ -2,7 +2,7 @@ en:
   ricer:
     plugins:
       server:
-        joinserver:
+        join_server:
           description: 'Make $BOT$ reconnect or connect to a new irc network.'
           err_already_connected: 'This server is already connected.'
           msg_connected: 'I have successfully connected to %{server} as %{nickname}. The superword is %{superword}, so try /msg #{nickname} super #{superword} to lift your priviledges.'

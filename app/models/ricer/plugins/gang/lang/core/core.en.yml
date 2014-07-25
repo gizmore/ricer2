@@ -1,9 +1,0 @@
-ricer:
-  plugins:
-    gang:
-      look:
-        trigger: 'look'
-        msg_look:
-          zero: 'There are no players near you.'
-          one: 'You see one player: %{players}.'
-          other: 'You see %{count} players: %{players.}'

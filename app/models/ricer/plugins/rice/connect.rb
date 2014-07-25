@@ -116,6 +116,8 @@ module Ricer::Plugins::Rice
         created = true
       end
       
+      Ricer::Irc::User.current = user
+      
       if !user.should_cache? # Not in mem cache yet?
         user.ricer_on_joined_server(server) # We surely joined the server then :)
         if created

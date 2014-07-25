@@ -45,10 +45,10 @@ module Ricer
       @event_map[event_name.to_sym].push(plugin)
       if event_name == 'on_privmsg' && plugin.has_usage?
         @trigger_count += 1
-        bot.log_debug "Mapped trigger #{plugin.plugin_name}"
+        #bot.log_debug "Mapped trigger #{plugin.plugin_name}"
       else
         @event_count += 1
-        bot.log_debug "Mapped event #{event_name} to #{plugin.plugin_name}"
+        #bot.log_debug "Mapped event #{event_name} to #{plugin.plugin_name}"
       end
     end
     

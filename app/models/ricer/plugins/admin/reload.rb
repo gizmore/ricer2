@@ -6,7 +6,7 @@ module Ricer::Plugins::Admin
 
     has_usage
     def execute
-      rply :msg_reloading
+#      rply :msg_reloading # FIXME: This causes a bug because sendqueue is done after reloading...
       clear_plugin_class_variables
       reload_core
       bot.load_plugins(true)

@@ -1,0 +1,6 @@
+en:
+  ricer:
+    plugins:
+      poll:
+        newpoll:
+          description: 'Create a new poll to get it announced and voted on all poll active channels.'

@@ -28,3 +28,7 @@ group :production do
   gem 'sass-rails'
   gem 'uglifier'
 end
+
+
+### Plugins ###
+gem 'survey'

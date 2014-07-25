@@ -28,6 +28,9 @@ module Ricer::Irc
     def displayname; Ricer::Irc::Lib.instance.no_highlight(self.nickname); end
     def guid; "#{self.name}:#{self.server_id}"; end
     def server; Ricer::Bot.instance.servers.find(self.server_id); end
+    
+    def self.current; Thread.current[:ricer_user]; end
+    def self.current=(user); Thread.current[:ricer_user] = user; end
 
     scope :online, -> { where(:online => 1) }
     

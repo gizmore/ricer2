@@ -43,6 +43,4 @@ config/secrets.yml
 /repos
 /log
 /config/environments/production.rb
-
-# --- private --- #
-/app/models/ricer/plugins/gangs
+/app/models/ricer/DISABLE
