@@ -9,9 +9,10 @@ Ricer::Application.configure do
   # owner, but for display only
   config.ricer_owner = 'gizmore'
   # Default server_nickname settings
-  config.ricer_hostname = 'ricer2.gizmore.org'
-  config.ricer_nickname = 'ricer2'
-  config.ricer_realname = 'Ricer2 - ruby IRCbot'
+  config.ricer_hostname = 'ricer.giz.org'
+  config.ricer_nickname = 'ricer'
+  config.ricer_realname = 'Ricer - The Ruby IRC Bot'
+  config.ricer_default_server = 'irc://irc.giz.org:6668'
   # END OF RICER2 STUFF
   
 

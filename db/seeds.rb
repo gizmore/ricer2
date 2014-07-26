@@ -19,9 +19,8 @@ end
 
 
 ### ---
-
+# TODO: Make this a rake task!
 bot = Ricer::Bot.create()
 server = Ricer::Irc::Server.create({bot_id:bot.id})
-url = Ricer::Irc::ServerUrl.create({server_id:server.id, url:'irc://irc.giz.org:6668'})
-nick = Ricer::Irc::ServerNick.create({server_id:server.id, nickname:'ricer'})
-
+url = Ricer::Irc::ServerUrl.create({server_id:server.id, url:Ricer::Application.config.ricer_default_server})
+nick = Ricer::Irc::ServerNick.create({server_id:server.id, nickname:Ricer::Application.config.ricer_nickname})
