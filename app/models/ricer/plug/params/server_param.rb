@@ -4,7 +4,7 @@ module Ricer::Plug::Params
     def convert_in!(input, options, message)
       server = Ricer::Irc::Server.where(:id => input).first
       server = Ricer::Irc::Server.in_domain(input).first if server.nil?
-      input_failed if server.nil?
+      failed_input if server.nil?
       server
     end
 

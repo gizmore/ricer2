@@ -11,11 +11,14 @@ module Ricer::Plug::Params
       server = message.server if server.nil?
       fail(:err_need_server) if server.nil?
 
+      channels = Ricer::Irc::Channel
+      channels = channels.where(:online => options[:online]) unless options[:online].nil?
+
       sid = server.id
-      channel = Ricer::Irc::Channel.where(:id => input).first
-      channel = Ricer::Irc::Channel.where(:name => input, server_id:sid).first if channel.nil?
-      channel = Ricer::Irc::Channel.where('name LIKE ? AND server_id=?', "#{input}%", sid).first if channel.nil?
-      channel = Ricer::Irc::Channel.where('name LIKE ? AND server_id=?', "%#{input}%", sid).first if channel.nil?
+      channel = channels.where(:id => input).first
+      channel = channels.where(:name => input, server_id:sid).first if channel.nil?
+      channel = channels.where('name LIKE ? AND server_id=?', "#{input}%", sid).first if channel.nil?
+      channel = channels.where('name LIKE ? AND server_id=?', "%#{input}%", sid).first if channel.nil?
 
       failed_input if channel.nil?
       channel

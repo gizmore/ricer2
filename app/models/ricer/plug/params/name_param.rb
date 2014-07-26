@@ -5,9 +5,9 @@ module Ricer::Plug::Params
 
       min = 3
       max = 32
-      arg =~ Regexp.new("^[a-z][#{NamedId.allowed}]{#{min-1},#{max-1}}$", true)
-      failed_input if arg.nil?
-      arg
+      input =~ Regexp.new("^[a-z][#{NamedId.allowed}]{#{min-1},#{max-1}}$", true)
+      failed_input if input.nil?
+      input
 
     end
 

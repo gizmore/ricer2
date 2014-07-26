@@ -12,7 +12,6 @@ module Ricer::Plugins::Art
     has_usage :execute, '[<..message..here..>]'
     
     def execute(text)
-      byebug
       text = Shellwords.escape(text)
       Ricer::Thread.execute do
         out = Kernel.exec("cowsay -f #{get_setting(:image)} -- #{text}")

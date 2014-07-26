@@ -4,20 +4,18 @@ module Ricer::Plugins::Conf
     trigger_is 'server set'
     permission_is :responsible
     
-    def columns
-      ServerShow.columns
-    end
-    
-    def execute
-      server = argc == 1 ? self.server : load_server(argv[0])
-      rplyr :err_server if server.nil?
-      var = argv[-2]
-      val = argv[-1]
-      columns = self.class.columns
-      rplyp :err_server_column, columns:columns.join(', ') unless columns.include?(var)
-      server[var] = val
+    has_usage :execute, '<server> <variable> <value>'
+    def execute(server, var, value)
+      columns = ServerShow.config_columns
+      return rplyp :err_server_column, columns: columns.join(', ') unless columns.include?(var.to_s)
+      server[var] = value
       server.save!
       rply :msg_set, server:server.displayname, varname:var, value:server[var]
+    end
+    
+    has_usage :execute_, '<variable> <value>'
+    def execute_(var, value)
+      execute(self.server, var, value)
     end
     
   end

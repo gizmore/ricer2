@@ -32,6 +32,7 @@ module Ricer::Plug::Extender::TriggerIs
       end
     
       klass.instance_variable_set('@default_trigger', trigger.to_s.downcase)
+      klass.instance_variable_set('@subcommand_depth', trigger.to_s.count(' ')+1)
       def triggered_by?(argline)
         (argline + ' ').start_with?(trigger+' ')
       end
@@ -85,7 +86,10 @@ module Ricer::Plug::Extender::TriggerIs
       
       def reply_backtrace(e)
         e.backtrace.each do |line|
-          return line unless line.index('/models/ricer/').nil?
+          return line unless line.index('/models/ricer/plugins').nil?
+        end
+        e.backtrace.each do |line|
+          return line unless line.index('/models/ricer').nil?
         end
         e.backtrace[0]
       end

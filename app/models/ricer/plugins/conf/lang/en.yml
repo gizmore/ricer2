@@ -13,34 +13,44 @@ en:
         msg_no_settings: 'The %{trigger} plugin has no configuration available.'
         msg_saved_setting: '%{configscope} settings for %{trigger}/%{varname} is now %{value}.'
         msg_triggers: 'Available: %{triggers}.'
+        
+        bot:
+          description: '???'
 
-        conf:
-          usage: '<plug> [<var>] [<value>]'
-          description: 'Configure or show $BOT$ plugin variables.'
-        help:
-          usage: '[<trigger>]'
-          description: 'Print available commands in scope or show help for a trigger. Note that the overview result differs between channels and queried requests.'
-          msg_event_info: '%{name}: %{info}'
-        event:
-          usage: '[<event>]'
-          description: 'Similiar to $TRIGGER$help, this command shows event plugins.'
-        userlang:
-          usage: '[<iso>]'
-          description: 'Show or set your language preference.'
-          msg_set: 'You have changed your language preference from %{old} to %{new}.'
-          msg_show: 'Your language is set to %{iso}. Available iso codes: %{available}.'
         channellang:
           usage: '[<iso>]'
           description: 'Show or set the channels language settings.'
           msg_set: 'This channels main language has been changed from %{old} to %{new}.'
           msg_show: 'This channel has set it´s main language to %{iso}. Available iso codes: %{available}.'
-        channelc:
-          usage: ''
-        channelu:
-          usage: ''
+          
+        channel_set:
+          description: 'Manage raw channel values like "triggers".'
+          msg_set: 'The setting for %{varname} in %{channel} is now "%{value}" (was "%{oldvalue}").' 
+          msg_show: 'The setting for %{varname} in %{channel} is "%{value}".'
+          msg_show_all: 'Available raw settings for %{channel}: %{columns}.'
+
+        conf:
+          usage: '<plug> [<var>] [<value>]'
+          description: 'Configure or show $BOT$ plugin variables.'
+          
+        events:
+          usage: '[<event>]'
+          description: 'Similiar to $TRIGGER$help, this command shows event plugins.'
+
+        help:
+          usage: '[<trigger>]'
+          description: 'Print available commands in scope or show help for a trigger. Note that the overview result differs between channels and queried requests.'
+          msg_event_info: '%{name}: %{info}'
+
         server_set:
-          usage: '[<server>] <var> <value>'
-          description: 'Set raw server values like throttle or cooldown.'
+          description: 'Set raw server values like triggers, throttle or cooldown.'
+
         server_show:
-          usage: '[<server>] <var>'
-          description: 'Show raw server values like throttle or cooldown.'
+          description: 'Show raw server values like triggers, throttle or cooldown.'
+          msg_show: 'The setting for %{varname} on %{server} is "%{value}".'
+
+        userlang:
+          usage: '[<iso>]'
+          description: 'Show or set your language preference.'
+          msg_set: 'You have changed your language preference from %{old} to %{new}.'
+          msg_show: 'Your language is set to %{iso}. Available iso codes: %{available}.'

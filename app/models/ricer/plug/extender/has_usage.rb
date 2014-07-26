@@ -5,23 +5,23 @@ module Ricer::Plug::Extender::HasUsage
     allow_trailing: false,
   }
   
-  # Extender after_use
-  def before_execution(&proc)
-    class_eval do |klass|
-      def execute_before_usage
-        yield proc(self)
-      end
-    end
-  end
-  
-  # Extender after_use
-  def after_execution(&proc)
-    class_eval do |klass|
-      def execute_after_usage
-        yield proc(self)
-      end
-    end
-  end
+  # # Extender after_use
+  # def before_execution(&proc)
+    # class_eval do |klass|
+      # def execute_before_usage
+        # yield proc(self)
+      # end
+    # end
+  # end
+#   
+  # # Extender after_use
+  # def after_execution(&proc)
+    # class_eval do |klass|
+      # def execute_after_usage
+        # yield proc(self)
+      # end
+    # end
+  # end
   
   # Extender has_usage
   def has_usage(function=:execute, pattern=nil, options={})
@@ -85,9 +85,9 @@ module Ricer::Plug::Extender::HasUsage
           unless args.nil?
             @message.plugin_id = plugin_id
             process_event('ricer_on_trigger')
-            send(:execute_after_usage) if self.class.respond_to?(:execute_before_usage)
+            # send(:execute_after_usage) if self.class.respond_to?(:execute_before_usage)
             send(usage.function, *args)
-            send(:execute_after_usage) if self.class.respond_to?(:execute_after_usage)
+            # send(:execute_after_usage) if self.class.respond_to?(:execute_after_usage)
             return true
           end
           not_even_failed_one = false

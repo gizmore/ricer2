@@ -6,8 +6,8 @@ module Ricer::Plug::Params
     
     def convert_in!(input, options, message)
       begin
-        return true  if (arg == '1') || (arg.downcase == true_label.downcase)
-        return false if (arg == '0') || (arg.downcase == false_label.downcase)
+        return true  if (input == '1') || (input.downcase == true_label.downcase)
+        return false if (input == '0') || (input.downcase == false_label.downcase)
       rescue => e
       end
       failed_input

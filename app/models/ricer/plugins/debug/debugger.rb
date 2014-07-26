@@ -6,7 +6,7 @@ module Ricer::Plugins::Debug
     
     has_usage :execute, '<..code..>'
     def execute(code)
-      
+
       byebug
       reply eval(code).inspect
       

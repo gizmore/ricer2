@@ -135,7 +135,7 @@ module Ricer
         back = default_trigger
       end
       if subcommand_depth > 1
-        back = "#{parent_command.trigger} #{back}"
+        back = "#{parent_command.trigger} #{back}" rescue back
       end
       back
     end

@@ -1,7 +1,7 @@
 module Ricer::Plugins::Debug
   class Railsc < Ricer::Plugin
     
-    trigger_is :rails
+    trigger_is :railsc
     permission_is :responsible
     
     has_usage :execute, '<..code..>'

@@ -61,7 +61,7 @@ module Ricer::Plug
         if param.is_eater?
           # <..message..eater..>
           begin
-            arg = plugin.line.split(/ +/, i+1)[-1]
+            arg = plugin.argline.split(/ +/, (i-plugin.subcommand_depth)+1)[-1]
             arg = nil if arg.trim.empty?
           rescue Exception => e
             arg = nil

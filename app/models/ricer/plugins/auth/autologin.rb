@@ -39,7 +39,7 @@ module Ricer::Plugins::Auth
     end
     
     def autologin(username)
-      user = Ricer::Plug::Param::UserParam.get_arg(server, username, @message)
+      user = Ricer::Plug::Params::UserParam.get_arg(username, nil, @message)
       unless user.nil?
         user.login!
         user.localize!.send_message(I18n.t('ricer.plugins.auth.autologin.msg_logged_in'))

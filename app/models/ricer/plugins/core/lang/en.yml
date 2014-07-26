@@ -12,7 +12,7 @@ en:
         in:
           trigger: 'in'
           description: 'Execute a comand after a delay.'
-        pasteout:
+        paste_out:
           pastebin_title: '%{user}´s paste from %{date}'
           pasteout_title: '$BOT$ response to %{user} for %{command} at %{date}'
           pastebin_content: '%{lines}'

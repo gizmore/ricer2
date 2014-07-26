@@ -7,7 +7,7 @@ module Ricer::Plugins::Channel
     
     has_setting name: :autojoin, type: :boolean, scope: :channel, default: true
 
-    has_usage :execute_already_there, '<channel>'
+    has_usage :execute_already_there, '<joined_channel>'
     def execute_already_there(channel)
       rply :err_already_joined
     end
