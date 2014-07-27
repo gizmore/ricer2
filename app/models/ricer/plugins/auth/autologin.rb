@@ -39,7 +39,7 @@ module Ricer::Plugins::Auth
     end
     
     def autologin(username)
-      user = Ricer::Irc::User.online.where(:nickname => username, server_id: server.id)
+      user = Ricer::Irc::User.online.where(:nickname => username, server_id: server.id).first
       unless user.nil?
         user.login!
         user.localize!.send_message(I18n.t('ricer.plugins.auth.autologin.msg_logged_in'))
