@@ -2,6 +2,8 @@ module Ricer::Plugins::Music
   class Audacious < Ricer::Plugin
     
     trigger_is :audacious, :announce => true
+    
+    default_enabled false
 
     has_setting name: :announce, scope: :user,    permission: :halfop, type: :boolean, default: false
     has_setting name: :announce, scope: :channel, permission: :halfop, type: :boolean, default: false
@@ -15,10 +17,19 @@ module Ricer::Plugins::Music
     
     def ricer_on_global_startup
       Ricer::Thread.execute do
-        @@current_song = what_audacious_is_playing
+        # Init
+        @@current_song = what_audacious_is_playing if get_setting(:trigger_enabled)
+        sleep 15.seconds
+        # Threadloop
         while true
-          sleep 5.seconds
-          check_new_song
+          if get_setting(:trigger_enabled)
+            # Announce every 5 seconds
+            check_new_song
+            sleep 8.seconds
+          else
+            # Wait for activation
+            sleep 40.seconds
+          end
         end
       end
     end
