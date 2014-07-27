@@ -17,22 +17,21 @@ module Ricer::Plugins::Log
     end
     
     def log(input)
-      #puts @irc_message.consolestring(input)
-      case setting(:logtype)
-      when :Binlog; Binlog.irc_message(@irc_message, input)
-      when :Textlog; Textlog.irc_message(@irc_message, input)
+      #puts @message.consolestring(input)
+      case get_setting(:logtype)
+      when :Binlog; Binlog.irc_message(@message, input)
+      when :Textlog; Textlog.irc_message(@message, input)
       end
     end
     
-    has_usage :execute, '[<boolean>]'
-    def execute(boolean)
-      return show if boolean.nil?
-      
-      exec "confc log enabled #{argv[0]}"
+    has_usage :execute_set, '<boolean>'
+    def execute_set(boolean)
+      exec "confc log enabled #{boolean}"
     end
     
-    def show
-      rplyp :msg_show_channel, channel:channel.displayname, enabled:show_setting(:enabled, :channel)
+    has_usage :execute_show
+    def execute_show
+      rply :msg_show, channel:channel.displayname, state:show_setting(:enabled, :channel)
     end
     
   end

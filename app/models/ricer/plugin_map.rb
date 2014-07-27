@@ -3,6 +3,8 @@ module Ricer
     
     include Singleton
     
+    attr_reader :event_count, :trigger_count
+    
     def bot; Ricer::Bot.instance; end
     
     def clear_cache

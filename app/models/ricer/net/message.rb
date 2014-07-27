@@ -56,6 +56,10 @@ module Ricer::Net
       sender && (sender.name.downcase == server.nickname.name.downcase)
     end
     
+    def is_user?
+      sender && (sender.is_a?(Ricer::Irc::User))
+    end
+    
     def is_server?
       receiver && (receiver.is_a?(Ricer::Irc::Server))
     end

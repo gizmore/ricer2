@@ -9,6 +9,7 @@
 # t.integer  "encoding_id",     default: 1,     null: false
 # t.integer  "timezone_id",     default: 1,     null: false
 # t.boolean  "online",          default: false, null: false
+# t.boolean  "bot",             default: false, null: false
 # t.datetime "created_at"
 # t.datetime "updated_at"
 module Ricer::Irc
@@ -70,10 +71,6 @@ module Ricer::Irc
       perm.online = false
       perm.save!
       perm.global_cache_remove
-    end
-    
-    def self.by_arg(server, arg)
-      Ricer::Plug::Param::UserParam.get_arg(server, arg)
     end
     
     #############

@@ -6,16 +6,18 @@ module Ricer
     with_global_orm_mapping
     def should_cache?; true; end
     
-    attr_reader :plugins, :rand
+    attr_reader :plugins, :rand, :botlog
     attr_accessor :needs_restart, :running, :reboot
     
     def running?; @running; end
     def servers; @servers; end
+    
     def name; Ricer::Application.config.ricer_name; end
     def randseed; Ricer::Application.config.rice_seeds; end
     def chopsticks; Ricer::Application.config.chop_sticks; end
     def version; Ricer::Application.config.ricer_version; end
     def builddate; Ricer::Application.config.ricer_version_date; end
+    def owner_name; Ricer::Application.config.ricer_owner; end
 
     def log_debug(s); @botlog.log_debug(s) if chopsticks; end
     def log_info(s); @botlog.log_info(s); end

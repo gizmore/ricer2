@@ -1,16 +1,16 @@
 module Ricer::Plugins::Log
   class Textlog
     
-    def self.irc_message(irc_message, input)
-      message = "#{sign(input)} #{irc_message.raw}"
-      serverlog(irc_message.server).unknown message
-      userlog(irc_message.user).unknown message unless irc_message.user.nil?
-      channellog(irc_message.channel).unknown message unless irc_message.channel.nil?
+    def self.irc_message(message, input)
+      text = input ? "#{sign(input)} #{message.raw}" : "#{sign(input)} #{message.reply_data}"
+      serverlog(message.server).unknown text
+      userlog(message.sender).unknown text if message.is_user?
+      channellog(message.receiver).unknown text if message.is_channel?
     end
     
     private
 
-    def self.sign(input); input ? 'IN' : 'OUT'; end
+    def self.sign(input); input ? '<<' : '>>'; end
     def self.bot; Ricer::Bot.instance; end
 
     ##############
@@ -18,7 +18,7 @@ module Ricer::Plugins::Log
     ##############
     @@SERVERLOGS = {}
     def self.serverlog(server)
-      @@SERVERLOGS[server] ||= bot.logger("#{server.id}.#{server.domain}.log")
+      @@SERVERLOGS[server] ||= bot.botlog.logger("#{server.id}.#{server.domain}.log")
       @@SERVERLOGS[server]
     end
 
@@ -30,7 +30,7 @@ module Ricer::Plugins::Log
       if @@USERLOGS[user].nil?
         server = user.server
         username = user.nickname.gsub(/[^a-zA-Z0-9_]/, '!')
-        @@USERLOGS[user] = bot.logger("#{server.id}.#{server.domain}/user/#{username}.log")
+        @@USERLOGS[user] = bot.botlog.logger("#{server.id}.#{server.domain}/user/#{username}.log")
       end
       @@USERLOGS[user]
     end
@@ -43,7 +43,7 @@ module Ricer::Plugins::Log
       if @@CHANNELLOGS[channel].nil?
         server = channel.server
         channelname = channel.name.gsub(/[^#@a-zA-Z0-9_]/, '_')
-        @@CHANNELLOGS[channel] = bot.logger("#{server.id}.#{server.domain}/channel/#{channelname}.log")
+        @@CHANNELLOGS[channel] = bot.botlog.logger("#{server.id}.#{server.domain}/channel/#{channelname}.log")
       end
       @@CHANNELLOGS[channel]
     end

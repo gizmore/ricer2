@@ -56,7 +56,7 @@ module Ricer::Plug
       # argv starts after command, e.g. '!ping foo'..
       # ..would start at index 1, and should maybe worry if it has trailing.
       i = one = plugin.subcommand_depth
-
+      
       @params.each do |param|
         if param.is_eater?
           # <..message..eater..>

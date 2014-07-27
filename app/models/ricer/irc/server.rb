@@ -33,6 +33,7 @@ module Ricer::Irc
     def uri; server_url.uri; end
     def url; server_url.url; end
     def ssl?; server_url.ssl?; end
+    def domain; server_url.domain; end
     def hostname; server_url.hostname; end
     def name; uri.domain; end
     def displayname; "#{self.id}-#{name}"; end
@@ -135,8 +136,8 @@ module Ricer::Irc
         @initial = false
         process_event('ricer_on_server_handshake', message)
       end
-      process_event("ricer_on_receive", message)
       process_event("on_#{message.command}", message)
+      process_event("ricer_on_receive", message)
     end
 
     def ricer_replies_to(message)

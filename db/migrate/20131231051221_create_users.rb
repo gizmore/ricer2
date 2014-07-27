@@ -12,6 +12,7 @@ class CreateUsers < ActiveRecord::Migration
       t.integer  :encoding_id,     :default => 1,     :null => false
       t.integer  :timezone_id,     :default => 1,     :null => false
       t.boolean  :online,          :default => false, :null => false
+      t.boolean  :bot,             :default => false, :null => false
       t.timestamps
     end
   end

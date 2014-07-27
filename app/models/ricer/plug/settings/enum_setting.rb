@@ -6,6 +6,10 @@ module Ricer::Plug::Settings
       throw Exception.new "#{klass.name} setting #{options[:name]} has no enums." if options[:enums].nil?
     end
     
+    def self.to_value(input)
+      input.to_sym
+    end
+
     def self.to_label(input)
       input.to_sym
     end

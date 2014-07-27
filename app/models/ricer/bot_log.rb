@@ -35,8 +35,6 @@ module Ricer
       end
     end
     
-    private
-
     def log(level, msg)
       msg = "[#{level.upcase}] #{msg}"
       puts msg

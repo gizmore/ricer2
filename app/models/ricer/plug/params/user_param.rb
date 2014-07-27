@@ -3,18 +3,28 @@ module Ricer::Plug::Params
 
     def convert_in!(input, options, message)
       
+      # Get server from user:sid or message
       sid = input.substr_from(':')
       sid = (sid.numeric? ? sid : nil) unless sid.nil?
       server = Ricer::Irc::Server.where(:id => sid) unless sid.nil?
-      return nil if server.nil?
+      server = message.server if sid.nil?
+      failed_input if server.nil?
+
+      # 
       name = input.substr_until(':') unless sid.nil?  
       sid = server.id
-      user = Ricer::Irc::User.where(:id => input).first
-      user = Ricer::Irc::User.where(:nickname => input, server_id:sid).first if user.nil?
-      user = Ricer::Irc::User.where('nickname LIKE ? AND server_id=?', "#{name}%", sid).first if user.nil?
-      user = Ricer::Irc::User.where('nickname LIKE ? AND server_id=?', "%#{name}%", sid).first if user.nil?
+      
+      users = Ricer::Irc::User
+      users = users.where(:online => options[:online]) unless options[:online].nil?
+      
+      user = nil
+      # user = users.where(:id => input).first
+      user = users.where(:nickname => input, server_id:sid).first if user.nil?
+      user = users.where('nickname LIKE ? AND server_id=?', "#{name}%", sid).first if user.nil?
+      user = users.where('nickname LIKE ? AND server_id=?', "%#{name}%", sid).first if user.nil?
       
       failed_input if user.nil?
+      
       user
      
     end
