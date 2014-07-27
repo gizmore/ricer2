@@ -25,7 +25,7 @@ module Ricer::Plugins::Music
     
     def what_audacious_is_playing
       back = `audtool current-song`
-      back.strip.gsub(/\s+/, ' ')
+      back.strip.gsub(/\s+/, ' ') rescue nil
     end
     
     def check_new_song

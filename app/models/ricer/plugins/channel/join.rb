@@ -31,8 +31,8 @@ module Ricer::Plugins::Channel
     
     # Disable autojoin on a ban
     def on_474
-      channel = Ricer::Irc::Channel.by_arg_and_message(args[1], @message)
-      channel_setting(channel, :autojoin).save_value(false)
+      channel = Ricer::Irc::Channel.where(:name => args[1], :server_id => server.id).first
+      channel_setting(channel, :autojoin).save_value(false) unless channel.nil?
     end
     
   end
