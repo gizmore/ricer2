@@ -54,7 +54,7 @@ module Ricer::Plugins::Rice
     
     def send_raw(message, line); send_queued(message.reply_text(line)); end
     def send_pong(message, ping); send_queued(message.reply_text("PONG #{ping}")); end
-    def send_join(message, channelname); send_queued(message.reply_text("JOIN #{channelname}")); end
+    def send_join(message, channelname); send_queued(message.reply_message("JOIN #{channelname}")); end
     def send_part(message, channelname); send_queued(message.reply_text("PART #{channelname}")); end
     def send_quit(message, quitmessage); send_line(message.reply_text("QUIT :#{quitmessage}")); end
     def send_notice(message, text); send_splitted(message, "NOTICE #{message.reply_to.name} :#{message.reply_prefix}", text); end
@@ -77,13 +77,15 @@ module Ricer::Plugins::Rice
     
     private
     def disconnect!(message)
-      server.bot.log_info("Disconnecting from #{hostname}")
-      send_quit(message, 'disconnect!') if @connected
-      @semaphore.synchronize do
-        @connected = false
-        @socket.close
-        @socket = nil
-      end 
+      if @connected
+        server.bot.log_info("Disconnecting from #{hostname}")
+        send_quit(message, 'disconnect!') if @connected
+        @semaphore.synchronize do
+          @connected = false
+          @socket.close
+          @socket = nil
+        end 
+      end
     end
     
     def send_splitted(message, prefix, text, postfix='')
