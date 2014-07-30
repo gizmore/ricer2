@@ -5,16 +5,19 @@ module Ricer::Plugins::Core
     
     trigger_is :paste
     
-    has_setting name: :max_length, type: :integer, scope: :user, permission: :operator, default: 12
+    has_setting name: :max_length, type: :integer, scope: :server, permission: :operator, default: 12
     
+#    has_usage :execute_with_language, '<programming_language> <..text..>'
+#    def execute_with_language(programming_language)
+#    end
+ 
     has_usage :execute, '<..text..>'
-#    has_usage :execute, '[<programming_language>] <..text..>'
     def execute(content)
       send_pastebin(pastebin_title, content, content.length, 'text', :msg_pasted_it)
     end
     
     def max_length
-      get_setting(:max_length, :user)
+      get_setting(:max_length)
     end
     
     def on_privmsg
@@ -22,8 +25,8 @@ module Ricer::Plugins::Core
     end
     
     def send_queue_as_pastebin
-      messages = user.flush_queue
-      messages.each do |message|
+      messages = user.flush_queue # Fetch and purge user queue
+      messages.each do |message|  # Let ricer know that the messages have been sent.
         server.ricer_replies_to(message)
       end
       build_and_send_pastepin(messages)

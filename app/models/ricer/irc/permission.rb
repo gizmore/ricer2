@@ -56,15 +56,26 @@ module Ricer::Irc
       self.by_name(name) != nil
     end
     
-    def self.by_name(name)
+    def self.by_char(char)
+      char = char.to_s.downcase
       ALL.each do |p|
-        return p if p.name.to_s.downcase == name.to_s.downcase
+        return p if p.priv == char
       end
       nil
     end
-    def self.by_label(label)
+    
+    def self.by_name(name)
+      name = name.to_s.downcase.to_sym
       ALL.each do |p|
-        return p if p.to_label.downcase == labelt.to_s.downcase
+        return p if p.name == name
+      end
+      nil
+    end
+    
+    def self.by_label(label)
+      label = label.to_s.downcase
+      ALL.each do |p|
+        return p if p.to_label.downcase == label
       end
       nil
     end
@@ -72,6 +83,7 @@ module Ricer::Irc
     def self.bits_from_nickname(nickname)
       bits_from_symbols(nickname)
     end
+    
     def self.bits_from_symbols(symbols)
       bits = 0
       ALL.each do |p|

@@ -14,6 +14,12 @@ GIT
       activemodel (> 3, < 4.2)
       mail (~> 2.5)
 
+GIT
+  remote: https://github.com/opennorth/tf-idf-similarity
+  revision: 37c962f0f64542a0d9d65794b582ad1781d9e262
+  specs:
+    tf-idf-similarity (0.1.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -129,9 +135,6 @@ GEM
       sprockets (~> 2.8)
     strip_attributes (1.5.1)
       activemodel (>= 3.0, < 5.0)
-    survey (0.1)
-      rails (>= 3.2.6, < 5)
-      railties (>= 3.2.6, < 5)
     therubyracer (0.12.1)
       libv8 (~> 3.16.14.0)
       ref
@@ -180,7 +183,7 @@ DEPENDENCIES
   ruby-git
   sass-rails
   strip_attributes
-  survey
+  tf-idf-similarity!
   therubyracer
   uglifier
   validate_as_email!

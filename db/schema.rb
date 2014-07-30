@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140725220449) do
+ActiveRecord::Schema.define(version: 20140307133735) do
 
   create_table "bots", force: true do |t|
     t.datetime "created_at"
@@ -105,49 +105,6 @@ ActiveRecord::Schema.define(version: 20140725220449) do
     t.string "value"
   end
 
-  create_table "survey_answers", force: true do |t|
-    t.integer  "attempt_id"
-    t.integer  "question_id"
-    t.integer  "option_id"
-    t.boolean  "correct"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "survey_attempts", force: true do |t|
-    t.integer "participant_id"
-    t.string  "participant_type"
-    t.integer "survey_id"
-    t.boolean "winner"
-    t.integer "score"
-  end
-
-  create_table "survey_options", force: true do |t|
-    t.integer  "question_id"
-    t.integer  "weight",      default: 0
-    t.string   "text"
-    t.boolean  "correct"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "survey_questions", force: true do |t|
-    t.integer  "survey_id"
-    t.string   "text"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "survey_surveys", force: true do |t|
-    t.string   "name"
-    t.text     "description"
-    t.integer  "attempts_number", default: 0
-    t.boolean  "finished",        default: false
-    t.boolean  "active",          default: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "timezones", force: true do |t|
     t.string "iso", null: false
   end
@@ -164,6 +121,7 @@ ActiveRecord::Schema.define(version: 20140725220449) do
     t.integer  "encoding_id",     default: 1,     null: false
     t.integer  "timezone_id",     default: 1,     null: false
     t.boolean  "online",          default: false, null: false
+    t.boolean  "bot",             default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

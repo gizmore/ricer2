@@ -1,6 +1,83 @@
 en:
   ricer:
+    plug:
+      params:
+        closed_question:
+          err_not_closed: 'This poll or question is not closed yet.'
+        open_question: 
+          err_not_open: 'This poll or question is already closed.'
+
     plugins:
       poll:
+        
+        type_1: 'Poll'
+        type_2: 'Choice'
+        type_3: 'Rating'
+        type_4: 'Question'
+        
+        err_no_options: 'You have to supply at least 2 options.'
+        list_item: '%{number}-(%{type})%{question}'
+
+        close:
+          trigger: 'closepoll'
+          description: 'close a poll and announce results. Polls are automatically closed after some time.'
+          err_not_allowed: 'You are not allowed to close this poll yet. It will automatically close after some time.'
+          msg_closed: 'You have closed event %{qid}: "%{question}" by %{asker}. The results are to be announced.'
+          paste_title: '%{type}#%{qid} - "%{question}" by %{asker} - %{date}'
+          paste_message: "%{type}#%{qid} - \"%{question}\" by %{asker} is now \x02closed\x02: %{url}"
+          
         newpoll:
+          trigger: 'newpoll'
+          usage: '<..question text..|..answer1..|..answer2..|..answerN..>'
           description: 'Create a new poll to get it announced and voted on all poll active channels.'
+          msg_created: 'Your poll has been created and broadcasted to %{channelcount} channels and %{usercount} users.'
+          msg_announce: "%{user} has created a poll: \"%{question}\". Possible answers: %{choices}. Vote with: \x02%{ta} <answer>\x02."
+
+        newpollm:
+          trigger: 'multipoll'
+          usage: '<..question text..|..option1..|..option2..|..optionN..>'
+          description: 'Create a new multiple choice poll to get it announced and voted on all poll active channels.'
+          msg_created: 'Your multiple choice poll has been created and broadcasted to %{channelcount} channels and %{usercount} users.'
+          msg_announce: "%{user} has created a multiple choice poll: \"%{question}\". Options: %{choices}. Multiple choice like this: \x02%{ta} 1,2\x02."
+
+        newpollr:
+          trigger: 'hotornot?!'
+          description: 'Create a hot or not question which can be rated with 1-10.'
+          msg_created: "Your HotOrNot is broadcasted to %{channelcount} channels and %{usercount} users. Close votes with \x02%{tc}\x02. Lifetime: %{max_age}."
+          msg_announce: "%{user} plays hot or not?! \"%{question}\" - Vote with: \x02%{ta} (%{min}–%{max})\x02."
+          
+        newpollq:
+          trigger: 'ask question'
+          description: 'Create a new question poll to get it announced and answered on all poll active channels.'
+          msg_created: 'Your question has been asked and broadcasted to %{channelcount} channels and %{usercount} users. Wait for answers and later close it with %{tc}. The question is open for max %{max_age}.'
+          msg_announce: "%{user} asks the irc: \"%{question}\". You can reply to him freely via: \x02%{ta} <..your..answer..here..>\x02."
+          
+        newpolls:
+          trigger: 'newpolls'
+          description: 'List and search all open polls and unanswered questions.'
+
+        poll:
+          trigger: 'pollwatch'
+          description: 'Subscribe to new popping up polls and questions in this channel or privately.'
+          
+        polls:
+          trigger: 'oldpolls'
+          description: 'List and search all closed polls and answered questions.'
+          
+        showpoll:
+          trigger: 'showpoll'
+          description: 'Show details for a poll or question.'
+
+        vote:
+          trigger: 'votepoll'
+          description: 'Vote a poll or answer a question.'
+          err_cheating: 'You have been caught cheating or share the network with a user. Maybe you meant another poll or question?'
+          err_answer_self: 'You cannot answer your own questions or polls.'
+          err_answer_twice: 'You already have answered this question.'
+          err_rate_range: 'You have to vote with an integer between %{min} and %{max}.'
+          err_no_choice: 'You have to choose at least one option.'
+          err_no_multi: 'You may maximally choose one option.'
+          err_invalid_choice: 'Please choose only valid options between %{min} and %{max}.'
+          msg_freetext_answer: '%{answerer} has replied to "%{question}": "%{answer}".'
+          msg_vote_counted: 'Your vote has been counted.'
+          msg_vote_received: 'There has been a vote on %{server}.'

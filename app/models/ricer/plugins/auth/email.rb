@@ -7,17 +7,11 @@ module Ricer::Plugins::Auth
     
     permission_is :registered
     
-    has_setting name: :valid_for, type: :duration, scope: :bot, permission: :responsible, default: 4.hours, max: 1.month
+    has_setting name: :valid_for, type: :duration, scope: :bot, permission: :responsible, default: 4.hours, max: 1.month, integer: true
     
-#    pre_execute :execute_cleanup
-
     has_usage :execute_confirm, '<email> <pin>' 
     has_usage :execute_request, '<email>'
     has_usage :execute_show, ''
-    
-    def execute_cleanup
-      EmailConfirmation.cleanup
-    end
     
     def execute_show
       return rply :msg_none if user.email.nil?
@@ -25,16 +19,23 @@ module Ricer::Plugins::Auth
     end
     
     def execute_request(address)
-      EmailConfirmation.delete_all(:user => user)
-      confirmation = EmailConfirmation.new_confirmation(user, address, get_setting(:valid_for))
-      return rply :err_address unless confirmation.valid
-      confirmation.save!
-      send_mail(confirmation)
-      nrply :msg_sent, email:address, duration:display_valid_for
+      # Clean for user
+      EmailConfirmation.delete_all(:user_id => user.id)
+      # Create one for user
+      confirmation = EmailConfirmation.create!(
+        user: user,
+        code: Ricer::Plug::Pin.random_pin.to_value,
+        email: address,
+        expires: valid_until
+      )
+      # Send mail
+      send_confirmation_mail(confirmation)
+      # And tell him
+      nrply :msg_sent, email: address, duration: show_setting(:valid_for)
     end
     
-    def execute_confirm(address, code)
-      confirmation = EmailConfirmation.where(user:user, email:address, code:code).first
+    def execute_confirm(address, pin)
+      confirmation = EmailConfirmation.not_expired.where(user:user, email:address, code:pin.to_value).first
       return rply :err_code if confirmation.nil?
       user.email = confirmation.email
       user.save!
@@ -44,14 +45,15 @@ module Ricer::Plugins::Auth
     
     private
     
-    def send_mail(confirmation)
-      to = confirmation.email
-      body = t(:mail_body, user:user.nickname, code:confirmation.code, email:to)
-      generic_mail(to, t(:mail_subj), body)
+    def valid_until
+      Time.now + get_setting(:valid_for)
     end
     
-    def display_valid_for
-      lib.human_duration get_setting(:valid_for).show_value
+    def send_confirmation_mail(confirmation)
+      to = confirmation.email
+      subj = t(:mail_subj)
+      body = t(:mail_body, user:user.nickname, code: confirmation.code, email:to)
+      send_mail(to, subj, body)
     end
     
   end

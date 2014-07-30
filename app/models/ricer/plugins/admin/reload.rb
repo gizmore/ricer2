@@ -30,6 +30,7 @@ module Ricer::Plugins::Admin
       reload_dir 'app/models/ricer/net'
       reload_dir 'app/models/ricer/irc'
       reload_dir 'app/models/ricer/plug'
+      bot.load_extenders
     end
 
     def reload_dir(dirname)

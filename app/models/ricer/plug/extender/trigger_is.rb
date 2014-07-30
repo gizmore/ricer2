@@ -1,5 +1,11 @@
+##
+## trigger_is, :symbol
+##
+## Enriches plugins with some default settings and core extenders.
+## [+] Reply functions and exception beautifier
+##
 module Ricer::Plug::Extender::TriggerIs
-  def trigger_is(trigger, options={:announce=>false})
+  def trigger_is(trigger)
 
     Ricer::Plugin.register_class_variable('@default_trigger')
 
@@ -18,12 +24,9 @@ module Ricer::Plug::Extender::TriggerIs
 #        has_setting name: :trigger_enabled,    type: :boolean,    scope: :bot,     permission: :owner,     default: def_enabled
         
 #        has_setting name: :trigger_permission, type: :permission, scope: :user,    permission: :responsible, default: :public
-#        has_setting name: :trigger_permission, type: :permission, scope: :channel, permission: :founder,     default: :public
+       # has_setting name: :trigger_permission, type: :permission, scope: :channel, permission: :founder,     default: :public
         has_setting name: :trigger_permission, type: :permission, scope: :server,  permission: :responsible, default: :public
 #        has_setting name: :trigger_permission, type: :permission, scope: :bot,     permission: :responsible, default: :public
-        
-        if options[:announce]
-        end
         
       end
  
@@ -62,6 +65,7 @@ module Ricer::Plug::Extender::TriggerIs
       def reply_exception(e)
         return if e.is_a?(Ricer::SilentCancel)
         return reply e.to_s if e.is_a?(Ricer::ExecutionException) || e.is_a?(ActiveRecord::RecordInvalid)
+             #ActiveRecord::StatementInvalid
         bot.log_exception(e)
         return reply e.to_s if e.is_a?(Ricer::TriggerException)
         return reply(exception_message(e))
@@ -72,10 +76,10 @@ module Ricer::Plug::Extender::TriggerIs
       def connection
         @message.server.connection
       end
-      
+
+      # Send back to channel or query      
       def reply_target
-        return sender if @message.is_query?
-        return receiver
+        @message.is_query? ? sender : receiver
       end
       
       private
@@ -94,7 +98,6 @@ module Ricer::Plug::Extender::TriggerIs
         e.backtrace[0]
       end
       
-   end
-
+    end
   end
 end

@@ -53,7 +53,7 @@ en:
           password: 'password with at least %{min} chars'
           permission: 'permission name'
           string: 'text between %{min} and %{max} chars'
-      param:
+      params:
         boolean:
           label: 'bool'
           error: 'Not a boolean value.'
@@ -101,10 +101,12 @@ en:
           error: 'Unknown User'
       extender:
         has_usage:
-          msg_usage: 'Usage: %{trigger} %{usage}. %{description}%{permission}'
+          msg_usage: 'Usage: %{trigger}%{usage}. %{description}%{permission}'
           scopeinfo_scope: 'This works only in %{scopelabel}.'
           scopeinfo_perm: 'This requires %{permission} permissions.'
           scopeinfo_both: 'This works in %{scopelabel} and requires %{permission} permissions.'
+        has_cheating_detection:
+          cheating_detected: 'You may not do this again as the maximum tasks for this are %{max_attempts}.'
         has_connectors:
           err_connector_unsupported: 'This plugin does not work in #{connector}.'
         permission_is:

@@ -1,19 +1,9 @@
 module Ricer::Plugins::Music
   class Audacious < Ricer::Plugin
     
-    trigger_is :audacious, :announce => true
+    is_announce_trigger :audacious
     
     default_enabled false
-
-    has_setting name: :announce, scope: :user,    permission: :halfop, type: :boolean, default: false
-    has_setting name: :announce, scope: :channel, permission: :halfop, type: :boolean, default: false
-
-    has_usage :execute, '<boolean>'
-    def execute(boolean)
-      boolean = boolean ? '1' : '0'
-      methodn = @message.is_query? ? 'confu' : 'confc'
-      exec_line("#{methodn} audacious announce #{boolean}")
-    end
     
     def ricer_on_global_startup
       Ricer::Thread.execute do
@@ -48,15 +38,8 @@ module Ricer::Plugins::Music
     end
     
     def announce_new_song
-      Ricer::Irc::Channel.online.each do |channel|
-        if get_channel_setting(channel, :announce)
-          channel.localize!.send_privmsg(announce_message)
-        end
-      end
-      Ricer::Irc::User.online.each do |user|
-        if get_user_setting(user, :announce)
-          user.localize!.send_privmsg(announce_message)
-        end
+      announce_targets do |target|
+        target.localize!.send_privmsg(announce_message)
       end
     end
     

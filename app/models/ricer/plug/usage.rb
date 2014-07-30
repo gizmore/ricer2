@@ -4,9 +4,11 @@ module Ricer::Plug
 #    attr_reader :function, :pattern, :options, :params
     attr_reader :function, :options, :params
 
-    def scope; Ricer::Irc::Scope.by_name(@options[:scope]) unless options[:scope].nil?; end
+    def scope; Ricer::Irc::Scope.by_name(@options[:scope]) unless @options[:scope].nil?; end
     def permission; @options[:permission]; end
-    def allows_trailing?; @options[:allow_trailing] == nil ? false : !!@options[:allow_trailing]; end
+    def forces_throwing?; !!@options[:force_throwing]; end
+    def allows_trailing?; !!@options[:allow_trailing]; end
+#    def allows_trailing?; @options[:allow_trailing] == nil ? false : !!@options[:allow_trailing]; end
 #   def allows_trailing?; @options[:allow_trailing] == nil ? @params.nil? : !!@options[:allow_trailing]; end
     def max_params; @params.length rescue 0; end
     def param(index); @params[index] rescue nil; end
@@ -37,59 +39,98 @@ module Ricer::Plug
       # empty params
       if @params.nil?
         if allows_trailing?
-          # allow trailing is always ok
-          return [] 
+          [] # allow trailing is always ok
         else
           # else only ok on empty argv
-          return plugin.argv.length == plugin.subcommand_depth ? [] : nil
+          plugin.argline.empty? ? [] : nil
         end
+      else
+        # non empty params
+        parse_param_args(plugin, message, forces_throwing?||throw_errors)
       end
-      # non empty params
-      parse_param_args(plugin, message, throw_errors)
     end
 
     def parse_param_args(plugin, message, throw_errors)
       
       back = []
-      args = plugin.argv # Read from pre-splitted argv
       
-      # argv starts after command, e.g. '!ping foo'..
-      # ..would start at index 1, and should maybe worry if it has trailing.
-      i = one = plugin.subcommand_depth
+      argline = plugin.argline.trim(' ')
       
       @params.each do |param|
+        
+        # Out of data!
+        return nil if argline.empty?
+        
+        # <..message..eater..>
         if param.is_eater?
-          # <..message..eater..>
-          begin
-            arg = plugin.argline.split(/ +/, (i-plugin.subcommand_depth)+1)[-1]
-            arg = nil if arg.trim.empty?
-          rescue Exception => e
-            arg = nil
-          end
-          return nil if arg.nil? && param.is_mandatory?
-          back.push(arg); # return immediately
-          return back     # return immediately
-        else
-          # Single arg
-          begin
-            arg = args[i] == nil ? nil : param.parse(args[i], @options, message)
-            return nil if arg.nil? && param.is_mandatory?
-            i += 1         # Add arg :)
-            back.push(arg) # Add arg :)
-          rescue Ricer::ExecutionException => e
-            raise e if throw_errors
-            return nil
-          end
+          back.push(argline)
+          return back
         end
+        
+        # Eat one arg
+        token = argline.substr_to(' ')||argline
+        argline.substr_from!(' ').ltrim!(' ') rescue argline = ''
+        begin
+          # Parse the single arg
+          back.push(param.parse(token, @options, message))
+        rescue Ricer::ExecutionException => e
+          raise e if throw_errors
+          return nil
+        end
+        
       end
       
-      unless allows_trailing?
-        return nil if (@params.length != (i - one)) || (args[i] != nil)
+      # Still tokens, but no pattern
+      unless allows_trailing? || argline.empty?
+        nil
+      else
+        back
       end
-      
-      back
-      
+
     end
     
+    # def parse_param_args___OLD(plugin, message, throw_errors)
+#       
+      # back = []
+      # args = plugin.argv # Read from pre-splitted argv
+#       
+      # # argv starts after command, e.g. '!ping foo'..
+      # # ..would start at index 1, and should maybe worry if it has trailing.
+      # i = one = plugin.subcommand_depth
+#       
+      # @params.each do |param|
+        # if param.is_eater?
+          # # <..message..eater..>
+          # begin
+            # arg = plugin.argline.split(/ +/, (i-plugin.subcommand_depth)+1)[-1]
+            # arg = nil if arg.trim.empty?
+          # rescue Exception => e
+            # arg = nil
+          # end
+          # return nil if arg.nil? && param.is_mandatory?
+          # back.push(arg); # return immediately
+          # return back     # return immediately
+        # else
+          # # Single arg
+          # begin
+            # arg = args[i] == nil ? nil : param.parse(args[i], @options, message)
+            # return nil if arg.nil? && param.is_mandatory?
+            # i += 1         # Add arg :)
+            # back.push(arg) # Add arg :)
+          # rescue Ricer::ExecutionException => e
+            # raise e if throw_errors
+            # return nil
+          # end
+        # end
+      # end
+#       
+      # unless allows_trailing?
+        # return nil if (@params.length != (i - one)) || (args[i] != nil)
+      # end
+#       
+      # back
+#       
+    # end
+
   end
 end

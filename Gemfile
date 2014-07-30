@@ -18,7 +18,6 @@ gem 'geocoder'
 gem 'open4'
 gem 'ruby-git'
 
-
 group :development do
   gem 'byebug'
 end
@@ -29,6 +28,5 @@ group :production do
   gem 'uglifier'
 end
 
-
-### Plugins ###
-gem 'survey'
+# LIB/SIMILIAR_VALIDATOR
+gem 'tf-idf-similarity', git: 'https://github.com/opennorth/tf-idf-similarity'

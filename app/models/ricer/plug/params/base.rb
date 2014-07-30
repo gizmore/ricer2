@@ -23,9 +23,9 @@ module Ricer::Plug::Params
     ### Errors and I18n ###
     #######################
     def _fail(text); raise Ricer::ExecutionException.new(text); end
-    def t(key, *args); I18n.t("ricer.plug.param.#{param_type}.#{key}", *args); end
+    def t(key, *args); I18n.t("ricer.plug.params.#{param_type}.#{key}", *args); end
     def default_error_text; t(:error); end
-    def fail_type; _fail(I18n.t('ricer.plug.param.err_type', input: @input, value: @value, type: param_label)); end
+    def fail_type; _fail(I18n.t('ricer.plug.params.err_type', input: @input, value: @value, type: param_label)); end
     def fail(key, *args); _fail(t(key, *args)); end
     def fail_default; _fail(default_error_text); end
     def failed_input; fail_default; end

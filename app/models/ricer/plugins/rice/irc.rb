@@ -24,12 +24,9 @@ module Ricer::Plugins::Rice
           server.bot.log_info("Connecting to #{hostname}")
           @socket = TCPSocket.new(hostname, port)
         end
-        @connected = true
-        @frame = Ricer::Net::Queue::Frame.new(server)
-        send_queue
-        fair_queue
+        connected
       rescue => e
-        server.bot.log_exception(e)
+        bot.log_exception(e)
       end
     end
     
@@ -46,6 +43,13 @@ module Ricer::Plugins::Rice
       end
     end
     
+    def connected
+      @connected = true
+      @frame = Ricer::Net::Queue::Frame.new(server)
+      send_queue
+      fair_queue
+    end
+    
     def disconnect(message); disconnect!(message||fake_message) if @socket; end
     
     def get_line; begin; @socket.gets; rescue => e; disconnect(fake_message); end; end
@@ -56,7 +60,7 @@ module Ricer::Plugins::Rice
     def send_pong(message, ping); send_queued(message.reply_text("PONG #{ping}")); end
     def send_join(message, channelname); send_queued(message.reply_message("JOIN #{channelname}")); end
     def send_part(message, channelname); send_queued(message.reply_text("PART #{channelname}")); end
-    def send_quit(message, quitmessage); send_line(message.reply_text("QUIT :#{quitmessage}")); end
+    def send_quit(message, quitmessage); send_line(message.reply_text("QUIT :#{quitmessage}")) if @connected; end
     def send_notice(message, text); send_splitted(message, "NOTICE #{message.reply_to.name} :#{message.reply_prefix}", text); end
     def send_privmsg(message, text); send_splitted(message, "PRIVMSG #{message.reply_to.name} :#{message.reply_prefix}", text); end
     def send_action(message, text); send_splitted(message, "NOTICE #{message.reply_to.name} :\x01", text, "\x01"); end

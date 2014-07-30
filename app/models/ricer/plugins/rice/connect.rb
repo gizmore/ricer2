@@ -10,6 +10,10 @@ module Ricer::Plugins::Rice
       bot.log_debug "Ricer::Plugins::Rice::Connect.ricer_on_server_handshake()"
 #      server.next_nickname
       server.login(@message)
+    end
+    
+    def ricer_on_server_connected
+      bot.log_debug "Ricer::Plugins::Rice::Connect.ricer_on_server_handshake()"
       if server.persisted?
         server.online = true
         server.save!
@@ -36,7 +40,7 @@ module Ricer::Plugins::Rice
     end
     
     def on_notice
-      on_privmsg unless @message.prefix.index('!').nil?
+      on_privmsg unless @message.prefix.index('!').nil? rescue nil
     end
 
     def on_privmsg
@@ -45,6 +49,10 @@ module Ricer::Plugins::Rice
       @message.sender = create_user(sender_nickname)
       # And maybe belongs to a channel
       @message.receiver = load_channel(@message.args[0])
+      
+      # Set the hostmask
+#      @message.sender.hostmask = @message.prefix
+
       # Else it belongs to bot itself
 #     @message.receiver = bot if message.receiver.nil?
     end
@@ -116,7 +124,7 @@ module Ricer::Plugins::Rice
         created = true
       end
       
-      Ricer::Irc::User.current = user
+      # Ricer::Irc::User.current = user
       
       if !user.should_cache? # Not in mem cache yet?
         user.ricer_on_joined_server(server) # We surely joined the server then :)

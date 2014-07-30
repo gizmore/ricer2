@@ -10,24 +10,6 @@ module Ricer
     
     attr_accessor :message
     
-    Ricer::Plugin.extend Ricer::Plug::Extender::BruteforceProtected
-    Ricer::Plugin.extend Ricer::Plug::Extender::ConnectorIs
-    Ricer::Plugin.extend Ricer::Plug::Extender::DefaultEnabled
-    Ricer::Plugin.extend Ricer::Plug::Extender::FloodingProtected
-    Ricer::Plugin.extend Ricer::Plug::Extender::ForcesAuthentication
-    Ricer::Plugin.extend Ricer::Plug::Extender::HasDescription
-    Ricer::Plugin.extend Ricer::Plug::Extender::HasPriority
-    Ricer::Plugin.extend Ricer::Plug::Extender::HasSetting
-    Ricer::Plugin.extend Ricer::Plug::Extender::HasSubcommand
-    Ricer::Plugin.extend Ricer::Plug::Extender::HasUsage
-    Ricer::Plugin.extend Ricer::Plug::Extender::IsDescription
-    Ricer::Plugin.extend Ricer::Plug::Extender::IsListTrigger
-    Ricer::Plugin.extend Ricer::Plug::Extender::PermissionIs
-    Ricer::Plugin.extend Ricer::Plug::Extender::RequiresConfirmation
-    Ricer::Plugin.extend Ricer::Plug::Extender::RequiresRetype
-    Ricer::Plugin.extend Ricer::Plug::Extender::ScopeIs
-    Ricer::Plugin.extend Ricer::Plug::Extender::TriggerIs
-
     def lib; Ricer::Irc::Lib.instance; end
     def bot; Ricer::Bot.instance; end
     def self.bot; Ricer::Bot.instance; end
@@ -40,7 +22,18 @@ module Ricer
     def argv; @message.privmsg_args; end
     def argc; @message.privmsg_args.length; end
     def line; args[1]; end
-    def argline; line.split(/ +/, subcommand_depth+1)[-1]; end
+    def privmsg_line; @message.privmsg_line; end
+    def argline
+      return @argline unless @argline.nil?
+      back = line
+      subcommand_depth.times do |n|
+        back = back.substr_from(' ').ltrim(' ') rescue back = ''
+      end
+      @argline = back
+      ## .ping a , d1, s1 
+      # return nil if line.count(' ') < subcommand_depth
+      # return line.split(/ +/, subcommand_depth+1)[-1]
+    end
     
     def core_plugin?; false; end
     def priority; self.class.instance_variable_defined?('@priority') ? self.class.instance_variable_get('@priority') : DEFAULT_PRIORITY; end
@@ -274,7 +267,7 @@ module Ricer
     def t(key, *args); tt "#{i18n_key}.#{key}", *args; end
     def tp(key, *args); tt "#{i18n_pkey}.#{key}", *args; end
     def tr(key, *args); tt "ricer.#{key}", *args; end
-    def tt(key, *args); rt I18n.t(key, *args); end
+    def tt(key, *args); rt i18t(key, *args); end
     def rt(response)
       response.to_s.
       gsub('$BOT$', server.nickname.name).
@@ -282,8 +275,19 @@ module Ricer
       gsub('$TRIGGER$', server.triggers[0]||'')
     end
     
-    def l(date)
-      I18n.l(date, :format => :long)
+    # Own I18n.t that rescues into key: arg.inspect
+    def i18t(key, *args)
+      begin
+        I18n.t(key, *args)
+      rescue => e
+        bot.log_exception(e)
+        i18ti(key, args)
+      end
+    end
+    def i18ti(key, args); "#{key.to_s.rsubstr_from('.')||key}: #{args.inspect.trim('[{}]')}"; end
+    
+    def l(date, format=:long)
+      I18n.l(date, :format => format)
     end
     
     #####################
@@ -298,6 +302,15 @@ module Ricer
     ### IrcLib ###
     ##############
     def bold(text); lib.bold(text); end
+    
+    ##############
+    ### Emails ###
+    ##############
+    def send_mail(to, subject, body)
+      Ricer::Thread.execute do
+        BotMailer.generic(to, subject, body).deliver
+      end
+    end
         
   end
 end

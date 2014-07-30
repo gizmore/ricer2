@@ -21,9 +21,7 @@ module Ricer::Plug
     end
     
     def usages_in_scope(message)
-      @usages.select do |pattern, usage|
-        matches_scope_and_permission?(usage, message)
-      end
+      @usages.select { |pattern, usage|; matches_scope_and_permission?(usage, message) }
     end
     
     def matches_scope_and_permission?(usage, message)
@@ -32,7 +30,9 @@ module Ricer::Plug
     end
       
     def combined_pattern_text(usages)
-      combined_pattern_text_columns(usages).join(' ')
+      pattern_string = combined_pattern_text_columns(usages).join(' ')
+      pattern_string = " #{pattern_string}" unless pattern_string.empty?
+      pattern_string
     end
     
     ###

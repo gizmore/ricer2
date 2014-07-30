@@ -48,6 +48,10 @@ module Ricer::Irc
       return nil
     end
     
+    def strip_html(html)
+      strip_tags(html)
+    end
+    
     def softhype(string)
       min = string.length < 2 ? 0 : 1
       i = Ricer::Bot.instance.rand.rand(min...string.length);
@@ -63,17 +67,9 @@ module Ricer::Irc
       seconds
     end
     
-    def strip_html(html)
-      strip_tags(html)
-    end
-    
     def human_to_seconds(human)
       human
     end
     
-    def human_duration(float)
-      float
-    end
- 
   end
 end

@@ -16,7 +16,6 @@ module Ricer::Irc
     SERVER     = new(char:'s', bit:0x01000000, :name => :server) # For settings only
     ALL        = new(char:'a', bit:0x0F000000, :name => :all)    # For settings only
     @@all = { user:USER, channel:CHANNEL, everywhere:EVERYWHERE, bot:BOT, server:SERVER, all:ALL }
-    
 
     def self.by_arg(arg)
       self.by_name(arg) || self.by_label(arg)
@@ -55,6 +54,5 @@ module Ricer::Irc
       return false
     end
     
-      
   end
 end

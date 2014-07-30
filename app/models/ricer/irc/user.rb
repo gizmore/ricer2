@@ -26,12 +26,13 @@ module Ricer::Irc
     def should_cache?; self.online == true; end
     
     def name; self.nickname; end
-    def displayname; Ricer::Irc::Lib.instance.no_highlight(self.nickname); end
+    def quietname; Ricer::Irc::Lib.instance.no_highlight(self.nickname); end
+    def displayname; "\x02#{quietname}\x02:#{self.server_id}" end
     def guid; "#{self.name}:#{self.server_id}"; end
     def server; Ricer::Bot.instance.servers.find(self.server_id); end
     
-    def self.current; Thread.current[:ricer_user]; end
-    def self.current=(user); Thread.current[:ricer_user] = user; end
+    # def self.current; Thread.current[:ricer_user]; end
+    # def self.current=(user); Thread.current[:ricer_user] = user; end
 
     scope :online, -> { where(:online => 1) }
     
@@ -88,21 +89,47 @@ module Ricer::Irc
     def send_notice(text); server.notice_to(self, text); end
     def send_privmsg(text); server.privmsg_to(self, text); end
     
-    #################
-    ### Chanperms ###
-    #################
+    ###########################
+    ### Channel permissions ###
+    ###########################
+    # Get all permission objects
     def all_chanperms
       Ricer::Irc::Chanperm.where(:user_id => self.id).load
     end
     
+    # Get permission object
     def chanperm_for(channel)
       Ricer::Irc::Chanperm.where({:user_id => self.id, :channel_id => channel.id}).first_or_create
     end
     
+    # Check for channel against other permission object 
+    def has_channel_permission?(channel, permission)
+      chanperm_for(channel).has_permission?(permission)
+    end
+
+    # Check for channel against permission privchar (prlvhosmafixy)
+    def has_channel_permission_char?(channel, permchar)
+      has_channel_permission?(channel, Ricer::Irc::Permission.by_char(permchar))
+    end
+    
+    ##########################
+    ### Server permissions ###
+    ##########################
+    # Get permission object
     def permission
       Ricer::Irc::Permission.by_permission(self.permissions, authenticated?)
     end
+    
+    # Check by permission object
+    def has_permission?(permission)
+      permission.has_permission?(permission)
+    end
 
+    # Check by privchar (prlvhosmafixy)
+    def has_permission_char?(permchar)
+      has_permission?(Ricer::Irc::Permission.by_char(permchar))
+    end
+    
     ######################
     ### Authentication ###
     ######################

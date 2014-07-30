@@ -8,9 +8,9 @@ module Ricer::Plugins::Conf
     def execute(server, var, value)
       columns = ServerShow.config_columns
       return rplyp :err_server_column, columns: columns.join(', ') unless columns.include?(var.to_s)
-      server[var] = value
+      old_value,server[var] = server[var],value
       server.save!
-      rply :msg_set, server:server.displayname, varname:var, value:server[var]
+      rply :msg_set, server:server.displayname, varname:var, value:server[var], old_value:old_value
     end
     
     has_usage :execute_, '<variable> <value>'

@@ -37,16 +37,28 @@ module Ricer
       @running = false
       @needs_restart = false
       @loader = PluginLoader.new(self)
+      load_extenders
       @loader.add_plugin_dir("app/models/ricer/plugins/*")
       save_all_offline
     end
     
+    ### Seed the random generator with seed from config
+    ### This ensures we can test nicely
     def init_random
       seed = randseed
       @rand = Random.new(seed)
       log_info "Seeded random generator with #{seed}"
     end
     
+    ### Extend Plugin with all extender/
+    def load_extenders
+      Filewalker.proc_files("app/models/ricer/plug/extender/") do |file|
+        load file
+        classname = file.rsubstr_from('/').substr_to('.rb').camelize
+        Ricer::Plugin.extend Object.const_get("Ricer").const_get('Plug').const_get('Extender').const_get(classname)
+        log_info("Loaded plugin extender: #{classname}")
+      end
+    end
     
     ### XXX: Horrible slow? because online attribute is in the db?
     ### but this way we get ActiveRecord syntax and maybe later

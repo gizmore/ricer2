@@ -4,7 +4,7 @@ ricer is an IRC bot written in ruby on rails. It is developed in ruby2 and RoR4.
 
 Main Features
 =============
-- Global ORM Cache (ActiveRecord patch is minimal without performance gain)
+- Global ORM Cache (ActiveRecord patch is minimal, but with a performance hit instead gain)
 - Multilanguage support
 - Multi network support
 - Code reloading at runtime
@@ -38,14 +38,17 @@ Update them (skip maybe)
 Configure your database
 > bundle exec rake db:migrate
 
-Check db/seed.rb for creating your first server.
-More servers can be added via irc later.
+Check config/environments/development.rb for your default and first connected server.
+More servers can be added via irc commands later.
+> nano config/environments/development.rb
+
+Create the initial DB
 > bundle exec rake db:seed
 
 Start the bot...
 > bundle exec rake ricer:start
 
-...but it will currently fail on first dry run, but a second start fixes it.
+It might currently fail on first dry run, but a second start fixes it.
 > bundle exec rake ricer:start
 
 Rice Up!
@@ -86,3 +89,8 @@ Known Bugs
 - Usage message is not correct (multi usage plugins)
 - Usage does not nicely know when it should be shown (multi usage plugins)
 - The send penalty queue has not receiver as queue, but sender. This is a problem for pastebin queueflush :(
+
+
+Windows installation help
+=========================
+- 

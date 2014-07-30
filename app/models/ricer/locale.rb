@@ -1,6 +1,9 @@
 module Ricer
   class Locale < ActiveRecord::Base
     
+    with_global_orm_mapping
+    def should_cache?; true; end
+
     def self.valid?(iso)
       exists?(iso)
     end

@@ -74,7 +74,7 @@ module Ricer::Irc
       unless @connection.connect!
         process_event('ricer_on_connection_error', fake_message)
       else
-        process_event('ricer_on_connection_success', fake_message)
+        process_event('ricer_on_server_handshake', fake_message)
       end
     end
     
@@ -104,6 +104,7 @@ module Ricer::Irc
         message = @connection.get_message
         if message.nil?
           disconnect!
+          sleep 5.seconds
         else
           message.server = message.sender = self
           process message
@@ -124,7 +125,9 @@ module Ricer::Irc
     
     def disconnect!(message=nil)
       self.online = false
-      self.save!
+      if self.persisted?
+        self.save!
+      end
       @connection.disconnect(message)
     end
     
@@ -134,7 +137,7 @@ module Ricer::Irc
       if @initial
         @started_up = true
         @initial = false
-        process_event('ricer_on_server_handshake', message)
+        process_event('ricer_on_server_connected', message)
       end
       process_event("on_#{message.command}", message)
       process_event("ricer_on_receive", message)

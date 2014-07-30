@@ -36,7 +36,7 @@ module Ricer::Plugins::Core
     end
     
     def append_line
-      set_line(get_line + line)
+      set_line(get_line + privmsg_line + "\n")
     end
     
     def execute_begin(plugin, arguments)

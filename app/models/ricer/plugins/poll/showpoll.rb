@@ -1,13 +1,7 @@
 module Ricer::Plugins::Poll
   class Showpoll < Ricer::Plugin
     
-    trigger_is :'poll'
-
-    has_usage :execute, '<poll>'
-    def execute(poll)
-      
-
-    end
+    is_show_trigger :showpoll, :for => Ricer::Plugins::Poll::Question.closed
 
   end
 end

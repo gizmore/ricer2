@@ -3,7 +3,7 @@ module Ricer::Plugins::Test
   
     def ricer_on_user_loaded
     
-      exec('gang start human male') if Ricer::Irc::User.current.nickname == 'gizmore'
+      # exec('gang start human male') if Ricer::Irc::User.current.nickname == 'gizmore'
       
     end
 

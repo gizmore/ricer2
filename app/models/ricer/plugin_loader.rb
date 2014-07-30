@@ -130,11 +130,13 @@ module Ricer
             classname = path[length..-4].camelize
             @bot.log_info "Loading plugin '#{modulename}::#{classname}'."
             load path
-            classobject = Object.const_get('Ricer').const_get('Plugins').const_get(modulename).const_get(classname)
+            classobject = Object.const_get("Ricer::Plugins::#{modulename}::#{classname}")
             if classobject < Ricer::Plugin
               plugin = install_plugin(classobject)
-              PluginMap.instance.load_plugin(plugin)
-              plugins.push(plugin)
+              unless plugin.nil?
+                PluginMap.instance.load_plugin(plugin)
+                plugins.push(plugin)
+              end
             elsif classobject < Ricer::Net::Connection
               PluginMap.instance.load_connector(classobject)
             end
@@ -181,7 +183,9 @@ module Ricer
           while db_version < plug_version
             dbv = db_version + 1
             if db_plugin.respond_to?("upgrade_#{dbv}")
-              db_plugin.send("upgrade_#{dbv}")
+              ActiveRecord::Base.transaction do              
+                db_plugin.send("upgrade_#{dbv}")
+              end
             end
             db_version = dbv
           end
@@ -196,9 +200,11 @@ module Ricer
       unless errors
         db_plugin.revision = db_version
         db_plugin.save!
+        db_plugin
+      else
+        nil
       end
-      
-      db_plugin
+
     end
 
   end

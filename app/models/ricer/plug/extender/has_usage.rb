@@ -3,6 +3,7 @@ module Ricer::Plug::Extender::HasUsage
   DEFAULT_OPTIONS = {
     usage_on_error: true,
     allow_trailing: false,
+    force_throwing: false,
   }
   
   # # Extender after_use
@@ -47,7 +48,6 @@ module Ricer::Plug::Extender::HasUsage
       klass.instance_variable_set('@usages', usages)
       
       # Register connector event handler by defining this here
-      # It w
       unless klass.respond_to?(:on_privmsg)
         def on_privmsg; end
       end
@@ -104,8 +104,12 @@ module Ricer::Plug::Extender::HasUsage
       ################
       def show_usage
         reply I18n.t('ricer.plug.extender.has_usage.msg_usage',
-          trigger: trigger, usage: usages.combined_pattern_text(usages_in_scope), description: description,
+          trigger: trigger, usage: display_usage_pattern, description: description,
           permission: scope_and_permission_text) 
+      end
+      
+      def display_usage_pattern
+        ' '+I18n.t!("#{i18n_key}.usage") rescue usages.combined_pattern_text(usages_in_scope)
       end
       
       def scope_and_permission_text
@@ -122,6 +126,13 @@ module Ricer::Plug::Extender::HasUsage
             ' '+I18n.t('ricer.plug.extender.has_usage.scopeinfo_both', scopelabel: scope.to_label, permission: trigger_permission.to_label)
           end
         end
+      end
+      
+      ####################
+      ### Input Helper ###
+      ####################
+      def failed_input(key, *args)
+        raise Ricer::ExecutionException.new(key.is_a?(Symbol) ? t(key,*args) : tt(key,*args))
       end
       
     end

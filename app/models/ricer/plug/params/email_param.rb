@@ -3,10 +3,8 @@ module Ricer::Plug::Params
 
     def convert_in!(input, options, message)
       begin
-        @email = Mail::Address.new(input)
-        unless (email.domain) && (email.address == value) && (email.__send__(:tree).domain.dot_atom_text.elements.length > 1)
-          failed_input
-        end
+        email = Mail::Address.new(input)
+        failed_input unless (email.domain) && (email.address == input) && (email.__send__(:tree).domain.dot_atom_text.elements.length > 1)
       rescue => e
         failed_input
       end

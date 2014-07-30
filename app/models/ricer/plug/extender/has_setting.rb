@@ -1,68 +1,42 @@
+###
+### Provides has_setting extender for plugins.
+### Settings can have a scope and a permission who may alter it with "!config".
+### Values can be conviniently get, set and shown.
+###
+### Example:
+### has_setting name: :bugs_per_file, type: :integer, scope: :server, permission: :admin, min: -2, max: 100, default: 5 
+###
 module Ricer::Plug::Extender::HasSetting
   def has_setting(options)
-    
     class_eval do |klass|
       
+      # Validate setting definition
       Ricer::Plug::Setting.validate_definition!(klass, options)
       
+      # Register static for cleanup
       Ricer::Plugin.register_class_variable('@db_settings')
       Ricer::Plugin.register_class_variable('@mem_settings')
-      
+
+      # Static cache for this plugin      
       @db_settings ||= {}
       @mem_settings ||= []
       @mem_settings.push(options)
       
+      ##########################
+      ### Autodetected scope ###
+      ##########################
       def setting(name, scopes=nil, filter=true)
         scopes ||= memory_setting_scopes(name.to_sym)
         scopes = memory_settings_filter(scopes) if filter
         db_setting_for(name.to_sym, scopes)
       end
       
-      def get_channel_setting(channel, name)
-        channel_setting(channel, name).to_value
-      end
-      def save_channel_setting(channel, name, value)
-        channel_setting(channel, name).save_value(value)
-      end
-      def channel_setting(channel, name)
-        @scope_id = channel.id
-        back = setting(name, :channel, false)
-        @scope_id = nil
-        back
-      end
-
-      def get_server_setting(server, name)
-        server_setting(server, name).to_value
-      end
-      def save_server_setting(server, name, value)
-        server_setting(server, name).save_value(value)
-      end
-      def server_setting(server, name)
-        @scope_id = server.id
-        back = setting(name, :server, false)
-        @scope_id = nil
-        back
-      end
-      
-      def get_user_setting(user, name)
-        user_setting(user, name).to_value
-      end
-      def save_user_setting(user, name, value)
-        user_setting(user, name).save_value(value)
-      end
-      def user_setting(user, name)
-        @scope_id = user.id
-        back = setting(name, :user, false)
-        @scope_id = nil
-        back
-      end
-      
-      def bot_setting(name); setting(name, :bot, false); end
-      def get_bot_setting(name); bot_setting(name).to_value; end
-      def save_bot_setting(name, value); bot_setting(name).save_value(value); end
-  
       def get_setting(name, scopes=nil)
         setting(name, scopes).to_value
+      end
+
+      def show_setting(name, scopes=nil)
+        setting(name, scopes).to_label
       end
   
       def save_setting(name, scope, value)
@@ -78,6 +52,83 @@ module Ricer::Plug::Extender::HasSetting
         save_setting(name, scope, get_setting(name, scope) + by)
       end
       
+      ##############################
+      ### Channel scope settings ###      
+      ##############################
+      def channel_setting(channel, name)
+        @scope_id = channel.id
+        back = setting(name, :channel, false)
+        @scope_id = nil
+        back
+      end
+
+      def get_channel_setting(channel, name)
+        channel_setting(channel, name).to_value
+      end
+      
+      def show_channel_setting(channel, name)
+        channel_setting(channel, name).to_label
+      end
+      
+      def save_channel_setting(channel, name, value)
+        channel_setting(channel, name).save_value(value)
+      end
+      
+      #############################
+      ### Server scope settings ###
+      #############################
+      def server_setting(server, name)
+        @scope_id = server.id
+        back = setting(name, :server, false)
+        @scope_id = nil
+        back
+      end
+      
+      def get_server_setting(server, name)
+        server_setting(server, name).to_value
+      end
+
+      def show_server_setting(server, name)
+        server_setting(server, name).to_label
+      end
+      
+      def save_server_setting(server, name, value)
+        server_setting(server, name).save_value(value)
+      end
+      
+      ###########################
+      ### User scope settings ###
+      ###########################
+      def user_setting(user, name)
+        @scope_id = user.id
+        back = setting(name, :user, false)
+        @scope_id = nil
+        back
+      end
+
+      def get_user_setting(user, name)
+        user_setting(user, name).to_value
+      end
+      
+      def show_user_setting(user, name)
+        user_setting(user, name).to_label
+      end
+      
+      def save_user_setting(user, name, value)
+        user_setting(user, name).save_value(value)
+      end
+      
+      ##########################
+      ### Bot scope settings ###
+      ##########################
+      def bot_setting(name); setting(name, :bot, false); end
+      def get_bot_setting(name); bot_setting(name).to_value; end
+      def show_bot_setting(name); bot_setting(name).to_label; end
+      def save_bot_setting(name, value); bot_setting(name).save_value(value); end
+  
+      #######################
+      ### Cache and magic ###
+      #######################
       def memory_settings
         self.class.instance_variable_get('@mem_settings')
       end
@@ -90,7 +141,7 @@ module Ricer::Plug::Extender::HasSetting
         memory_settings.each do |options|
           return options if (options[:scope] == scope) && (options[:name] == name)
         end
-        return nil
+        nil
       end
       
       def memory_setting_scopes(name)
@@ -157,7 +208,7 @@ module Ricer::Plug::Extender::HasSetting
       end
       
       def default_scope_id(scope)
-        return @scope_id if @scope_id
+        return @scope_id unless @scope_id.nil?
         return 0 if scope == :bot
         return server.id if scope == :server
         return sender.id if scope == :user
@@ -166,6 +217,5 @@ module Ricer::Plug::Extender::HasSetting
       end
       
     end
-    
   end
 end
