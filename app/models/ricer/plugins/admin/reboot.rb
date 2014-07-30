@@ -7,8 +7,13 @@ module Ricer::Plugins::Admin
     
     requires_retype
     
-    has_usage :execute, '[<..message..>]'    
-    def execute(message)
+    has_usage :execute_reboot
+    def execute_reboot
+      execute_with_message(t(:default_msg, sender.displayname))
+    end
+        
+    has_usage :execute_with_message, '<..message..>'
+    def execute_with_message(message)
       bot.reboot = true
       exec_line "die #{message}"
     end

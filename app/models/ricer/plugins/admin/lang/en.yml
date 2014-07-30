@@ -2,12 +2,23 @@ en:
   ricer:
     plugins:
       admin:
+
         die:
           description: 'Make $BOT$ quit all servers and die.'
           default_message: '%{user} used the die command.'
+
         raw:
           description: 'Send raw commands to an irc server.'
+          
+        reboot:
+          description: 'Kill the $BOT$ process and let it restart.'
+          default_msg: '%{user} used the reboot command.'
+
         reload:
           description: 'Reload plugin code at runtime.'
           msg_reloading: 'Reloading ricer code and plugins.'
           msg_reloaded: 'Everything reloaded and ready to crash.'
+          
+        upgrade:
+          description: "Do a execute \x02git pull\x02 for the bot."
+          msg_pulling: "Executing git pull..."
