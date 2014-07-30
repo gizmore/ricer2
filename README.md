@@ -35,14 +35,21 @@ Install gems
 Update them (skip maybe)
 > bundle update
 
-Configure your database
-> bundle exec rake db:migrate
-
-Check config/environments/development.rb for your default and first connected server.
+Check config/environments/development.rb for your default irc server and other stuff.
 More servers can be added via irc commands later.
 > nano config/environments/development.rb
 
-Create the initial DB
+Configure your database settings
+> nano config/database.yml
+
+Configure some secret settings
+> cp config/secrets.yml.example config/secrets.yml
+> nano config/secrets.yml
+
+Create the database scheme
+> bundle exec rake db:migrate
+
+Fill your DB with initial values
 > bundle exec rake db:seed
 
 Start the bot...
@@ -93,4 +100,5 @@ Known Bugs
 
 Windows installation help
 =========================
-- 
+- Download and install mysql-connector from oracle. Choose a dir without spaces! READ: http://stackoverflow.com/questions/24649052/cant-install-mysql2-0-3-16-gem-on-ruby
+ 

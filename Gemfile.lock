@@ -159,6 +159,8 @@ GEM
       simple_oauth (~> 0.1.4)
     tzinfo (1.2.1)
       thread_safe (~> 0.1)
+    tzinfo-data (1.2014.5)
+      tzinfo (>= 1.0.0)
     uglifier (2.5.3)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
@@ -185,5 +187,6 @@ DEPENDENCIES
   strip_attributes
   tf-idf-similarity!
   therubyracer
+  tzinfo-data
   uglifier
   validate_as_email!

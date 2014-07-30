@@ -28,5 +28,8 @@ group :production do
   gem 'uglifier'
 end
 
+# Fix for windows?
+gem 'tzinfo-data'
+
 # LIB/SIMILIAR_VALIDATOR
 gem 'tf-idf-similarity', git: 'https://github.com/opennorth/tf-idf-similarity'
