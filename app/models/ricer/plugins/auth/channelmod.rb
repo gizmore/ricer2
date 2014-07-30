@@ -3,22 +3,28 @@ module Ricer::Plugins::Auth
   
     trigger_is :modc
 
-    has_usage :execute_cshow, '[<user>]', scope: :channel 
-    has_usage :execute_cchange, '<user> [<permission>]', scope: :channel
+    has_usage :execute_cshow, '', scope: :channel 
+    has_usage :execute_cshowu, '<user>', scope: :channel 
+    has_usage :execute_cchange, '<user> <permission>', scope: :channel
 
-    has_usage :execute_show_u, '<channel> [<user>]', scope: :user
+    has_usage :execute_show, '<channel>', scope: :user 
+    has_usage :execute_show_u, '<channel> <user>', scope: :user
     has_usage :execute_change_u, '<channel> <user> <permission>', scope: :user
-        
-    def execute_cshow(user=nil)
-      execute_show_u(channel, user)
-    end
+    
+    ###################################
+    ### Channel funcs call wrappers ###
+    ###################################
+    def execute_cshow; execute_show_u(channel, user); end
+    def execute_cshowu(user); execute_show_u(channel, user); end
+    def execute_cchange(user, permission); execute_change_u(channel, user, permission); end
 
-    def execute_cchange(user, permission)
-      execute_change_u(channel, user, permission)
+    ##############################
+    ### Private query triggers ###
+    ##############################
+    def execute_show(channel)
+       execute_show_u(channel, user)
     end
-  
     def execute_show_u(channel, user)
-      user = sender if user.nil?
       p = user.chanperm_for(channel)
       rply :msg_show_chan,
         user: user.displayname,
@@ -28,6 +34,8 @@ module Ricer::Plugins::Auth
     end
 
     def execute_change_u(channel, user, permission)
+      rplyr :err_stub
+      # TODO: Implement :P
     end
 
   end
