@@ -5,8 +5,6 @@ module Ricer::Plugins::Admin
 
     permission_is :responsible
     
-    requires_retype
-    
     has_usage :execute_reboot
     def execute_reboot
       execute_with_message(t(:default_msg, sender.displayname))
