@@ -11,9 +11,7 @@ module Ricer::Plugins::Note
       message = Message.create!({
         sender: sender,
         receiver: receiver,
-        text: text,
-        read_at: nil,
-        sent_at: Time.now,
+        message: text,
       })
       
       if receiver.online?
