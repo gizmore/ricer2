@@ -53,7 +53,7 @@ module Ricer::Net
     end
     
     def is_ricer?
-      sender && (sender.name.downcase == server.nickname.name.downcase)
+      is_user? && sender.is_ricer?
     end
     
     def is_user?

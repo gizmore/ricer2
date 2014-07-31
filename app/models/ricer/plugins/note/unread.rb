@@ -14,7 +14,7 @@ module Ricer::Plugins::Note
     private
     def chronological_unread
       Ricer::Plugins::Note::Message.uncached do
-        Ricer::Plugins::Note::Message.inbox(user).unread.order('sent_at ASC').first
+        Ricer::Plugins::Note::Message.inbox(user).unread.order('created_at ASC').first
       end
     end
     
