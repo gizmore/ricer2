@@ -5,9 +5,12 @@ en:
         action:
           trigger: 'do'
           description: 'Sends an action to a user or channel.'
+        echo:
+          trigger: 'echo'
+          description: 'Replies the text you give as parameter.'
         message:
           trigger: 'send'
-          description: 'Sends a message to a user or channel, which respects user preferences.'
+          description: 'Sends a message to a user or channel, which respects user preferences of notice and privmsg.'
         notice:
           trigger: 'notice'
           description: 'Sends a notice to a user or channel.'

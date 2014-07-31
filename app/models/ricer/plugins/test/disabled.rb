@@ -12,7 +12,7 @@ module Ricer::Plugins::Test
     has_description    {en:'Test default disabled', de:'Default disabled testen'}
     
     has_usage  :execute_one_arg, '<user>'
-    has_usage  :execute_with_multiline, '<user> [<..message..>]'
+    has_usage  :execute_with_multiline, '<user> <..message..>'
     has_usage  :execute # Fallback
     has_usage # same
     

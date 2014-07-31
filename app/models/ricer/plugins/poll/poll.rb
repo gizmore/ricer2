@@ -26,7 +26,7 @@ module Ricer::Plugins::Poll
     # Close poll timeout
     has_setting name: :lifetime, type: :duration, permission: :responsible, scope: :bot, default: 2.hours
     def max_age; get_setting(:lifetime); end
-    def max_age_cut; Time.now.to_f - max_age; end
+    def max_age_cut; Time.now - max_age; end
     
     # Close poll thread    
     def ricer_on_global_startup

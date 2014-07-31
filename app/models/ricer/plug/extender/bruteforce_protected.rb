@@ -1,17 +1,20 @@
 module Ricer::Plug::Extender::BruteforceProtected
+
+  OPTIONS = {
+    always: true,
+    timeout: 7.seconds
+  }
+
   def bruteforce_protected(options={})
     
-    options[:always] ||= true
-    options[:duration] ||= 7.seconds
+    merge_options(options, OPTIONS)
 
     class_eval do |klass|
 
-#      has_setting name: :bf_timeout, scope: :user,    permission: :ircop, type: :duration, default: options[:duration]
-#      has_setting name: :bf_timeout, scope: :channel, permission: :admin, type: :duration, default: options[:duration]
-      has_setting name: :bf_timeout, scope: :server, permission: :admin, type: :duration, default: options[:duration]
-      has_setting name: :bf_timeout, scope: :bot, permission: :admin, type: :duration, default: options[:duration]
+      has_setting name: :bf_timeout, scope: :server, permission: :ircop,       type: :duration, default: options[:timeout]
+      has_setting name: :bf_timeout, scope: :bot,    permission: :responsible, type: :duration, default: options[:timeout]
 
-      Ricer::Plugin.register_exec_function(:not_bruteforcing?) if (!!options[:always])
+      Ricer::Plugin.register_exec_function(:not_bruteforcing?) if options[:always]
       
       protected
       
@@ -58,6 +61,5 @@ module Ricer::Plug::Extender::BruteforceProtected
       end
       
     end
-    
   end
 end

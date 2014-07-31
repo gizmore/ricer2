@@ -66,6 +66,14 @@ module Ricer::Irc
       return number_with_precision(seconds, precision:2)+'s' if seconds < 10
       seconds
     end
+
+    def human_fraction(fraction, precision=1)
+      number_with_precision(fraction, precision: precision)
+    end
+    
+    def human_percent(fraction)
+      human_fraction(fraction*100, 2)+'%'
+    end
     
     def human_to_seconds(human)
       human

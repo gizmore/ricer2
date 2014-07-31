@@ -9,7 +9,7 @@ module Ricer::Plugins::Conf
     has_usage :execute_list, ''
     
     def execute_help(trigger)
-      return trigger.show_help
+      reply trigger.get_help
     end
         
     def execute_list
@@ -17,9 +17,8 @@ module Ricer::Plugins::Conf
       grouped = collect_groups
       grouped = Hash[grouped.sort]
       grouped.each do |k,v|; grouped[k] = v.sort; end
-      nrplyp :msg_triggers, :triggers => grouped_output(grouped)
+      sender.send_message t(:msg_triggers, :triggers => grouped_output(grouped))
     end
-
 
     protected
     

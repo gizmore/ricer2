@@ -11,43 +11,39 @@ module Ricer::Plugins::Poll
     def execute(question)
       return rply :err_not_allowed unless question.can_close?(sender, max_age_cut)
       close_question(question)
-      rply :msg_closed, qid:question.id, question:question.text, asker:question.creator.displayname
+      rply :msg_closed, type:question.type_label, qid:question.id, question:question.text, asker:question.creator.displayname
     end
     
     def close_question(question)
       question.close!
       vote_plugin.cheat_clear(question)
-      case question.poll_type
-      when Question::POLL
-        announce_poll_closed(question)
-      when Question::MULTI
-        announce_poll_closed(question)
-      when Question::RATE
-        announce_rating_closed(question)
-      when Question::QUESTION
+      if question.is_answered_freely?
         announce_free_question_closed(question)
+      else
+        announce_poll_closed(question)
       end
     end
     
     private
     
+    #################################
+    ### Poll,  Multi and HotOrNot ###
+    #################################
     def announce_poll_closed(question)
-      poll_plugin.abbonements.each do |target|
+      poll_plugin.announce_targets do |target|
         target.localize!.send_message(poll_closed_message(question))
       end
     end
-    
+
     def poll_closed_message(question)
       t(:msg_poll_closed,
-        :user => question.creator.displayname,
-        :outcome => poll_outcome_message,
-      )
+        :type => question.type_label,
+        :qid => question.id,
+        :question => question.text,
+        :asker => question.creator.displayname,
+        :outcome => question.display_outcome)
     end
     
-    def announce_rating_closed(question)
-      
-    end
-
     ######################
     ### Free Questions ###
     ######################

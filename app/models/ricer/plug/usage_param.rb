@@ -13,7 +13,7 @@ module Ricer::Plug
       @optional = paramstring.index('[') != nil
       #@type = paramstring.trim('[<.>]')
       unless @eater
-        @parser = Param.parser!(paramstring.trim('[<.>]'))
+        @parser = Param.parser!(paramstring.trim!('[<.>]'))
       else
         @parser = Param.parser!('message')
       end

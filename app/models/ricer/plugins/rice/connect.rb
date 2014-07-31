@@ -89,6 +89,12 @@ module Ricer::Plugins::Rice
       end
     end
     
+    def on_kick
+      puts @message
+      byebug
+      puts "HI"
+    end
+    
     def on_353
       @message.receiver = channel = create_channel(args[2])
       args[3].split(' ').each do |username|

@@ -5,18 +5,15 @@ module Ricer::Plugins::Art
     
     permission_is :halfop
 
-    bruteforce_protected
+    bruteforce_protected timeout: 12.seconds
     
     has_setting name: :image, type: :enum, scope: :user, permission: :halfop, enums:[:cat,:default], default: :cat
     
-    has_usage :execute, '[<..message..here..>]'
-    
+    has_usage :execute, '<..message..>'
     def execute(text)
-      text = Shellwords.escape(text)
       Ricer::Thread.execute do
-        out = Kernel.exec("cowsay -f #{get_setting(:image)} -- #{text}")
-        puts out
-        puts out.inspect
+        text = Shellwords.escape(text)
+        reply `"cowsay -f #{get_setting(:image)} -- #{text}"`
       end
     end
     

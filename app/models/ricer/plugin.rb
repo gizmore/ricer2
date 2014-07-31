@@ -6,6 +6,8 @@ module Ricer
 
   class Plugin < ActiveRecord::Base
     
+    include ActionView::Helpers::NumberHelper
+
     DEFAULT_PRIORITY = 50
     
     attr_accessor :message

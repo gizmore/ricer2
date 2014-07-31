@@ -3,9 +3,10 @@ module Ricer::Plugins::Debug
     
     trigger_is :sdbg
     
-    has_usage :execute, '[<server>]'
-    def execute(server)
-      server = self.server if server.nil?
+    has_usage :execute, ''
+    has_usage :execute_s, '<server>'
+    def execute(); execute_s(server); end
+    def execute_s(server)
       rply :msg_serverinfo,
         name: server.displayname
     end

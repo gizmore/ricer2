@@ -9,6 +9,7 @@ module Ricer::Plugins::Poll
     # Create poll or multi    
     def create_poll(message, poll_type)
       parts = message.split('|')
+      parts.each { |part| part.trim!(' ') }
       question, options = parts.shift, parts.uniq
       return rplyp :err_no_options if options.length < 2
       question = Question.create!({
@@ -38,10 +39,10 @@ module Ricer::Plugins::Poll
       end
       
       # Announce to asker
-      rply :msg_created,
-        question_id: question.id,
-        usercount: usercount,
+      rplyp :msg_created,
+        type: question.type_label,
         channelcount: channelcount,
+        usercount: usercount,
         tc: close_trigger(question),
         max_age: display_max_age
     end

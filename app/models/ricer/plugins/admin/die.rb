@@ -6,9 +6,13 @@ module Ricer::Plugins::Admin
     
     requires_retype
 
-    has_usage :execute, '[<..message..>]'
-    def execute(message)
-      message = message||default_message
+    has_usage :execute
+    def execute
+      execute_with_message(default_message)
+    end
+
+    has_usage :execute_with_message, '<..message..>'
+    def execute_with_message(message)
       bot.servers.each do |server|
         server.connection.send_quit(@message, message) if server.connected?
       end

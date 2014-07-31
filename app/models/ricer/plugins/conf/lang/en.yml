@@ -11,26 +11,26 @@ en:
         msg_overview: 'Settings for %{trigger}: %{vars}.'
         msg_show_var: 'Settings for %{trigger}/%{varname}: %{values}.'
         msg_no_settings: 'The %{trigger} plugin has no configuration available.'
-        msg_saved_setting: '%{configscope} settings for %{trigger}/%{varname} is now %{value}.'
+        msg_no_change: '%{configscope} settings for %{trigger}/%{varname} are still %{samevalue}.'
+        msg_saved_setting: '%{configscope} settings for %{trigger}/%{varname} changed from %{oldvalue} to %{newvalue}.'
         msg_triggers: 'Available: %{triggers}.'
         
         bot:
           description: '???'
 
         channellang:
-          usage: '[<iso>]'
           description: 'Show or set the channels language settings.'
           msg_set: 'This channels main language has been changed from %{old} to %{new}.'
           msg_show: 'This channel has set it´s main language to %{iso}. Available iso codes: %{available}.'
           
         channel_set:
           description: 'Manage raw channel values like "triggers".'
+          err_channel_column: 'Unknown channel database column. Known columns are: %{columns}.'
           msg_set: 'The setting for %{varname} in %{channel} is now "%{value}" (was "%{oldvalue}").' 
           msg_show: 'The setting for %{varname} in %{channel} is "%{value}".'
           msg_show_all: 'Available raw settings for %{channel}: %{columns}.'
 
         conf:
-          usage: '<plug> [<var>] [<value>]'
           description: 'Configure or show $BOT$ plugin variables.'
           
         disable:
@@ -38,14 +38,11 @@ en:
 
         enable:
           description: 'Enable a plugin.'
-            
           
         events:
-          usage: '[<event>]'
           description: 'Similiar to $TRIGGER$help, this command shows event plugins.'
 
         help:
-          usage: '[<trigger>]'
           description: 'Print available commands in scope or show help for a trigger. Note that the overview result differs between channels and queried requests.'
           msg_event_info: '%{name}: %{info}'
 
@@ -58,7 +55,6 @@ en:
           msg_show: 'The setting for %{varname} on %{server} is "%{value}".'
 
         userlang:
-          usage: '[<iso>]'
           description: 'Show or set your language preference.'
           msg_set: 'You have changed your language preference from %{old} to %{new}.'
           msg_show: 'Your language is set to %{iso}. Available iso codes: %{available}.'

@@ -1,12 +1,6 @@
 module Ricer::Plugins::Conf
   class ConfBase < Ricer::Plugin
   
-    def execute(plugin, variable, value)
-      return show_vars(plugin) if variable.nil?
-      return show_var(plugin, variable) if value.nil?
-      return set_var(plugin, variable, value)
-    end
-    
     private
     
     def config_settings(plugin)
@@ -61,19 +55,37 @@ module Ricer::Plugins::Conf
     end
 
     def set_var(plugin, varname, value)
+      
       settings = config_settings(plugin)[varname]
       return rplyp :err_no_such_var if settings.nil?
       return rplyp :err_conflicting if conflicting?(settings)
 
       options = settings[0]
       setting = plugin.setting(varname, options[:scope])
+      
       return rplyp :err_no_such_var if setting.nil?
       return rplyp :err_permission unless change_permitted?(setting)
       return rplyp :err_invalid_value, trigger: plugin.trigger, varname: varname, hint: setting.to_hint unless setting.valid_value?(value)
-      
-      setting.save_value(value)
+  
+      # No change?
+      if setting.equals_input?(value)
+        return rplyp(:msg_no_change,
+          configscope: setting.scope.to_label,
+          trigger: plugin.trigger,
+          varname: varname,
+          samevalue: setting.to_label
+        ) 
+      end
 
-      return rplyp :msg_saved_setting, configscope: setting.scope.to_label, trigger: plugin.trigger, varname: varname, value: setting.to_label
+      # Save and reply
+      old_label = setting.to_label
+      setting.save_value(value)
+      rplyp :msg_saved_setting,
+        configscope: setting.scope.to_label,
+        trigger: plugin.trigger,
+        varname: varname,
+        oldvalue: old_label,
+        newvalue: setting.to_label
     end
     
   end

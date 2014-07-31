@@ -4,8 +4,10 @@ module Ricer::Plugins::Debug
     trigger_is :udbg
     scope_is :user
     
-    has_usage :execute, '[<user>]'
-    def execute(user)
+    has_usage :execute, ''
+    has_usage :execute_u, '<user>'
+    def execute; execute_u(sender); end
+    def execute_u(user)
       user = sender if user.nil?
       rply :msg_userinfo, {
         id: user.id,

@@ -11,8 +11,8 @@ module Ricer::Plugins::Poll
     def execute(question, message)
       # Validation
       return rply :err_answer_self if question.creator == sender
-      cheat_detection!(question)
       return rply :err_answer_twice if question.has_user_voted?(sender)
+      cheat_detection!(question)
       # Call vote handler
       case question.poll_type
       when Question::POLL;      execute_vote_for_poll(question, message, 1)
@@ -40,7 +40,7 @@ module Ricer::Plugins::Poll
       failed_input(:err_no_choice) if choices.length < 1
       failed_input(:err_no_multi) if choices.length > max_choices
       # Loop and check index for answer choice creation
-      question.options.each_with_index do |i, option|
+      question.options.each_with_index do |option, i|
         option.answers.create!({user: sender, option: option}) if (choices.include?(i))
       end
       # Done

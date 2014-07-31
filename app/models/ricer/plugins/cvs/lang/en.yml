@@ -14,7 +14,6 @@ en:
           msg_announce: '[%{repo_name}] Commit %{revision} from %{commiter}: %{comment}'
         add:
           trigger: 'add'
-          usage: '<name> <url> [<public:yes|no>] [<sshpubkey|username:password>]'
           description: 'Checkout a repository from a version control system.'
           err_dup_name: 'This repository name is already taken.'
           err_dup_url: 'This repository URI already exists.'

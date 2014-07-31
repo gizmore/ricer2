@@ -8,9 +8,12 @@ module Ricer::Plugins::Cvs
     has_setting name: :default_delay,  type: :integer, scope: :user,    permission: :operator,    default:60, min:3, max:240
     has_setting name: :default_delay,  type: :integer, scope: :channel, permission: :operator,    default:60, min:3, max:240
     
-    has_usage :execute, '<name> <url> [<boolean>] [<pubkey>]'
-    
-    def execute(name, url, public=nil, pubkey=nil)
+    has_usage :execute, '<name> <url>'
+    has_usage :execute_b, '<name> <url> <boolean>'
+    has_usage :execute_bp, '<name> <url> <boolean> <pubkey>'
+    def execute(name, url); execute_b(name, url, get_setting(:default_public)); end
+    def execute_b(name, url, public); execute_bp(name, url, public, nil); end
+    def execute_bp(name, url, public, pubkey)
       
       return rply :err_dup_name unless Repo.by_name(argv[0]).nil?
       return rply :err_dup_url unless Repo.by_url(argv[1]).nil?
@@ -18,7 +21,7 @@ module Ricer::Plugins::Cvs
         user: user,
         name: name,
         url: url,
-        public: public == nil ? get_setting(:default_public) : public,
+        public: public,
         pubkey: pubkey,
       })
       repo.validate!

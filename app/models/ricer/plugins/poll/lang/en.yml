@@ -14,42 +14,48 @@ en:
         type_2: 'Choice'
         type_3: 'Rating'
         type_4: 'Question'
+
+        outcome_none: 'There has not been a single vote.'
+        outcome_question: 'URI not available anymore' # TODO: Save Pastie ID needed + Accepted answers
+        outcome_partial: '%{number}-"%{choice}"(%{times}/%{percent})'
+        outcome_rating:
+          one: '%{rating} with %{count} vote'
+          other: '%{rating} with %{count} votes'
         
         err_no_options: 'You have to supply at least 2 options.'
+        msg_created: "Your %{type} was broadcasted to %{channelcount} channels and %{usercount} users. Close with \x02%{tc}\x02. Lifetime: %{max_age}."
+
         list_item: '%{number}-(%{type})%{question}'
 
         close:
           trigger: 'closepoll'
           description: 'close a poll and announce results. Polls are automatically closed after some time.'
           err_not_allowed: 'You are not allowed to close this poll yet. It will automatically close after some time.'
-          msg_closed: 'You have closed event %{qid}: "%{question}" by %{asker}. The results are to be announced.'
+          msg_closed: 'You have closed %{type} %{qid}: "%{question}" by %{asker}. The results are to be announced.'
+          msg_poll_closed: "%{type}#%{qid} - \"%{question}\" by %{asker} is now \x02closed\x02: %{outcome}"
           paste_title: '%{type}#%{qid} - "%{question}" by %{asker} - %{date}'
           paste_message: "%{type}#%{qid} - \"%{question}\" by %{asker} is now \x02closed\x02: %{url}"
-          
+
         newpoll:
           trigger: 'newpoll'
           usage: '<..question text..|..answer1..|..answer2..|..answerN..>'
           description: 'Create a new poll to get it announced and voted on all poll active channels.'
-          msg_created: 'Your poll has been created and broadcasted to %{channelcount} channels and %{usercount} users.'
           msg_announce: "%{user} has created a poll: \"%{question}\". Possible answers: %{choices}. Vote with: \x02%{ta} <answer>\x02."
 
         newpollm:
           trigger: 'multipoll'
           usage: '<..question text..|..option1..|..option2..|..optionN..>'
           description: 'Create a new multiple choice poll to get it announced and voted on all poll active channels.'
-          msg_created: 'Your multiple choice poll has been created and broadcasted to %{channelcount} channels and %{usercount} users.'
           msg_announce: "%{user} has created a multiple choice poll: \"%{question}\". Options: %{choices}. Multiple choice like this: \x02%{ta} 1,2\x02."
 
         newpollr:
           trigger: 'hotornot?!'
           description: 'Create a hot or not question which can be rated with 1-10.'
-          msg_created: "Your HotOrNot is broadcasted to %{channelcount} channels and %{usercount} users. Close votes with \x02%{tc}\x02. Lifetime: %{max_age}."
           msg_announce: "%{user} plays hot or not?! \"%{question}\" - Vote with: \x02%{ta} (%{min}–%{max})\x02."
           
         newpollq:
           trigger: 'ask question'
           description: 'Create a new question poll to get it announced and answered on all poll active channels.'
-          msg_created: 'Your question has been asked and broadcasted to %{channelcount} channels and %{usercount} users. Wait for answers and later close it with %{tc}. The question is open for max %{max_age}.'
           msg_announce: "%{user} asks the irc: \"%{question}\". You can reply to him freely via: \x02%{ta} <..your..answer..here..>\x02."
           
         newpolls:
@@ -67,6 +73,10 @@ en:
         showpoll:
           trigger: 'showpoll'
           description: 'Show details for a poll or question.'
+          msg_show_closed: "%{type} %{number} by %{asker} from %{date} - \"%{question}\": %{outcome}."
+          msg_show_open:
+            one: "%{type} %{number} by %{asker} is still open, %{time_left} left. \"%{question}\" got %{count} vote so far."
+            other: "%{type} %{number} by %{asker} is still open, %{time_left} left. \"%{question}\" got %{count} votes so far."
 
         vote:
           trigger: 'votepoll'

@@ -38,6 +38,10 @@ module Ricer::Plug
     def scope
       Ricer::Irc::Scope.by_name(options[:scope])
     end
+    
+    def equals_input?(input)
+      self.to_value == setting_class.to_value(input)
+    end
 
     def to_value
       setting_class.to_value(self.value)

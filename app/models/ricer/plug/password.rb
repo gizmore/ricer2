@@ -14,7 +14,7 @@ module Ricer::Plug
     end
     
     def length
-      @string.nil? ? 0 : @string.length
+      empty? ? 0 : @string.length
     end
     
     def matches?(password)

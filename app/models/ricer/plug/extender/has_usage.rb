@@ -67,7 +67,8 @@ module Ricer::Plug::Extender::HasUsage
       # Usage
       def has_usage?; true; end
       def usages; self.class.instance_variable_get('@usages'); end
-      def show_help; show_usage; end
+      def show_help; reply get_help; end
+      def get_help; get_usage; end
       
       #####################
       ### Exec Handlers ###
@@ -103,7 +104,11 @@ module Ricer::Plug::Extender::HasUsage
       ### Messages ###
       ################
       def show_usage
-        reply I18n.t('ricer.plug.extender.has_usage.msg_usage',
+        reply get_usage
+      end
+      
+      def get_usage
+        I18n.t('ricer.plug.extender.has_usage.msg_usage',
           trigger: trigger, usage: display_usage_pattern, description: description,
           permission: scope_and_permission_text) 
       end

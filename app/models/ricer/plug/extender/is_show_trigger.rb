@@ -23,7 +23,7 @@ module Ricer::Plug::Extender::IsShowTrigger
       unless options[:pattern_id].nil?
         has_usage :execute_display_id, options[:pattern_id]
         def execute_display_id(number)
-          item = visible_relation(display_class).limit(1).from(number-1).first!
+          item = visible_relation(display_class).limit(1).offset(number-1).first!
 #          raise ActiveRecord::RecordNotFound if item.nil?
 #          item = visible_relation(display_class).find(id)
           execute_show_item(item, 1)
@@ -48,7 +48,7 @@ module Ricer::Plug::Extender::IsShowTrigger
       end
 
       # def execute_display(number)
-        # object = visible_relation(display_class).limit(1).from(number-1).first
+        # object = visible_relation(display_class).limit(1).offset(number-1).first
 #         
         # return rplyr 'plug.extender.is_show_trigger.err_not_found', :classname => object.class.human_name if object.nil?
         # reply object.display_show_item

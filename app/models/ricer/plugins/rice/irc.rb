@@ -93,11 +93,11 @@ module Ricer::Plugins::Rice
     end
     
     def send_splitted(message, prefix, text, postfix='')
-      # @server.ricer_replies_to(messsage)
       length = MAXLEN - prefix.length
       text.scan(Regexp.new(".{1,#{length}}(?:\s|$)|.{1,#{length}}")).map(&:strip).each do |line|
         send_queued(message.reply_message(prefix+line+postfix))
       end
+      nil
     end
     
     def send_queued(message)
@@ -106,6 +106,7 @@ module Ricer::Plugins::Rice
         @queue[to] ||= Ricer::Net::Queue::Object.new(to)
         @queue[to].push(message)
       end
+      nil
     end
     
     def send_line(message)
@@ -121,6 +122,7 @@ module Ricer::Plugins::Rice
         @connected = false
         disconnect(message)
       end
+      nil
     end
     
     # Thread that reduces penalty for QueueObjects

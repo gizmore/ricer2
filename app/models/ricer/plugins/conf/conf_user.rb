@@ -3,9 +3,11 @@ module Ricer::Plugins::Conf
 
     trigger_is :confu
 
-    def config_scope; [:user]; end
+    has_usage :set_var, '<plugin> <variable> <value>'
+    has_usage :show_var, '<plugin> <variable>'
+    has_usage :show_vars, '<plugin>'
 
-    has_usage :execute, '<plugin> [<variable>] [<value>]'
+    def config_scope; [:user]; end
 
   end
 end
