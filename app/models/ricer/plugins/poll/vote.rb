@@ -26,7 +26,6 @@ module Ricer::Plugins::Poll
     ### Poll and Multi ###
     ######################
     def execute_vote_for_poll(question, message, max_choices)
-      
       choices = []
       # First sanity
       num_options = question.options.count
@@ -67,7 +66,11 @@ module Ricer::Plugins::Poll
       rply :msg_vote_counted
       # Feedback to creator
       question.creator.localize!.send_message(
-        t(:msg_vote_received, server:sender.server.displayname))
+        t(:msg_vote_received,
+          qid: question.id,
+          question: question.text,
+          server: sender.server.displayname,
+      ))
     end
 
     #####################

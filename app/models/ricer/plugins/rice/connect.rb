@@ -1,3 +1,7 @@
+###
+### The core plugin that sets up users and channels when receiving events
+### TODO: Probably cleanest is to give it "connector_is :irc"
+###
 module Ricer::Plugins::Rice
   class Connect < Ricer::Plugin
     
@@ -85,14 +89,22 @@ module Ricer::Plugins::Rice
       @message.receiver = channel = create_channel(args[0])
       if @message.is_ricer?
         channel.ricer_on_part
-        Chanperm.where(:channel_id => channel.id).update_all(:online => false)
+        Ricer::Irc::Chanperm.where(:channel_id => channel.id).update_all(:online => false)
+      else
+        @message.sender.ricer_on_parted_channel(channel)
       end
     end
     
     def on_kick
-      puts @message
-      byebug
-      puts "HI"
+      @message.sender = create_user(sender_nickname)
+      @message.receiver = channel = create_channel(args[0])
+      kicked_user = create_user(args[1])
+      if (kicked_user.is_ricer?)
+        channel.ricer_on_part
+        Ricer::Irc::Chanperm.where(:channel_id => channel.id).update_all(:online => false)
+      else
+        kicked_user.ricer_on_parted_channel(channel)
+      end
     end
     
     def on_353
@@ -130,7 +142,10 @@ module Ricer::Plugins::Rice
         created = true
       end
       
-      # Ricer::Irc::User.current = user
+      # Set current user in thread variable scope :(
+      # This is needed as some events might need to know which user to process
+      # But there might be no sender / receiver in that event or looping many users
+      Ricer::Irc::User.current = user
       
       if !user.should_cache? # Not in mem cache yet?
         user.ricer_on_joined_server(server) # We surely joined the server then :)

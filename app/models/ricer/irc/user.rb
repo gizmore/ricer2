@@ -30,11 +30,13 @@ module Ricer::Irc
     def displayname; "\x02#{quietname}\x02:#{self.server_id}" end
     def guid; "#{self.name}:#{self.server_id}"; end
     def server; Ricer::Bot.instance.servers.find(self.server_id); end
-    
-    # def self.current; Thread.current[:ricer_user]; end
-    # def self.current=(user); Thread.current[:ricer_user] = user; end
+    def is_ricer?; self.server.nickname.name.downcase == self.nickname.downcase; end
 
-    scope :online, -> { where(:online => 1) }
+    # Current user for current thread
+    def self.current; Thread.current[:ricer_user]; end
+    def self.current=(user); Thread.current[:ricer_user] = user; end
+
+    scope :online, -> { where(:online => true) }
     
     def get_queue; server.connection.queue_for(self); end
     def flush_queue; server.connection.flush_queue_for(self); end
@@ -94,7 +96,7 @@ module Ricer::Irc
     ###########################
     # Get all permission objects
     def all_chanperms
-      Ricer::Irc::Chanperm.where(:user_id => self.id).load
+      Ricer::Irc::Chanperm.where(:user_id => self.id)
     end
     
     # Get permission object
