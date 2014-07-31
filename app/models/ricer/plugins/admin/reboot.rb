@@ -9,13 +9,14 @@ module Ricer::Plugins::Admin
     
     has_usage :execute_reboot
     def execute_reboot
-      execute_with_message(t(:default_msg, sender.displayname))
+      execute_with_message(t(:default_msg, user:sender.displayname))
     end
         
     has_usage :execute_with_message, '<..message..>'
     def execute_with_message(message)
-      bot.reboot = true
       exec_line "die #{message}"
+      pid = spawn "bundle exec rake ricer:start"
+      Process.detach(pid)
     end
 
   end

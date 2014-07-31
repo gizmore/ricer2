@@ -90,4 +90,4 @@ en:
           err_invalid_choice: 'Please choose only valid options between %{min} and %{max}.'
           msg_freetext_answer: '%{answerer} has replied to "%{question}": "%{answer}".'
           msg_vote_counted: 'Your vote has been counted.'
-          msg_vote_received: 'There has been a vote on %{server}.'
+          msg_vote_received: 'There has been a vote for %{type} %{qid} - "%{question}" - on %{server}.'
