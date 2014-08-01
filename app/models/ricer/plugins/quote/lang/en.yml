@@ -2,11 +2,17 @@ en:
   ricer:
     plugins:
       quote:
+
         display_list_item: '%{id}'
-        display_show_item: 'Quote #%{id} - %{message} - added by %{by} - Liked %{likes} times.'
+        display_show_item: 'Quote #%{id} - "%{message}" - added by %{by} - Liked %{likes} times.'
+
         add:
           description: 'Add a quote to the database.'
           msg_quote_added: 'A new quote has been added to the database with ID: %{quote_id}.'
+          
+        search:
+          description: 'Search the quote database.'
+
         stats:
           description: 'Show statistics about the quote database.'
           msg_stats:
