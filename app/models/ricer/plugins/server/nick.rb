@@ -5,9 +5,11 @@ module Ricer::Plugins::Server
     scope_is :everywhere
     permission_is :ircop
     connector_is :irc
+
+    has_usage :execute, '<nickname> <password>'
     
     has_usage :execute, '<nickname>'
-    def execute(nickname)
+    def execute(nickname, password=nil)
       return rply :err_nick_is_online if server.users.online.by_name(nickname).count > 1
       
       if nick != server.server_nicks.where(:name => nickname).first

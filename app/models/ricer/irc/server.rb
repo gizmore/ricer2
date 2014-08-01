@@ -93,7 +93,7 @@ module Ricer::Irc
       rescue => e
         @nicknames.rewind
         @nickname = @nicknames.peek
-        @nick_cycle = '_'+SecureRandom.base64(3)
+        @nick_cycle = '_'+(SecureRandom.base64(3).gsub(/[^a-z0-9]/i, 'a'))
         @nickname.next_cycle(@nick_cycle)
       end
       bot.log_info "Next nickname is #{@nickname.name}"

@@ -4,6 +4,8 @@ module Ricer::Plugins::Cvs
     trigger_is :add
     permission_is :voice
     
+    denial_of_service_protected scope: :bot
+    
     has_setting name: :default_public, type: :boolean, scope: :bot,     permission: :responsible, default:false
     has_setting name: :default_delay,  type: :integer, scope: :user,    permission: :operator,    default:60, min:3, max:240
     has_setting name: :default_delay,  type: :integer, scope: :channel, permission: :operator,    default:60, min:3, max:240
@@ -15,8 +17,9 @@ module Ricer::Plugins::Cvs
     def execute_b(name, url, public); execute_bp(name, url, public, nil); end
     def execute_bp(name, url, public, pubkey)
       
-      return rply :err_dup_name unless Repo.by_name(argv[0]).nil?
-      return rply :err_dup_url unless Repo.by_url(argv[1]).nil?
+      return rply :err_dup_name unless Repo.by_name(name).nil?
+      return rply :err_dup_url unless Repo.by_url(url).nil?
+      
       repo = Repo.new({
         user: user,
         name: name,
@@ -25,7 +28,9 @@ module Ricer::Plugins::Cvs
         pubkey: pubkey,
       })
       repo.validate!
+      
       Ricer::Thread.execute do
+        start_service
         begin
           system = System.new(repo, self, setting(:default_delay))
           system_name = system.detect
@@ -39,6 +44,7 @@ module Ricer::Plugins::Cvs
         rescue => e
           reply_exception e
         end
+        finished_service
       end
     end
     

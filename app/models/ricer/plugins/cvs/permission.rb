@@ -3,8 +3,8 @@ module Ricer::Plugins::Cvs
     
     self.table_name = :cvs_repo_perms
     
+    belongs_to :repo, :class_name => Repo.name
     belongs_to :user, :class_name => 'Ricer::Irc::User'
-    belongs_to :repo, :class_name => 'Ricer::Plugin::Cvs::Repo'
     
     def self.upgrade_1
       m = ActiveRecord::Migration.new

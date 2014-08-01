@@ -16,7 +16,7 @@ module Ricer::Plugins::Cvs
     end
 
     def get_system(name); self.class.get_system(name); end
-    def self.get_system(name); Ricer::Plugin::Cvs.const_get(name); end
+    def self.get_system(name); Ricer::Plugins::Cvs.const_get(name); end
     
     def detect
       repo.rmdir

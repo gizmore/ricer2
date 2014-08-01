@@ -3,7 +3,7 @@ en:
     models:
       ricer/plugin/cvs/repo: 'Repository'
   ricer:
-    plugin:
+    plugins:
       cvs:
         err_permission: 'You are not allowed to do that.'
         msg_show_item: '%{repo_id}-%{name}(%{path})'
@@ -23,15 +23,12 @@ en:
           trigger: 'show'
         delete:
           trigger: 'delete'
-          usage: '<name|id>'
           description: 'Purge a repository and mark it deleted.'
         find:
           trigger: 'find'
-          usage: '<repo> <filename>'
           description: 'Search for a file with a given name in a repository.'
         ifind:
           trigger: 'findi'
-          usage: '<repo> <filename>'
           description: 'Search for a file with a given name, case insensitive, in a repository.'
         abbo:
         unabbo:
