@@ -65,7 +65,7 @@ module Ricer::Plug::Extender::VoteTriggers
       
       has_usage :execute, '<id>'
       def execute(id)
-        item = vote_class.find!(id)
+        item = vote_class.find(id)
         item.liked_by user
         return reply I18n.t('ricer.plug.extender.vote_triggers.err_vote') unless item.vote_registered?
         return reply I18n.t('ricer.plug.extender.vote_triggers.msg_voted')
@@ -83,7 +83,7 @@ module Ricer::Plug::Extender::VoteTriggers
       
       has_usage :execute, '<id>'
       def execute(id)
-        item = vote_class.find!(id)
+        item = vote_class.find(id)
         item.disliked_by user
         return reply I18n.t('ricer.plug.extender.vote_triggers.err_vote') unless item.vote_registered?
         return reply I18n.t('ricer.plug.extender.vote_triggers.msg_voted')

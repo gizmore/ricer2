@@ -33,3 +33,8 @@ gem 'tzinfo-data'
 
 # LIB/SIMILIAR_VALIDATOR
 gem 'tf-idf-similarity', git: 'https://github.com/opennorth/tf-idf-similarity'
+
+
+# PLUGINS
+gem 'net-toc' # ICQ
+

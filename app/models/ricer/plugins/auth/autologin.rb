@@ -34,10 +34,9 @@ module Ricer::Plugins::Auth
       end
     end
     
-    def on_330
-      autologin(args[2])
-    end
-    
+    # TODO: configure in ircd detection which statuscode really means autologin 
+    def on_307; on_330; end
+    def on_330; autologin(args[1]); end
     def autologin(username)
       user = Ricer::Irc::User.online.where(:nickname => username, server_id: server.id).first
       unless user.nil?

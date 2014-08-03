@@ -3,7 +3,7 @@ module Ricer::Plugins::Quote
     
     trigger_is :stats
     
-    has_usage :execute, ''
+    has_usage :execute
     def execute
       
       rply :msg_stats,

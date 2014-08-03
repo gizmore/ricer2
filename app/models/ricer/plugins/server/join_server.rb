@@ -39,7 +39,11 @@ module Ricer::Plugins::Server
         server.online = true
         server.save!
         server.global_cache_add
-        user.localize!.send_privmsg(t('msg_connected', server: server.displayname, nickname: server.nickname.nickname, superword:generate_superword))
+        user.localize!.send_privmsg(t('msg_connected',
+          server: server.displayname,
+          nickname: server.nickname.next_nickname,
+          superword:generate_superword
+        ))
       end
     end
     
@@ -48,7 +52,7 @@ module Ricer::Plugins::Server
     end
     
     def generate_superword
-      password = 'abcdefg'
+      password = SecureRandom.base64(6).gsub('/', 'a')
       super_plugin = get_plugin('Auth/Super')
       super_plugin.save_setting(:password, :server, password)
       password

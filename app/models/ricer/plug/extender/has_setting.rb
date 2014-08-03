@@ -176,7 +176,7 @@ module Ricer::Plug::Extender::HasSetting
           unless options.nil?
             key = build_key(name, scope)
             unless create
-              setting = Ricer::Plug::Setting.find!(key) rescue nil
+              setting = Ricer::Plug::Setting.find(key) rescue nil
               if setting
                 setting.options = options
                 return db_settings[key] = setting

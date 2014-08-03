@@ -12,9 +12,7 @@ module Ricer::Plug::Params
     end
     
     def convert_in!(input, options, message)
-      unless input.integer?
-        fail_type(input, 'Integer')
-      end
+      fail_type unless input.integer?
       input = input.to_i
       min,max = self.min(options), self.max(options)
       fail_int_between(min, max) unless input.between?(min, max) 

@@ -8,7 +8,7 @@ module Ricer::Plug::Extender::IsListTrigger
 
   def is_list_trigger(trigger_name, options={})
     
-    options = merge_options(options, DEFAULT_OPTIONS)
+    merge_options(options, DEFAULT_OPTIONS)
     
     class_eval do |klass|
 
@@ -34,6 +34,7 @@ module Ricer::Plug::Extender::IsListTrigger
       has_usage :execute_welcome, ''
       has_usage :execute_list, '<page>'
       has_usage :execute_search, "#{options[:pattern]} <page>"
+      has_usage :execute_search, "#{options[:pattern]}"
       
       def execute_welcome
         execute_list(1)
