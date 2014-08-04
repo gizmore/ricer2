@@ -7,10 +7,8 @@ module Ricer::Plugins::Websocket
         
         EM::WebSocket.run(:host => server.hostname, :port => server.port) do |ws|
           ws.onopen { |handshake|
-            puts "WebSocket connection open"
           }
           ws.onclose {
-            puts "Connection closed"
             if ws.instance_variable_defined?(:@ricer_user)
               user = ws.instance_variable_remove(:@ricer_user)
               xlin_logout(user, message)

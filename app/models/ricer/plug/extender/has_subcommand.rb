@@ -1,6 +1,5 @@
 module Ricer::Plug::Extender::HasSubcommand
   def has_subcommand(plugin_name)
-
     class_eval do |klass|
       
       Ricer::Plugin.register_class_variable('@parent_command')
@@ -44,6 +43,5 @@ module Ricer::Plug::Extender::HasSubcommand
       end
       
     end
-
   end
 end

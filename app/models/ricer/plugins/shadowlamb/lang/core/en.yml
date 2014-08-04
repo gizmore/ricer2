@@ -1,2 +1,9 @@
 en:
-  
+  shadowlamb:
+    values:
+      body:
+        long: body
+        short: bo
+      magic:
+        long: magic
+        short: ma

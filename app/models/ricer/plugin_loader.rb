@@ -3,6 +3,8 @@ module Ricer
     
     attr_reader :plugdirs, :valid
     
+    def bot; @bot; end
+    
     def initialize(bot)
       @bot = bot
       @plugdirs = []
@@ -27,6 +29,10 @@ module Ricer
         plugins += load_path(path)
       end
       
+      plugins.each do |plugin|
+        plugin.on_load
+      end
+
       plugins.each do |plugin|
         gather_subcommands(plugins, plugin)
       end
@@ -54,7 +60,20 @@ module Ricer
       # Then the rest
       @plugdirs.each do |plugdir|
         Dir[plugdir].each do |dir|
-          plugins += load_plugin_dir dir
+          modulename = dir.rsubstr_from('/').camelize
+          plugins += load_plugin_dir(dir, modulename)
+          begin
+            load_i18n_dir(dir+'/lang/')
+          rescue Exception => e
+            @bot.log_error("Lang files missing: '#{plugdir}/lang/'.")
+          end
+        end
+      end
+      
+      # Subcommands
+      @plugdirs.each do |plugdir|
+        Dir[plugdir].each do |dir|
+          plugins += load_command_dir(dir)
         end
       end
       
@@ -62,10 +81,11 @@ module Ricer
     end
     
     def gather_subcommands(plugins, plugin)
-      return unless plugin.respond_to?(:has_subcommands?)
-      plugin.subcommand_names.each do |cmdname|
-        subcommand = gather_subcommand(plugins, plugin, cmdname)
-        plugin.add_subcommand(subcommand)
+      if plugin.respond_to?(:has_subcommands?)
+        plugin.subcommand_names.each do |cmdname|
+          subcommand = gather_subcommand(plugins, plugin, cmdname)
+          plugin.add_subcommand(subcommand)
+        end
       end
     end
     
@@ -83,6 +103,23 @@ module Ricer
     end
     def load_model_dir(plugdir)
       load_files(plugdir+'/model/*')
+    end
+    def load_command_dir(plugdir)
+      loaded = []
+      if File.directory?(plugdir+'/command')
+        modulename = plugdir.rsubstr_from('/').camelize
+        loaded = load_plugin_dir(plugdir+'/command', modulename)
+        begin
+          parent_plugin = Object.const_get("Ricer::Plugins::#{modulename}::#{modulename}")
+          Filewalker::proc_files(plugdir+'/command/') do |path|
+            subcommand = path.rsubstr_from('/').substr_to('.').to_sym
+            parent_plugin.has_subcommand(subcommand)
+          end
+        rescue => e
+          bot.log_exception(e)
+        end
+      end
+      loaded
     end
     def load_files(dir_pattern)
       begin
@@ -117,11 +154,11 @@ module Ricer
       end
     end
     
-    def load_plugin_dir(plugdir)
+    def load_plugin_dir(plugdir, modulename)
       plugins = []
  
       length = plugdir.length + 1;
-      modulename = plugdir[(plugdir.rindex('/')+1)..-1].camelize
+#      modulename = plugdir[(plugdir.rindex('/')+1)..-1].camelize
       @bot.log_info "Loading plugin module folder '#{modulename}' from '#{plugdir}'."
       
       Dir[plugdir+'/*'].each do |path|
@@ -133,6 +170,7 @@ module Ricer
             classobject = Object.const_get("Ricer::Plugins::#{modulename}::#{classname}")
             if classobject < Ricer::Plugin
               plugin = install_plugin(classobject)
+              plugin.plugin_module = modulename
               unless plugin.nil?
                 PluginMap.instance.load_plugin(plugin)
                 plugins.push(plugin)
@@ -146,11 +184,6 @@ module Ricer
             @valid = false
           end
         end
-      end
-      begin
-        load_i18n_dir(plugdir+'/lang/')
-      rescue Exception => e
-        @bot.log_error("Lang files missing: '#{plugdir}/lang/'.")
       end
       plugins
     end

@@ -172,8 +172,6 @@ module Ricer
           end
           @running = false
         rescue Exception => e
-          puts e
-          puts e.backtrace.join("\n")
           ricer_on_exit
           @running = false
         end

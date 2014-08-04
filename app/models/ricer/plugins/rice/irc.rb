@@ -109,7 +109,6 @@ module Ricer::Plugins::Rice
     end
     
     def send_line(message)
-#      puts "IRC::Connection.send_line(#{message.reply_data})"
       begin
         @server.ricer_replies_to(message)
         text = message.reply_data.gsub("\n", '').gsub("\r", '')
@@ -191,7 +190,6 @@ module Ricer::Plugins::Rice
       s = e + 1
       
       # match = /[^\s"']+|"([^"]*)"|'([^']*)'/.match(raw[s..-1])
-      # puts match.inspect
       
       while !(e = raw.index(' ', s)).nil?
         if (raw[s] == ':')

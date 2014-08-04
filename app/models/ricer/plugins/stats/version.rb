@@ -18,7 +18,7 @@ module Ricer::Plugins::Stats
     private
     
     def os_signature
-      puts RbConfig::CONFIG.inspect    
+      bot.log_debug(RbConfig::CONFIG.inspect)
       'Linux'
     end
     

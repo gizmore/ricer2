@@ -17,7 +17,6 @@ module Ricer::Plugins::Log
     end
     
     def log(input)
-      #puts @message.consolestring(input)
       case get_setting(:logtype)
       when :Binlog; Binlog.irc_message(@message, input)
       when :Textlog; Textlog.irc_message(@message, input)

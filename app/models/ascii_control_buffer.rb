@@ -22,7 +22,6 @@ class AsciiControlBuffer
       @data += @io.read_nonblock(@bufsize)
     rescue => e
     end
-    puts @data
     !empty?
   end
   

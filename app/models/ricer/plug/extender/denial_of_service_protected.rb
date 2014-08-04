@@ -31,7 +31,6 @@ module Ricer::Plug::Extender::DenialOfServiceProtected
 
       # Call this when the thread is started!      
       def start_service
-        byebug
         if service_running?
           raise Ricer::ExecutionException.new(tt('ricer.plug.extender.denial_of_service_protected.err_already_running'))  
         end
@@ -40,7 +39,6 @@ module Ricer::Plug::Extender::DenialOfServiceProtected
       
       # Call this when the thread is done!      
       def stopped_service
-        byebug
         denial_of_service_cache.delete(service_issuer)
       end
       

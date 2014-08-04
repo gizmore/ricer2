@@ -10,7 +10,7 @@ module Ricer
 
     DEFAULT_PRIORITY = 50
     
-    attr_accessor :message
+    attr_accessor :message, :plugin_module
     
     def lib; Ricer::Irc::Lib.instance; end
     def bot; Ricer::Bot.instance; end
@@ -46,12 +46,13 @@ module Ricer
     def plugin_revision; 1; end
     def plugin_license; 'MIT'; end
     def plugin_author; 'gizmore@wechall.net'; end
-    def plugin_module; self.class.name.split('::')[-2]; end
+#    def plugin_module; self.class.name.split('::')[-2]; end
     def plugin_name; self.class.name.split('::').slice(-2, 2).join('/'); end
     def plugin_shortname; self.class.name.rsubstr_from('::').undescore.to_sym; end
 
     def on_init; end
     def on_exit; end
+    def on_load; end
     def on_reload; end
     def on_install; end
     

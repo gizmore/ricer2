@@ -9,7 +9,6 @@ module Ricer::Plug
       if check_unknown
         options.keys.each do |k|
           unless default_options.key?(k)
-            puts Kernel.caller
             throw Exception.new("Unexpected option key: #{k}")
           end
         end

@@ -28,7 +28,7 @@ class Filewalker
   
   def self.__traverse(dir, pattern='*', recursive=true, dotfiles=true, files=true, dirs=false, &block)
     
-    #dir = dir.rtrim!('/') + '/'
+    dir = dir.rtrim('/') + '/'
     
     # Sanity
     raise Exception.new "filewalker(dir) is not a directory: '#{dir}'." unless File.directory?(dir)

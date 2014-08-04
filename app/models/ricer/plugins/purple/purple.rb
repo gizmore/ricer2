@@ -15,8 +15,6 @@ module Ricer::Plugins::Purple
       if @protocol.nil?
         throw Ricer::ExecutionException.new("LibPurple/Ruburple does not speak #{purple_protocol_symbol}")        
       end
-      byebug
-
 
       @account = @protocol.get_account(username, password)
       @connected = true
@@ -36,12 +34,11 @@ module Ricer::Plugins::Purple
         # end
 #         
       # end
-      Ruburple::subscribe(:account_authorization_requested) do |account, sender, message, conversation, flags|
-        byebug
-        if account.uid == @account.uid
-          purple_add_buddy(account, sender, message, conversation, flags)
-        end
-      end
+      # Ruburple::subscribe(:account_authorization_requested) do |account, sender, message, conversation, flags|
+        # if account.uid == @account.uid
+          # purple_add_buddy(account, sender, message, conversation, flags)
+        # end
+      # end
       
       Ruburple::subscribe(:received_im_msg) do |account, sender, message, conversation, flags|
         if account.uid == @account.uid
@@ -78,7 +75,6 @@ module Ricer::Plugins::Purple
     
 
     def purple_add_buddy(sender, message, conversation, flags)
-      byebug
       puts "HELLO"
     end
     

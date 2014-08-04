@@ -8,7 +8,6 @@ module Ricer::Plugins::Rss
     def start(plugin)
       Ricer::Thread.execute do
         while true
-          bot.log_info "Checking feeds"
           begin
             check_feeds(plugin)
           rescue => e
@@ -22,7 +21,6 @@ module Ricer::Plugins::Rss
     def check_feeds(plugin)
       Feed.all.enabled.each do |feed|
         begin
-          puts "Checking feed #{feed.title}"
           feed.check_feed(plugin)
           sleep(3)
         rescue => e
