@@ -11,14 +11,15 @@ module Ricer::Plugins::Fun
 		def wtf(message)
 			message.gsub!(/\s/, '+')
 			ud = 'http://www.urbandictionary.com/define.php?term=' + message
-			doc = Nokogiri::HTML(open(ud), nil, 'UTF-8')
-			if doc.at_css('.meaning')
-				meaning = doc.at_css('.meaning').content.strip
-				example = doc.at_css('.example').content.strip
-				reply meaning
-				reply "Example: " + example
+			Ricer::Thread.execute do
+				doc = Nokogiri::HTML(open(ud), nil, 'UTF-8')
+				if doc.at_css('.meaning')
+					meaning = doc.at_css('.meaning').content.strip
+					example = doc.at_css('.example').content.strip
+					rply meaning
+					rply :example + example
 			else
-				reply "Not found :("
+				rply :error_not_found
 			end
 		end
 	end
