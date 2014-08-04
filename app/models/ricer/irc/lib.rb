@@ -1,13 +1,14 @@
 module Ricer::Irc
   class Lib
     
+    include Singleton
+    include ActionView::Helpers::NumberHelper
+    include ActionView::Helpers::SanitizeHelper
+
     ACTION = "\x01"
     BOLD = "\x02"
     ITALIC = "\x03"
     
-    include Singleton
-    include ActionView::Helpers::NumberHelper
-    include ActionView::Helpers::SanitizeHelper
     
     def green(text)
       text

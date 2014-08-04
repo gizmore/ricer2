@@ -20,4 +20,4 @@ en:
           stats: 'Connected to %{active_servers}/%{total_servers} servers and %{channels} channels, seeing %{users} users. %{plugins} plugins and %{events} event handlers registered.'
         version:
           description: 'Show version information for $BOT$.'
-          version: '%{owner} runs Ricer v%{version} - %{builddate}. Ruby: %{ruby}. Platform: %{os}. Local time: %{time}.'
+          version: '%{owner} runs Ricer v%{version} - %{builddate}. Ruby: %{ruby}. Platform: %{os}. Local time: %{time}. Environment: %{environment}.'

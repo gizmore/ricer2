@@ -2,6 +2,7 @@ module Ricer::Plugins::Auth
   class Autologin < Ricer::Plugin
     
     has_priority 25
+    connector_is :irc
     
     def ricer_on_startup
       probe_server

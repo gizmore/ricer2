@@ -6,8 +6,6 @@ module Ricer::Plugins::Rice
     require 'uri'
     require 'socket'
     
-    def bot; server.bot; end
-
     def connect!
       begin
         @queue = {}
@@ -94,7 +92,8 @@ module Ricer::Plugins::Rice
     
     def send_splitted(message, prefix, text, postfix='')
       length = MAXLEN - prefix.length
-      text.scan(Regexp.new(".{1,#{length}}(?:\s|$)|.{1,#{length}}")).map(&:strip).each do |line|
+#      text.scan(Regexp.new(".{1,#{length}}(?:\s|$)|.{1,#{length}}")).map(&:strip).each do |line|
+      text.scan(Regexp.new(".{1,#{length}}(?:\s|$)|.{1,#{length}}")).each do |line|
         send_queued(message.reply_message(prefix+line+postfix))
       end
       nil
@@ -157,6 +156,8 @@ module Ricer::Plugins::Rice
     
     ### IRC Message parser
     def parse(line)
+      
+      line.rtrim!("\r\n")
       
       message = Ricer::Net::Message.new(line)
       

@@ -2,6 +2,7 @@ module Ricer::Plugins::Auth
   class Register < Ricer::Plugin
     
     trigger_is :register
+    connector_is :irc
 
     bruteforce_protected :always => false
     

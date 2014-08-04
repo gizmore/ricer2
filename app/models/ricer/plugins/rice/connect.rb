@@ -1,13 +1,15 @@
 ###
-### The core plugin that sets up users and channels when receiving events
-### TODO: Probably cleanest is to give it "connector_is :irc"
+### The core IRC plugin that sets up users and channels when receiving events
 ###
 module Ricer::Plugins::Rice
   class Connect < Ricer::Plugin
     
+    connector_is :irc
+
     # We have to be called first!
     def priority; 0; end 
     def core_plugin?; true; end
+
     # We have to be called first!
     
     def ricer_on_server_handshake

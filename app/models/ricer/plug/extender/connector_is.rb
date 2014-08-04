@@ -1,6 +1,4 @@
 module Ricer::Plug::Extender::ConnectorIs
-  
-#  def has_connectors(symbols=nil)
   def connector_is(symbols=nil)
     
     # Basic sanity
@@ -41,15 +39,9 @@ module Ricer::Plug::Extender::ConnectorIs
       
       # Checker helper
       def connector_supported?(connector_symbol)
-        connector_symbols.include?(connector_symbol)
+        connector_symbols.include?(connector_symbol.to_sym)
       end
       
     end
   end
-
-  # # Singularized function name
-  # def connector_is(symbols=nil); has_connectors(symbols); end
-  # def has_connector(symbols=nil); has_connectors(symbols); end
-  # def connectors_are(symbols=nil); has_connectors(symbols); end
-  
 end

@@ -44,3 +44,4 @@ config/secrets.yml
 /log
 /config/environments/production.rb
 /app/models/ricer/DISABLE
+/app/models/ricer/plugins/shadowlamb

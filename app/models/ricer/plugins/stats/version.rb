@@ -11,7 +11,8 @@ module Ricer::Plugins::Stats
         builddate: bot.builddate,
         ruby: RUBY_VERSION,
         os: os_signature,
-        time: l(Time.now)
+        time: l(Time.now),
+        environment: ENV['RAILS_ENV']
     end
     
     private

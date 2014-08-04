@@ -2,6 +2,8 @@ module Ricer::Plugins::Cvs
   class Cvs < Ricer::Plugin
     
     def upgrade_1; Repo.upgrade_1; Permission.upgrade_1; end
+
+#    for_environment :development
     
     has_subcommand :abbo
     has_subcommand :abbos

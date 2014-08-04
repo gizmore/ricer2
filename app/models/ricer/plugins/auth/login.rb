@@ -4,6 +4,8 @@ module Ricer::Plugins::Auth
     trigger_is :login  
     scope_is :user
     permission_is :registered
+    
+    connector_is :irc
 
     bruteforce_protected
 

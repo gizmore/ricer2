@@ -53,7 +53,7 @@ GEM
     arel (5.0.1.20140414130214)
     bcrypt (3.1.7)
     builder (3.2.2)
-    byebug (3.1.2)
+    byebug (3.2.0)
       columnize (~> 0.8)
       debugger-linecache (~> 1.2)
     columnize (0.8.9)
@@ -63,6 +63,9 @@ GEM
       edge_rider (>= 0.2.5)
     edge_rider (0.3.0)
       activerecord
+    em-websocket (0.5.0)
+      eventmachine (>= 0.12.9)
+      http_parser.rb (~> 0.5.3)
     erubis (2.7.0)
     eventmachine (1.0.3)
     execjs (2.2.1)
@@ -91,7 +94,6 @@ GEM
     multi_json (1.10.1)
     multipart-post (1.2.0)
     mysql2 (0.3.16)
-    net-toc (0.2)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
     open4 (1.3.4)
@@ -174,12 +176,12 @@ DEPENDENCIES
   bcrypt
   byebug
   dusen
+  em-websocket
   exception_notification!
   foreigner
   geocoder
   kaminari
   mysql2
-  net-toc
   nokogiri
   open4
   os

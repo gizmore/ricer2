@@ -13,7 +13,7 @@ module Ricer::Plugins::Art
     def execute(text)
       Ricer::Thread.execute do
         text = Shellwords.escape(text)
-        reply `"cowsay -f #{get_setting(:image)} -- #{text}"`
+        reply `cowsay -f #{get_setting(:image)} -- #{text}`
       end
     end
     

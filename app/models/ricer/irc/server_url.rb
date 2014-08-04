@@ -21,6 +21,10 @@ module Ricer::Irc
       uri.hostname
     end
     
+    def port
+      uri.port
+    end
+    
     def domain
       uri.domain
     end

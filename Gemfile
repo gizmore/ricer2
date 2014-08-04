@@ -35,6 +35,6 @@ gem 'tzinfo-data'
 gem 'tf-idf-similarity', git: 'https://github.com/opennorth/tf-idf-similarity'
 
 
-# PLUGINS
-gem 'net-toc' # ICQ
-
+# Connector plugins
+#gem 'ruburple', path: '/DATA/_ProjectRuby/ruburple_release'
+gem 'em-websocket'

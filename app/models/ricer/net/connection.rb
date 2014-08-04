@@ -6,6 +6,7 @@ module Ricer::Net
     def self.connector_symbol; name.to_s.rsubstr_from('::').downcase.to_sym; end
     def connector_symbol; self.class.connector_symbol; end
     
+    def bot; server.bot; end
     
     def initialize(server); @server = server;  end
     def connected?; @connected ? true : false; end
@@ -43,7 +44,7 @@ module Ricer::Net
     def get_message
       line = get_line
       puts "#{hostname} << #{line}"
-      parse(line.strip) unless line.nil?
+      parse(line) unless line.nil?
     end
  
     private

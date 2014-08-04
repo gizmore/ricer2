@@ -35,6 +35,7 @@ module Ricer::Irc
     def ssl?; server_url.ssl?; end
     def domain; server_url.domain; end
     def hostname; server_url.hostname; end
+    def port; server_url.port; end
     def name; uri.domain; end
     def displayname; "#{self.id}-#{name}"; end
     def guid; "*:#{self.id}"; end
@@ -158,6 +159,10 @@ module Ricer::Irc
       bot.plugins_for_event(event).each do |plugin|
         # sieve out unsupported connectors
         if plugin.connector_supported?(self.connector)
+          
+          # if plugin.plugin_name == 'Test/Ping'
+            # byebug
+          # end
 
           # EVENT
           # Simply call the func after cloning the plugin
@@ -183,6 +188,7 @@ module Ricer::Irc
           
         end # .connector_supported?
       end # .plugins_for_event
+      nil
     end # def process_event
     
     #####################
