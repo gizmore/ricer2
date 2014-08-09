@@ -11,3 +11,6 @@ en:
           tumbleweed: 'makes the tumbleweed sound.'
         happy_hour:
           description: 'Used by gizmore to inititate happy hour mode in #wechall'
+        hirsch:
+          description: 'Rööööhr'
+          msg_hirsch: 'Röööööööööööööööhr! HIRSCH!'
