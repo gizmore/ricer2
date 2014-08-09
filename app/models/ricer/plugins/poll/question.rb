@@ -44,7 +44,7 @@ module Ricer::Plugins::Poll
     def close!;  self.closed_at = Time.now; self.save!; end
     def can_close?(user, cut_time)
       return true if self.user_id == user.id
-      return true if self.created_at.to_i <= cut_time
+      return true if self.created_at <= cut_time
       return false
     end
     

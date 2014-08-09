@@ -51,7 +51,7 @@ module Ricer::Plugins::Poll
       content = pastebin_title(question)
       content += "\n\n"
       question.answers.each do |answer|
-        content += "<#{answer.user.displayname}>: \"#{answer.option.text}\"\n"
+        content += "<#{answer.user.displayname}>: \"#{answer.option.choice}\"\n"
       end
       send_pastebin(question, content)
     end
