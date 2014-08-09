@@ -71,12 +71,17 @@ module Ricer
       end
       
       # Subcommands
-      @plugdirs.each do |plugdir|
-        Dir[plugdir].each do |dir|
-          plugins += load_command_dir(dir)
-        end
+      # @plugdirs.each do |plugdir|
+        # Dir[plugdir].each do |dir|
+#           
+        # end
+      # end
+      subcommands = []
+      plugins.each do |parent_plugin|
+        subcommands += load_command_dir(parent_plugin)
       end
-      
+      plugins += subcommands
+
       plugins
     end
     
@@ -101,26 +106,35 @@ module Ricer
     def load_export_dir(plugdir)
       load_files(plugdir+'/export/*')
     end
+    
     def load_model_dir(plugdir)
       load_files(plugdir+'/model/*')
     end
-    def load_command_dir(plugdir)
-      loaded = []
+    
+    def load_command_dir(parent_plugin)
+      byebug if parent_plugin.plugin_name == 'Shadowlamb/Shadowlamb'
+      plugdir, all_loaded = parent_plugin.plugin_dir, []
       if File.directory?(plugdir+'/command')
-        modulename = plugdir.rsubstr_from('/').camelize
+        modulename = parent_plugin.plugin_module
+        # Load all and subdirs
         loaded = load_plugin_dir(plugdir+'/command', modulename)
+        Filewalker::proc_dirs(plugdir+'/command') do |path, subdir|
+          loaded += load_plugin_dir(subdir, modulename)
+        end
+        # Add the subcommands
         begin
-          parent_plugin = Object.const_get("Ricer::Plugins::#{modulename}::#{modulename}")
-          Filewalker::proc_files(plugdir+'/command/') do |path|
-            subcommand = path.rsubstr_from('/').substr_to('.').to_sym
-            parent_plugin.has_subcommand(subcommand)
+          loaded.each do |loaded_plugin|
+            parent_plugin.class.has_subcommand(loaded_plugin.short_class_name.to_s.downcase.to_sym)
           end
         rescue => e
           bot.log_exception(e)
         end
+        all_loaded += loaded
       end
-      loaded
+      byebug if parent_plugin.plugin_name == 'Shadowlamb/Shadowlamb'
+      all_loaded
     end
+    
     def load_files(dir_pattern)
       begin
         Dir[dir_pattern].each do |path|
@@ -150,6 +164,7 @@ module Ricer
     
     def load_i18n_dir(plugdir)
       Filewalker.traverse_files(plugdir, '*.yml', true) do |path, dir|
+        #puts "Added I18n file: #{path}"
         I18n.load_path.push(path)
       end
     end
@@ -161,6 +176,7 @@ module Ricer
 #      modulename = plugdir[(plugdir.rindex('/')+1)..-1].camelize
       @bot.log_info "Loading plugin module folder '#{modulename}' from '#{plugdir}'."
       
+#      Filewalker.traverse_files(plugdir, '*.rb') do |path|
       Dir[plugdir+'/*'].each do |path|
         if File.file?(path)
           begin
@@ -171,6 +187,8 @@ module Ricer
             if classobject < Ricer::Plugin
               plugin = install_plugin(classobject)
               plugin.plugin_module = modulename
+              plugin.plugin_dir = plugdir
+              plugin.module_dir = plugdir.substr_to("/#{modulename.underscore}/")||plugdir
               unless plugin.nil?
                 PluginMap.instance.load_plugin(plugin)
                 plugins.push(plugin)

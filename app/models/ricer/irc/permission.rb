@@ -154,7 +154,7 @@ module Ricer::Irc
     def hierarchic_bits(respect_auth=REGISTERED)
       sumbits = 0
       ALL.map do |p|; sumbits += p.bit if (self.bit >= p.bit) && p.hierarchic; end
-      sumbits &= REGISTERED.hierarchic_bits(nil) if respect_auth && (!self.authenticated)
+      sumbits &= respect_auth.hierarchic_bits(nil) if respect_auth && (!self.authenticated)
       sumbits
     end
     def group_bits(respect_auth=REGISTERED)
@@ -168,9 +168,9 @@ module Ricer::Irc
     end
     
     def has_permission?(permission, respect_auth=REGISTERED)
-      (self.hierarchic_bits(respect_auth) >= permission.hierarchic_bits)
-#       &&
-#      ( ((self.group_bits(respect_auth) & permission.group_bits) == permission.group_bits) || (permission.group_bits == 0) ) 
+      hierarchic_passed = self.hierarchic_bits(respect_auth) >= permission.hierarchic_bits
+      group_bits_passed = (permission.group_bits == 0) || ((self.group_bits(respect_auth) & permission.group_bits) == permission.group_bits)
+      hierarchic_passed && group_bits_passed
     end
 
   end 

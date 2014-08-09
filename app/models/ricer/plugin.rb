@@ -10,7 +10,7 @@ module Ricer
 
     DEFAULT_PRIORITY = 50
     
-    attr_accessor :message, :plugin_module
+    attr_accessor :message, :plugin_module, :plugin_dir, :module_dir
     
     def lib; Ricer::Irc::Lib.instance; end
     def bot; Ricer::Bot.instance; end
@@ -281,7 +281,7 @@ module Ricer
     # Own I18n.t that rescues into key: arg.inspect
     def i18t(key, *args)
       begin
-        I18n.t(key, *args)
+        I18n.t!(key, *args)
       rescue => e
         bot.log_exception(e)
         i18ti(key, args)

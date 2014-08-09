@@ -28,6 +28,8 @@ class Filewalker
   
   def self.__traverse(dir, pattern='*', recursive=true, dotfiles=true, files=true, dirs=false, &block)
     
+    dir = File.dirname(dir) if File.file?(dir)
+    
     dir = dir.rtrim('/') + '/'
     
     # Sanity

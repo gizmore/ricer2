@@ -101,7 +101,9 @@ module Ricer::Irc
     
     # Get permission object
     def chanperm_for(channel)
-      Ricer::Irc::Chanperm.where({:user_id => self.id, :channel_id => channel.id}).first_or_create
+      perm = Ricer::Irc::Chanperm.where({:user_id => self.id, :channel_id => channel.id}).first_or_create
+      perm.permissions |= self.permissions
+      perm
     end
     
     # Check for channel against other permission object 

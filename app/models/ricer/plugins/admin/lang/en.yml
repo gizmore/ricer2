@@ -6,6 +6,12 @@ en:
         die:
           description: 'Make $BOT$ quit all servers and die.'
           default_message: '%{user} used the die command.'
+          
+        purge:
+          trigger: 'purge'
+          description: 'Delete a whole plugin module, it´s triggers and all plugin module tables. DO NOT USE IN PRODUCTION!'
+          msg_purging: 'Scrubbing the db...'
+          msg_purged_and_die: 'All stuff deleted... going to die.'
 
         raw:
           description: 'Send raw commands to an irc server.'

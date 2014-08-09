@@ -1,9 +1,13 @@
 en:
   shadowlamb:
-    values:
-      body:
-        long: body
-        short: bo
-      magic:
-        long: magic
-        short: ma
+    core:
+      values:
+        body:
+          long: body
+          short: bo
+        magic:
+          long: magic
+          short: ma
+        strength:
+          long: strength
+          short: st

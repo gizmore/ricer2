@@ -28,7 +28,7 @@ module Ricer::Plugins::Auth
       p = user.chanperm_for(channel)
       rply :msg_show_chan,
         user: user.displayname,
-        bitstring: p.merged_permission.display,
+        bitstring: user.chanperm_for(channel).display,
         channel: channel.displayname,
         server: server.displayname
     end
