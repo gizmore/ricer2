@@ -6,7 +6,7 @@ module Ricer::Plug::Params
       # Get server from user:sid or message
       sid = input.substr_from(':')
       sid = (sid.numeric? ? sid : nil) unless sid.nil?
-      server = Ricer::Irc::Server.where(:id => sid) unless sid.nil?
+      server = Ricer::Irc::Server.where(:id => sid).first unless sid.nil?
       server = message.server if sid.nil?
       failed_input if server.nil?
 
