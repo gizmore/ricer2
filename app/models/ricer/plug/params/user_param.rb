@@ -11,7 +11,7 @@ module Ricer::Plug::Params
       failed_input if server.nil?
 
       # 
-      name = input.substr_until(':') unless sid.nil?
+      name = input.substr_to(':') unless sid.nil?
       name = input if name.nil?
       sid = server.id
       
