@@ -15,7 +15,9 @@ module Ricer::Plugins::Fun
         if doc.at_css('.meaning')
           reply doc.at_css('.meaning').content.strip
           example = doc.at_css('.example').content.strip rescue nil
-          rply :msg_example, example:example unless example.nil?
+          unless example.nil? || example.empty?
+            rply :msg_example, example:example
+          end 
         else
           rply :err_not_found
         end
