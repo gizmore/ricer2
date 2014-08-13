@@ -1,0 +1,6 @@
+en:
+  ricer:
+    plugins:
+      convert:
+        reverse:
+          description: 'Reverse a string so you cannot read it anymore!'
