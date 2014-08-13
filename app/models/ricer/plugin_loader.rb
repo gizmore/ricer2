@@ -110,28 +110,30 @@ module Ricer
     def load_model_dir(plugdir)
       load_files(plugdir+'/model/*')
     end
+
     
     def load_command_dir(parent_plugin)
-      byebug if parent_plugin.plugin_name == 'Shadowlamb/Shadowlamb'
       plugdir, all_loaded = parent_plugin.plugin_dir, []
-      if File.directory?(plugdir+'/command')
-        modulename = parent_plugin.plugin_module
-        # Load all and subdirs
-        loaded = load_plugin_dir(plugdir+'/command', modulename)
-        Filewalker::proc_dirs(plugdir+'/command') do |path, subdir|
-          loaded += load_plugin_dir(subdir, modulename)
-        end
-        # Add the subcommands
-        begin
-          loaded.each do |loaded_plugin|
-            parent_plugin.class.has_subcommand(loaded_plugin.short_class_name.to_s.downcase.to_sym)
+      modulename = parent_plugin.plugin_module
+      # For all dirs that are named command...
+      Filewalker.traverse_dirs(plugdir) do |_stub_path, dir|
+        if dir.end_with?('/command')
+          # Load all and subdirs..
+          loaded = load_plugin_dir(dir, modulename)
+          Filewalker.proc_dirs(dir) do |path, subdir|
+            loaded += load_plugin_dir(subdir, modulename)
           end
-        rescue => e
-          bot.log_exception(e)
+          # Add the subcommands
+          begin
+            loaded.each do |loaded_plugin|
+              parent_plugin.class.has_subcommand(loaded_plugin.short_class_name.to_s.downcase.to_sym)
+            end
+          rescue => e
+            bot.log_exception(e)
+          end
+          all_loaded += loaded
         end
-        all_loaded += loaded
       end
-      byebug if parent_plugin.plugin_name == 'Shadowlamb/Shadowlamb'
       all_loaded
     end
     
