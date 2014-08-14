@@ -198,6 +198,8 @@ module Ricer
             elsif classobject < Ricer::Net::Connection
               PluginMap.instance.load_connector(classobject)
             end
+          rescue SystemExit, Interrupt
+            raise
           rescue Exception => e
             @bot.log_error("Error in #{path}")
             @bot.log_exception(e)
