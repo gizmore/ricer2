@@ -65,7 +65,7 @@ module Ricer
           begin
             load_i18n_dir(dir+'/lang/')
           rescue Exception => e
-            @bot.log_error("Lang files missing: '#{plugdir}/lang/'.")
+            @bot.log_warn("Lang files missing: '#{dir}/lang/'.")
           end
         end
       end
