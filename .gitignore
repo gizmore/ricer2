@@ -42,6 +42,8 @@ config/secrets.yml
 /vendor
 /repos
 /log
+/config/database.yml
+/config/environments/development.rb
 /config/environments/production.rb
 /app/models/ricer/DISABLE
 /app/models/ricer/plugins/shadowlamb

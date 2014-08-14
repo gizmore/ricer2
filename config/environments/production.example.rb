@@ -3,9 +3,11 @@ Rails.application.configure do
 
   # RICER2 STUFF. THERE IS ANOTHER SECTION AT THE BOTTOM FOR MAIL #
   # Initial seed for random generator (non crypto)
-  config.rice_seeds = 3133735
+  config.rice_seeds = 445566
+  # Set to true if plugin_loader shall ignore errors
+  config.genetic_rice = true
   # Set to true for more debug output
-  config.chop_sticks = true
+  config.chop_sticks = false
   # owner, but for display only
   config.ricer_owner = 'gizmore'
   # Default server_nickname settings

@@ -201,6 +201,7 @@ module Ricer
           rescue SystemExit, Interrupt
             raise
           rescue Exception => e
+            raise unless @bot.genetic_rice
             @bot.log_error("Error in #{path}")
             @bot.log_exception(e)
             @valid = false

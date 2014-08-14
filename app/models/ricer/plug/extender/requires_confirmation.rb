@@ -1,5 +1,12 @@
 module Ricer::Plug::Extender::RequiresConfirmation
-  def requires_confirmation(options={random:false,always:true})
+  OPTIONS = {
+    always: true,
+    random: false,
+  }
+  def requires_confirmation(options={})
+    
+    merge_options(options, OPTIONS)
+    
     class_eval do |klass|
       
       klass.register_exec_function(:execute_confirmation) if !!options[:always]
@@ -13,8 +20,6 @@ module Ricer::Plug::Extender::RequiresConfirmation
         @@CONFIRM[user] = line + ' ' + confirmationword
         raise Ricer::ExecutionException.new(tt('ricer.plug.extender.requires_confirmation.msg_confirm', phrase:@@RETYPE[user]))
       end
-      
-      private
       
       @@CONFIRM = {}
 

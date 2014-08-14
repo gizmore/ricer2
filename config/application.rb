@@ -9,6 +9,14 @@ Bundler.require(*Rails.groups)
 module Ricer
   class Application < Rails::Application
     
+    # Initial seed for random generator (non crypto)
+    config.rice_seeds = 12345
+    # Set to true for more debug output
+    config.chop_sticks = true
+    # Set to true if plugin_loader shall ignore errors
+    config.genetic_rice = true
+
+    #    
     config.autoload_paths += %W["#{config.root}/app/validators/"]
     
     # Settings in config/environments/* take precedence over those specified here.
@@ -26,8 +34,8 @@ module Ricer
     
     config.ricer_name = 'Ricer'
     config.ricer_owner = 'gizmore'
-    config.ricer_version = '0.95a'
-    config.ricer_version_date = Time.new(2014, 6, 3, 11, 33, 27)
+    config.ricer_version = '0.96a'
+    config.ricer_version_date = Time.new(2014, 8, 15, 16, 23, 42)
 
   end
 end
