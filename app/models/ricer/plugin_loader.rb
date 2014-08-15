@@ -188,13 +188,12 @@ module Ricer
             classobject = Object.const_get("Ricer::Plugins::#{modulename}::#{classname}")
             if classobject < Ricer::Plugin
               plugin = install_plugin(classobject)
+              raise Exception.new("Error loading plugin in #{path}") if plugin.nil?
               plugin.plugin_module = modulename
               plugin.plugin_dir = plugdir
               plugin.module_dir = plugdir.substr_to("/#{modulename.underscore}/")||plugdir
-              unless plugin.nil?
-                PluginMap.instance.load_plugin(plugin)
-                plugins.push(plugin)
-              end
+              PluginMap.instance.load_plugin(plugin)
+              plugins.push(plugin)
             elsif classobject < Ricer::Net::Connection
               PluginMap.instance.load_connector(classobject)
             end

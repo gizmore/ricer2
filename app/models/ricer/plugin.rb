@@ -246,6 +246,8 @@ module Ricer
         plugin.class.get_exec_functions.each do |func|
           plugin.send(func)
         end
+      rescue ActiveRecord::NoDatabaseError => e
+        bot.running = false
       rescue Exception => e
         plugin.reply_exception e
       end

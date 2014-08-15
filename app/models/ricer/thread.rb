@@ -20,6 +20,8 @@ module Ricer
       new do |t|
         begin
           yield proc
+        rescue ActiveRecord::NoDatabaseError => e
+          bot.running = false
         rescue Exception => e
           bot.log_exception(e)
         end
