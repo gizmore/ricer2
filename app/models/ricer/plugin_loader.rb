@@ -43,14 +43,14 @@ module Ricer
     def load_path(path)
       plugins = []
 
-      # Exports first      
+      # Exports first (Cross plugin)     
       @plugdirs.each do |plugdir|
         Dir[plugdir].each do |dir|
           load_export_dir dir
         end
       end
       
-      # Then models
+      # Then models (Cross plugin)
       @plugdirs.each do |plugdir|
         Dir[plugdir].each do |dir|
           load_model_dir dir
@@ -62,26 +62,19 @@ module Ricer
         Dir[plugdir].each do |dir|
           modulename = dir.rsubstr_from('/').camelize
           plugins += load_plugin_dir(dir, modulename)
-          begin
-            load_i18n_dir(dir+'/lang/')
-          rescue Exception => e
-            @bot.log_warn("Lang files missing: '#{dir}/lang/'.")
-          end
+          # Langfiles
+          load_i18n_dirs(dir)
         end
       end
       
       # Subcommands
-      # @plugdirs.each do |plugdir|
-        # Dir[plugdir].each do |dir|
-#           
-        # end
-      # end
       subcommands = []
       plugins.each do |parent_plugin|
         subcommands += load_command_dir(parent_plugin)
       end
       plugins += subcommands
 
+      # \o/
       plugins
     end
     
@@ -102,15 +95,6 @@ module Ricer
       end
       throw Exception.new("Plugin #{parent.plugin_name} has an unknown subcommand: #{cmdname}")
     end
-    
-    def load_export_dir(plugdir)
-      load_files(plugdir+'/export/*')
-    end
-    
-    def load_model_dir(plugdir)
-      load_files(plugdir+'/model/*')
-    end
-
     
     def load_command_dir(parent_plugin)
       plugdir, all_loaded = parent_plugin.plugin_dir, []
@@ -137,6 +121,14 @@ module Ricer
       all_loaded
     end
     
+    def load_export_dir(plugdir)
+      load_files(plugdir+'/export/*')
+    end
+    
+    def load_model_dir(plugdir)
+      load_files(plugdir+'/model/*')
+    end
+    
     def load_files(dir_pattern)
       begin
         Dir[dir_pattern].each do |path|
@@ -159,52 +151,48 @@ module Ricer
       end
     end
     
-    # def install_file(path)
-      # parts = path.split('/')
-      # Object.const_get('Ricer').const_get('Plugins').const_get(modulename).const_get(classname)
-    # end
-    
+    # Lang files
+    def load_i18n_dirs(plugin_dir)
+      Filewalker.traverse_dirs(plugin_dir) do |path, dir|
+        if dir.end_with?('/lang')
+          load_i18n_dir(dir) 
+        end
+      end
+    end
     def load_i18n_dir(plugdir)
       Filewalker.traverse_files(plugdir, '*.yml', true) do |path, dir|
-        #puts "Added I18n file: #{path}"
         I18n.load_path.push(path)
       end
     end
-    
+
+    #     
     def load_plugin_dir(plugdir, modulename)
-      plugins = []
- 
-      length = plugdir.length + 1;
-#      modulename = plugdir[(plugdir.rindex('/')+1)..-1].camelize
       @bot.log_info "Loading plugin module folder '#{modulename}' from '#{plugdir}'."
-      
-#      Filewalker.traverse_files(plugdir, '*.rb') do |path|
-      Dir[plugdir+'/*'].each do |path|
-        if File.file?(path)
-          begin
-            classname = path[length..-4].camelize
-            @bot.log_info "Loading plugin '#{modulename}::#{classname}'."
-            load path
-            classobject = Object.const_get("Ricer::Plugins::#{modulename}::#{classname}")
-            if classobject < Ricer::Plugin
-              plugin = install_plugin(classobject)
-              raise Exception.new("Error loading plugin in #{path}") if plugin.nil?
-              plugin.plugin_module = modulename
-              plugin.plugin_dir = plugdir
-              plugin.module_dir = plugdir.substr_to("/#{modulename.underscore}/")||plugdir
-              PluginMap.instance.load_plugin(plugin)
-              plugins.push(plugin)
-            elsif classobject < Ricer::Net::Connection
-              PluginMap.instance.load_connector(classobject)
-            end
-          rescue SystemExit, Interrupt
-            raise
-          rescue Exception => e
-            raise unless @bot.genetic_rice
-            @bot.log_error("Error in #{path}")
-            @bot.log_exception(e)
-            @valid = false
+      plugins, length = [], plugdir.length + 1;
+      Filewalker.proc_files(plugdir, '*.rb') do |path|
+        begin
+          classname = path[length..-4].camelize
+          @bot.log_info "Loading plugin '#{modulename}::#{classname}'."
+          load path
+          classobject = Object.const_get("Ricer::Plugins::#{modulename}::#{classname}")
+          if classobject < Ricer::Plugin
+            plugin = install_plugin(classobject)
+            raise Exception.new("Error loading plugin in #{path}") if plugin.nil?
+            plugin.plugin_module = modulename
+            plugin.plugin_dir = plugdir
+            plugin.module_dir = plugdir.substr_to("/#{modulename.underscore}/")||plugdir
+            PluginMap.instance.load_plugin(plugin)
+            plugins.push(plugin)
+          elsif classobject < Ricer::Net::Connection
+            PluginMap.instance.load_connector(classobject)
           end
+        rescue SystemExit, Interrupt
+          raise
+        rescue Exception => e
+          raise unless @bot.genetic_rice
+          @bot.log_error("Error in #{path}")
+          @bot.log_exception(e)
+          @valid = false
         end
       end
       plugins

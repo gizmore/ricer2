@@ -75,7 +75,6 @@ module Ricer
     ### Sort ###
     ############
     def sort_plugins
-    
       @event_map.each do |k, plugins|
         plugins.sort! do |a,b|
           b.trigger_permission.bit - a.trigger_permission.bit rescue 0
@@ -87,7 +86,6 @@ module Ricer
           a.priority - b.priority
         end
       end
-    
     end
     
   end
