@@ -1,13 +1,22 @@
 en:
   shadowlamb:
-    core:
-      values:
-        body:
-          long: body
-          short: bo
-        magic:
-          long: magic
-          short: ma
-        strength:
-          long: strength
-          short: st
+
+    action:
+      created: "just being created"
+      goto: "going to %{location}"
+      inside: "inside %{location}"
+      outside: "outside of %{location}"
+      sleeping: "sleeping inside %{location}"
+      spawning: "respawning"
+      talking: "talking to %{members}"
+
+    values:
+      body:
+        long: body
+        short: bo
+      magic:
+        long: magic
+        short: ma
+      strength:
+        long: strength
+        short: st

@@ -80,5 +80,15 @@ module Ricer::Irc
       human
     end
     
+    def human_join(array)
+      out = ''
+      if array.count > 0 
+        out = array[0..-1].join(I18n.t('ricer.comma'))
+        out += I18n.t('ricer.and') unless out == ''
+        out += array[-1]
+      end
+      out
+    end
+    
   end
 end

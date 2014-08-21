@@ -75,6 +75,8 @@ module Ricer::Plugins::Rice
       @message.sender = create_user(sender_nickname)
       unless @message.is_ricer?
         @message.sender.ricer_on_parted_server(server)
+      else
+        server.disconnect!(@message)
       end
     end
     

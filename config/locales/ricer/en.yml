@@ -1,5 +1,7 @@
 en:
   ricer:
+    and: ' and '
+    comma: ', '
     dateformats:
       day: 'Tag'
       date: 'Tag.Monat.Jahr'

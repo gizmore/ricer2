@@ -24,7 +24,7 @@ module Ricer::Plug::Extender::TriggerIs
 #        has_setting name: :trigger_enabled,    type: :boolean,    scope: :bot,     permission: :owner,     default: def_enabled
         
 #        has_setting name: :trigger_permission, type: :permission, scope: :user,    permission: :responsible, default: :public
-       # has_setting name: :trigger_permission, type: :permission, scope: :channel, permission: :founder,     default: :public
+        has_setting name: :trigger_permission, type: :permission, scope: :channel, permission: :founder,     default: :public
         has_setting name: :trigger_permission, type: :permission, scope: :server,  permission: :responsible, default: :public
 #        has_setting name: :trigger_permission, type: :permission, scope: :bot,     permission: :responsible, default: :public
         
