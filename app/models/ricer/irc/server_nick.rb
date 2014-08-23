@@ -28,7 +28,7 @@ module Ricer::Irc
     end
     
     def can_authenticate?
-      (self.password != nil) && (@cycle.empty?)
+      (self.password != nil) && (@cycle.nil? || @cycle.empty?)
     end
     
   end

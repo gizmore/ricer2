@@ -73,7 +73,12 @@ module Ricer::Plug::Extender::HasUsage
             @message.plugin_id = plugin_id
             process_event('ricer_on_trigger')
             before_execution
-            send(usage.function, *args)
+            begin
+              send(usage.function, *args)
+            rescue => e
+              after_execution
+              raise
+            end
             after_execution
             return true
           end

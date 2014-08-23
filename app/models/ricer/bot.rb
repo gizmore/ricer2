@@ -6,7 +6,7 @@ module Ricer
     with_global_orm_mapping
     def should_cache?; true; end
     
-    attr_reader :plugins, :rand, :botlog
+    attr_reader :rand, :botlog
     attr_accessor :needs_restart, :running, :reboot
     
     def running?; @running; end
@@ -29,8 +29,14 @@ module Ricer
     after_initialize :after_init
     def after_init
       self.class.instance_variable_set('@instance', self)
+      @loader = PluginLoader.new(self)
+      @loader.add_plugin_dir("app/models/ricer/plugins/*")
       @botlog = BotLog.new
       @servers = Ricer::Irc::Server.all
+    end
+    
+    def plugins
+      @loader.plugins
     end
     
     def init
@@ -38,9 +44,7 @@ module Ricer
       @reboot = false
       @running = false
       @needs_restart = false
-      @loader = PluginLoader.new(self)
       load_extenders
-      @loader.add_plugin_dir("app/models/ricer/plugins/*")
       save_all_offline
     end
     

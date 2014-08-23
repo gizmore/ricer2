@@ -1,13 +1,13 @@
 module Ricer
   class PluginLoader
     
-    attr_reader :plugdirs, :valid
+    attr_reader :plugdirs, :valid, :plugins
     
     def bot; @bot; end
     
     def initialize(bot)
       @bot = bot
-      @plugdirs = []
+      @plugdirs, @plugins = [], []
       @valid = true
     end
     
@@ -24,20 +24,20 @@ module Ricer
       load_i18n_dir('config/locales/rails/')
       load_i18n_dir('config/locales/ricer/')
 
-      plugins = []
+      @plugins = []
       @plugdirs.each do |path|
-        plugins += load_path(path)
+        @plugins += load_path(path)
       end
       
-      plugins.each do |plugin|
+      @plugins.each do |plugin|
         plugin.on_load
       end
 
-      plugins.each do |plugin|
-        gather_subcommands(plugins, plugin)
+      @plugins.each do |plugin|
+        gather_subcommands(@plugins, plugin)
       end
       
-      plugins
+      @plugins
     end
     
     def load_path(path)
