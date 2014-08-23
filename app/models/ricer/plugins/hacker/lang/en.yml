@@ -1,0 +1,9 @@
+en:
+  ricer:
+    plugins:
+      hacker:
+        jhype:
+          description: 'Show a random or specific picture of the famous Jhype hacker girl.'
+          err_none: 'There are no pictures of her yet. How sad! :('
+          msg_announce: '[HOT] New Picture of Jhype available: %{link}'
+          msg_show: 'Picture %{num}/%{of}: %{link}'

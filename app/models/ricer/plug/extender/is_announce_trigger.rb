@@ -22,7 +22,7 @@ module Ricer::Plug::Extender::IsAnnounceTrigger
       def execute_toggle_announce(boolean)
         boolean = boolean ? '1' : '0'
         methodn = @message.is_query? ? 'confu' : 'confc'
-        exec_line("#{methodn} #{trigger} #{boolean}")
+        exec_line("#{methodn} #{trigger} announce #{boolean}")
       end
       
       def announce_channels(&block)

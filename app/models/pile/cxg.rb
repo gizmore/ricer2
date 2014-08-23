@@ -7,6 +7,8 @@ module Pile
     
     def do_upload(title, content, format='text')
       
+      byebug
+
       uri = URI.parse("http://api.cxg.de/paste")
       
       http = Net::HTTP.new(uri.host, uri.port)
@@ -17,6 +19,8 @@ module Pile
       request.add_field('User-Agent', 'ricer IRC bot; ruby2; https://github.com/gizmore/ricer2')
       response = http.request(request)
       
+      byebug
+
       if response.code.to_i == 201
         JSON.parse(response.body)['url']
       else

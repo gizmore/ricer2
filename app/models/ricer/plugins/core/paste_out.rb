@@ -13,6 +13,7 @@ module Ricer::Plugins::Core
  
     has_usage :execute, '<..text..>'
     def execute(content)
+      byebug
       send_pastebin(pastebin_title, content, content.length, 'text', :msg_pasted_it)
     end
     
@@ -54,6 +55,7 @@ module Ricer::Plugins::Core
     
     def send_pastebin(title, content, lines, pastelang='text', langkey=:msg_pasted_this)
       Ricer::Thread.execute do
+        byebug
         paste = Pile::Cxg.new({user_id:user.id}).upload(title, content, pastelang)
         rply langkey, url: paste.url, size: paste.size, count: lines
       end

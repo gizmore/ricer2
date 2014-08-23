@@ -12,21 +12,19 @@ module Ricer::Plug::Extender::TriggerIs
     class_eval do |klass|
       
       unless klass.instance_variable_defined?('@default_trigger')
-        
+
         permission_is :public
         scope_is  :everywhere
         default_enabled  true
         flooding_protected true
         
         def_enabled = klass.instance_variable_get('@default_enabled')        
-        has_setting name: :trigger_enabled,    type: :boolean,    scope: :channel, permission: :operator,  default: def_enabled
-        has_setting name: :trigger_enabled,    type: :boolean,    scope: :server,  permission: :ircop,     default: def_enabled
-#        has_setting name: :trigger_enabled,    type: :boolean,    scope: :bot,     permission: :owner,     default: def_enabled
+        has_setting name: :trigger_enabled,    type: :boolean,    scope: :channel, permission: :operator,    default: def_enabled
+        has_setting name: :trigger_enabled,    type: :boolean,    scope: :server,  permission: :ircop,       default: def_enabled
+        has_setting name: :trigger_enabled,    type: :boolean,    scope: :bot,     permission: :responsible, default: def_enabled
         
-#        has_setting name: :trigger_permission, type: :permission, scope: :user,    permission: :responsible, default: :public
         has_setting name: :trigger_permission, type: :permission, scope: :channel, permission: :founder,     default: :public
         has_setting name: :trigger_permission, type: :permission, scope: :server,  permission: :responsible, default: :public
-#        has_setting name: :trigger_permission, type: :permission, scope: :bot,     permission: :responsible, default: :public
         
       end
  

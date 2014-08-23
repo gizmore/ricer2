@@ -168,6 +168,7 @@ module Ricer::Irc
     end
     
     def has_permission?(permission, respect_auth=REGISTERED)
+      permission = PUBLIC if permission.nil?
       hierarchic_passed = self.hierarchic_bits(respect_auth) >= permission.hierarchic_bits
       group_bits_passed = (permission.group_bits == 0) || ((self.group_bits(respect_auth) & permission.group_bits) == permission.group_bits)
       hierarchic_passed && group_bits_passed
