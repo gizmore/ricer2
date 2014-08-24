@@ -27,12 +27,16 @@ module ActiveRecord
     alias :original_exec_queries :exec_queries
     
     def exec_queries
-      new_records = []
-      original_exec_queries.each do |record|
-        break unless record.respond_to? :global_cache_table
-        new_records.push(record.global_cache_table(record))
+      begin
+        new_records = []
+        original_exec_queries.each do |record|
+          break unless record.respond_to? :global_cache_table
+          new_records.push(record.global_cache_table(record))
+        end
+        @records = new_records unless new_records.empty?
+      rescue => e
+        #puts "OOOPS: #{e.to_s}\n\n#{e.backtrace}\n"
       end
-      @records = new_records unless new_records.empty?
       @records
     end
     

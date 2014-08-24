@@ -8,6 +8,8 @@ Rails.application.configure do
   config.genetic_rice = true
   # Set to true for more debug output
   config.chop_sticks = false
+  # Set to true for verbose DB Query runtime analysis. there is also "!dbtrace <bool>" plugin to switch that on runtime.
+  config.paddy_queries = false
   # owner, but for display only
   config.ricer_owner = 'gizmore'
   # Default server_nickname settings

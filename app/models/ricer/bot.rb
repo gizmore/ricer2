@@ -15,6 +15,7 @@ module Ricer
     def name; Ricer::Application.config.ricer_name; end
     def randseed; Ricer::Application.config.rice_seeds; end
     def genetic_rice; Ricer::Application.config.genetic_rice; end
+    def paddy_queries; Ricer::Application.config.paddy_queries; end
     def chopsticks; Ricer::Application.config.chop_sticks; end
     def version; Ricer::Application.config.ricer_version; end
     def builddate; Ricer::Application.config.ricer_version_date; end
@@ -40,6 +41,7 @@ module Ricer
     end
     
     def init
+      ActiveRecord::Base.logger = paddy_queries ? Logger.new(STDOUT) : nil
       init_random
       @reboot = false
       @running = false

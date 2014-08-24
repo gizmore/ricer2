@@ -6,6 +6,8 @@ Ricer::Application.configure do
   config.rice_seeds = 3133735
   # Set to true for more debug output
   config.chop_sticks = true
+  # Set to true for verbose DB Query runtime analysis. there is also "!dbtrace <bool>" plugin to switch that on runtime.
+  config.paddy_queries = false
   # Set to true if plugin_loader shall ignore errors
   config.genetic_rice = false
   # owner, but for display only

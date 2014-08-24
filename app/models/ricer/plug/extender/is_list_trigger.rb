@@ -4,6 +4,7 @@ module Ricer::Plug::Extender::IsListTrigger
     :for => nil,
     per_page: 5,
     pattern: '<search_term>',
+    order: 'created_at',
   }
 
   def is_list_trigger(trigger_name, options={})
@@ -20,10 +21,12 @@ module Ricer::Plug::Extender::IsListTrigger
       # Register vars exist in class for reloading code
       Ricer::Plugin.register_class_variable('@list_per_page')
       Ricer::Plugin.register_class_variable('@search_class')
+      Ricer::Plugin.register_class_variable('@list_ordering')
 
       # Set the vars for this plugin
       klass.instance_variable_set('@search_class', options[:for])
       klass.instance_variable_set('@list_per_page', options[:per_page].to_i)
+      klass.instance_variable_set('@list_ordering', options[:order])
       def search_class; self.class.instance_variable_get('@search_class'); end
       
       ##############
@@ -40,8 +43,10 @@ module Ricer::Plug::Extender::IsListTrigger
         execute_list(1)
       end
       
+      def list_ordering; self.class.instance_variable_get('@list_ordering'); end
+      
       def execute_list(page)
-        show_items(visible_relation(search_class).order("created_at"), page)
+        show_items(visible_relation(search_class).order(list_ordering), page)
       end
 
       def execute_search(search_term, page=1)

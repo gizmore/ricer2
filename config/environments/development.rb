@@ -8,6 +8,8 @@ Ricer::Application.configure do
   config.chop_sticks = true
   # Set to true if plugin_loader shall ignore errors
   config.genetic_rice = false
+  # Set to true for verbose DB Query runtime analysis. there is also "!dbtrace <bool>" plugin to switch that on runtime.
+  config.paddy_queries = false
   # owner, but for display only
   config.ricer_owner = 'gizmore'
   # Default server_nickname settings
