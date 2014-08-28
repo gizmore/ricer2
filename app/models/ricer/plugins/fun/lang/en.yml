@@ -11,3 +11,18 @@ en:
           tumbleweed: 'makes the tumbleweed sound.'
         happy_hour:
           description: 'Used by gizmore to inititate happy hour mode in #wechall'
+        reverse:
+          description: 'Reverses a string backwards.'
+        wtf:
+          description: 'gets the word meaning from urbandictionary.'
+          err_not_found: 'Not found.'
+          msg_example: "Example: %{example}"
+        bed:
+          description: 'You can use this function to goto bed.'
+          bed1: 'nighty night %{user}'
+          bed2: 'good night %{user}'
+        cat:
+          description: 'Dog sees a cat!'
+          cat1: 'Bark! Bark!'
+          cat2: 'Woof! Woof!'
+          cat3: 'Shrug!'
