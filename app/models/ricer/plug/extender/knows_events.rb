@@ -17,7 +17,7 @@ module Ricer::Plug::Extender::KnowsEvents
   def publish(event, *args)
     class_eval do |klass|
       event_subscriptions(event).each do |subscription|
-        subscription.call(args)
+        subscription.call(*args)
       end
     end
   end

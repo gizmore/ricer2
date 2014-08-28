@@ -1,1 +1,2 @@
 en:
+  err_wrong_action: 'This command does not work when you are %{current_action}.'
