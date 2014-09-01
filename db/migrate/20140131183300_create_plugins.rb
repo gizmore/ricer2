@@ -7,7 +7,7 @@ class CreatePlugins < ActiveRecord::Migration
       t.timestamps
     end
     create_table :settings, :id => false do |t|
-      t.string  :id, :null => false, :length => 64
+      t.string  :id, :null => false, :length => 32, :charset => :ascii, :collation => :ascii_bin
 #      t.integer :plugin_id
 #      t.integer :scope
 #      t.integer :scope_id

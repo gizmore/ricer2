@@ -49,6 +49,10 @@ module Ricer::Irc
       global_cache_remove
     end
     
+    def users
+      User.joined(self)
+    end
+
     #####################
     ### Communication ###
     #####################

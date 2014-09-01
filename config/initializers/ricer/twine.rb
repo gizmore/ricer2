@@ -24,6 +24,15 @@ class String
   end
   def rsubstr_from!(from); replace(rsubstr_from(from)); end
   
+  # Nibble from a string
+  # Example: s = "this:is:nibbled"; b = s.nibble!(':') # => s becomes "is:nibbled". b becomes "this"
+  def nibble!(token)
+    back = substr_to(token);
+    replace(substr_from(token)) unless back.nil?
+    back
+  end
+  
+  
   # Trimming, lovely trimming
   TRIM = "\r\n\t "
   def trim(chars=TRIM); ltrim(chars).rtrim(chars); end

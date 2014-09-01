@@ -35,6 +35,29 @@ module Ricer::Irc
       "\x01#{text}\x01"
     end
     
+    #
+    # 00 white
+    # 01 black
+    # 02 blue (navy)
+    # 03 green
+    # 04 red
+    # 05 brown (maroon)
+    # 06 purple
+    # 07 orange (olive)
+    # 08 yellow
+    # 09 light green (lime)
+    # 10 teal (a green/blue cyan)
+    # 11 light cyan (cyan) (aqua)
+    # 12 light blue (royal)
+    # 13 pink (light purple) (fuchsia)
+    # 14 grey
+    # 15 light grey (silver)
+
+    def color(r, g, b)
+      "\x02"
+      #"\x038,6"
+    end
+    
     def obfuscate(string)
       [
         "A\xce\x91", "B\xce\x92", "C\xd0\xa1", "E\xce\x95", "F\xcf\x9c",
@@ -72,8 +95,8 @@ module Ricer::Irc
       number_with_precision(fraction, precision: precision)
     end
     
-    def human_percent(fraction)
-      human_fraction(fraction*100, 2)+'%'
+    def human_percent(fraction, precision=2)
+      human_fraction(fraction*100, precision)+'%'
     end
     
     def human_to_seconds(human)
@@ -82,11 +105,10 @@ module Ricer::Irc
     
     def human_join(array)
       out = ''
-      if array.count > 0 
-        out = array[0..-1].join(I18n.t('ricer.comma'))
-        out += I18n.t('ricer.and') unless out == ''
-        out += array[-1]
-      end
+      return array[0] if array.count < 2
+      out = array[0..-2].join(I18n.t('ricer.comma'))
+      out += I18n.t('ricer.and')
+      out += array[-1]
       out
     end
     

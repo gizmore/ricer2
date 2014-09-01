@@ -14,11 +14,15 @@ module Ricer::Plug::Extender::RequiresConfirmation
       klass.class_variable_set(:@@REQUIRES_RANDOM_WORD, !!options[:random])
       
       def execute_confirmation
-        waitingfor = @@CONFIRM[user]
-        @@CONFIRM.delete(user)
-        return if waitingfor == line
-        @@CONFIRM[user] = line + ' ' + confirmationword
-        raise Ricer::ExecutionException.new(tt('ricer.plug.extender.requires_confirmation.msg_confirm', phrase:@@RETYPE[user]))
+        unless @@CONFIRM[user].nil?
+          waitingfor = @@CONFIRM[user] + ' ' + confirmationword
+          if waitingfor == line
+            @@CONFIRM.delete(user)
+            return
+          end
+        end
+        @@CONFIRM[user] = line
+        raise Ricer::ExecutionException.new(tt('ricer.plug.extender.requires_confirmation.msg_confirm', command: @@CONFIRM[user], word: confirmationword))
       end
       
       @@CONFIRM = {}
@@ -26,7 +30,7 @@ module Ricer::Plug::Extender::RequiresConfirmation
       def confirmationword
         word = self.class.class_variable_get(:@@REQUIRES_RANDOM_WORD) ?
           SecureRandom.base64(3) :
-          I18n.t('ricer.plug.extender.confirm.word')
+          I18n.t('ricer.plug.extender.requires_confirmation.word')
       end
       
     end

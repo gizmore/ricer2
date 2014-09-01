@@ -102,6 +102,8 @@ en:
           label: 'user'
           error: 'Unknown User'
       extender:
+        default_enabled:
+          err_disabled: 'This plugin is disabled here.'
         has_usage:
           msg_usage: 'Usage: %{trigger}%{usage}. %{description}%{permission}'
           scopeinfo_scope: 'This works only in %{scopelabel}.'
@@ -116,10 +118,13 @@ en:
         scope_is:
           err_only_private: 'This works only in private.'
           err_only_channel: 'This works only in channels.'
+        requires_confirmation:
+          word: IAmSure
+          msg_confirm: "Please type \"%{command} %{word}\" to execute your command."
         requires_retype:
-          msg_retype: 'Please retype that to execute the command.'
+          msg_retype: 'Please retype that to execute your command.'
         is_show_trigger:
-          err_not_found: 'There is no #{classname} with that number.'
+          err_not_found: 'There is no %{classname} with that number.'
         is_list_trigger:
           description:
             one: 'Search or list the %{classname} database. There is %{count} record in the db.'
@@ -128,8 +133,6 @@ en:
           err_no_list_items: 'There could be no %{classname} found.'
         forces_authentication:
           err_authenticate: 'You have to authenticate in order to use this functionality.'
-        default_enabled:
-          err_disabled: 'This plugin is disabled here.'
     err_user: 'This user is unknown.'
     err_exception: 'Ruby Exception: %{message} in %{location}'
     

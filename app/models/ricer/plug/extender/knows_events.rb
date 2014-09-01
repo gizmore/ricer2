@@ -15,11 +15,13 @@ module Ricer::Plug::Extender::KnowsEvents
   end
 
   def publish(event, *args)
-    class_eval do |klass|
+    Ricer::Bot.instance.log_debug("publish event #{event}:")
+#    Ricer::Bot.instance.log_debug("publish event #{event}: #{args.inspect}")
+#    class_eval do |klass|
       event_subscriptions(event).each do |subscription|
         subscription.call(*args)
       end
-    end
+#    end
   end
 
 end

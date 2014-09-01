@@ -1,9 +1,10 @@
 module Ricer
 
   class SilentCancel < Exception; end
-  class TriggerException < Exception; end
-  class ExecutionException < Exception; end
-
+  class NotImplemented < StandardError; end
+  class TriggerException < StandardError; end
+  class ExecutionException < StandardError; end
+  
   class Plugin < ActiveRecord::Base
     
     include ActionView::Helpers::NumberHelper

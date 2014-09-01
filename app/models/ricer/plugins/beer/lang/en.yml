@@ -1,0 +1,26 @@
+en:
+  ricer:
+    plugins:
+      beer:
+        left:
+          one: '%{count} bottle left.'
+          other: '%{count} bottles left.'
+        refill:
+          trigger: 'refill'
+          description: 'GmbH - Go mon beer hunting.'
+          msg_filled: '%{hero} went out and bought beer: %{left}'
+        beer:
+          trigger: 'beer'
+          description: 'Fetch a beer for someone, or maybe yourself.'
+#        beer:
+#          trigger: 'beer'
+          # 
+          # msg_steal: 'You and $BOT$ hand a beer to %{drinker}, but %{stealer} steals it! %{left}'
+          # msg_throw: 'You and $BOT$ hand a beer to %{drinker}. {%left}'
+          # msg_fetch: '$BOT$ hands you an ice - cold - beer.'
+          # err_alert:
+            # 'Alert! NO. BEER. LEFT. Repeat: no. beer. left. Repeat...'
+            # 'The worst case is when the beer is empty.'
+            # 'Is there any vodka left?!'
+            # 'While you are at it, bring beer.'
+#           

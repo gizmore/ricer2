@@ -36,7 +36,11 @@ module Ricer::Irc
     def self.current; Thread.current[:ricer_user]; end
     def self.current=(user); Thread.current[:ricer_user] = user; end
 
+    scope :bot, -> { where(:bot => false) }
+    scope :human, -> { where(:bot => false) }
     scope :online, -> { where(:online => true) }
+    scope :offline, -> { where(:online => false) }
+    scope :joined, ->(channel) { joins(:chan_perms).where('chan_perms.channel_id=?', channel) }
     
     def get_queue; server.connection.queue_for(self); end
     def flush_queue; server.connection.flush_queue_for(self); end

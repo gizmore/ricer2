@@ -60,10 +60,11 @@ module Ricer
       # Then the rest
       @plugdirs.each do |plugdir|
         Dir[plugdir].each do |dir|
-          modulename = dir.rsubstr_from('/').camelize
-          plugins += load_plugin_dir(dir, modulename)
           # Langfiles
           load_i18n_dirs(dir)
+          # Plugins
+          modulename = dir.rsubstr_from('/').camelize
+          plugins += load_plugin_dir(dir, modulename)
         end
       end
       
@@ -130,24 +131,21 @@ module Ricer
     end
     
     def load_files(dir_pattern)
-      begin
-        Dir[dir_pattern].each do |path|
-          if File.file?(path)
-            begin
-              @bot.log_info("Loading model or export class #{path}")
-              load path
-              # install_file(path)
-            rescue => e
-              @bot.log_error("Error in #{path}")
-              @bot.log_exception(e)
-              @valid = false
-            end
+      Dir[dir_pattern].each do |path|
+        if File.file?(path)
+          begin
+            @bot.log_info("Loading model or export class #{path}")
+            load path
+            # install_file(path)
+          rescue SystemExit, Interrupt
+            raise
+          rescue => e
+            @valid = false
+            @bot.log_error("ERROR IN: #{path}")
+            @bot.log_exception(e)
+            raise unless @bot.genetic_rice
           end
         end
-      rescue => e
-        @valid = false
-        @bot.log_error("Error in #{plugdir}")
-        @bot.log_exception(e)
       end
     end
     
@@ -189,10 +187,10 @@ module Ricer
         rescue SystemExit, Interrupt
           raise
         rescue Exception => e
-          raise unless @bot.genetic_rice
-          @bot.log_error("Error in #{path}")
-          @bot.log_exception(e)
           @valid = false
+          @bot.log_error("ERROR IN: #{path}")
+          raise unless @bot.genetic_rice
+          @bot.log_exception(e)
         end
       end
       plugins
