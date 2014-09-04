@@ -14,6 +14,9 @@ en:
         hirsch:
           description: 'Rööööhr'
           msg_hirsch: 'Röööööööööööööööhr! HIRSCH!'
+        ronja:
+          description: 'Wer oder was ist Ronja?'
+          msg_ronja: 'Ronja ist cool!'
         wtf:
           description: 'Checks urban dictionary for a definition of your input.'
           msg_example: 'e.g. %{example}'

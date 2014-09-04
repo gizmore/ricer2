@@ -40,7 +40,7 @@ module Ricer::Irc
     
     def display
       out = 'p'
-      bits = self.all_bits(true)
+      bits = self.all_bits
       bold = "\x02"
       ALL.each do |p|
         if (p.bit & bits) > 0
