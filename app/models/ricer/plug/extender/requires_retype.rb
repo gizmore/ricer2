@@ -3,13 +3,17 @@ module Ricer::Plug::Extender::RequiresRetype
     class_eval do |klass|
       
       # Add new exec handler to plugin exec chain
-      klass.register_exec_function(:execute_retype) if !!options[:always]
+      klass.register_exec_function(:execute_retype!) if !!options[:always]
+      
+      def retyped?
+        @@RETYPE.delete(user) == line
+      end
 
-      def execute_retype
-        waitingfor = @@RETYPE.delete(user)
-        return if waitingfor == line
+      def execute_retype!(message="")
+        return if retyped?
         @@RETYPE[user] = line
-        raise Ricer::ExecutionException.new(tt('ricer.plug.extender.requires_retype.msg_retype'))
+        message += " " unless message.nil? || message.empty?
+        raise Ricer::ExecutionException.new(message+tt('ricer.plug.extender.requires_retype.msg_retype'))
       end
       
       private

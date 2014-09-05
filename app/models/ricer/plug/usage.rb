@@ -63,7 +63,7 @@ module Ricer::Plug
         
         # <..message..eater..>
         if param.is_eater?
-          back.push(argline)
+          back.push(param.parse(argline, @options, message))
           return back
         end
         
