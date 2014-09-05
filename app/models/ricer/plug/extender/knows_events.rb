@@ -11,17 +11,31 @@ module Ricer::Plug::Extender::KnowsEvents
   end
 
   def subscribe(event, &block)
+    bot.log_debug(display_subscribed(event, block))
     event_subscriptions(event).push(block)
   end
 
   def publish(event, *args)
-    Ricer::Bot.instance.log_debug("publish event #{event}:")
-#    Ricer::Bot.instance.log_debug("publish event #{event}: #{args.inspect}")
-#    class_eval do |klass|
-      event_subscriptions(event).each do |subscription|
-        subscription.call(*args)
-      end
-#    end
+    event_subscriptions(event).each do |subscription|
+      bot.log_debug(display_publish_consumed(event, subscription))
+      subscription.call(*args)
+    end
+  end
+
+  def display_subscribed(event, subscription)
+    "subscribe(#{event}) by #{subscription_location(subscription)}"
+    
+  end
+
+  def display_publish_consumed(event, subscription)
+    "publish(#{event}) consumed by #{subscription_location(subscription)}"
+  end
+  
+  def subscription_location(subscription)
+    sl = subscription.source_location
+    file = sl[0].substr_from('/plugins/')
+    line = sl[1]
+    "#{file} #{line}"
   end
 
 end

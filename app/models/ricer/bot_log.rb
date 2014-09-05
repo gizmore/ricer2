@@ -1,6 +1,8 @@
 module Ricer
   class BotLog
     
+    @@puts_mutex = Mutex.new
+    
     attr_accessor :failed
     
     def initialize
@@ -37,8 +39,10 @@ module Ricer
     
     def log(level, msg)
       msg = "[#{level.upcase}] #{msg}"
-      puts msg
-      @logfiles[level.to_sym].send(level, msg)
+      @@puts_mutex.synchronize do
+        puts msg
+        @logfiles[level.to_sym].send(level, msg)
+      end
     end
 
     def logger(filename)
