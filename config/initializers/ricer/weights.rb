@@ -22,6 +22,7 @@ class Integer
   def numeric?; true; end
   def float?; false; end
   def integer?; true; end
+  def deg; (self * 180.0) / Math::PI; end
 end
 class Float
   extend Ricer::Clamper
@@ -30,6 +31,7 @@ class Float
   def float?; true; end
   def integer?; false; end 
   def round_i; Math.round(self); end
+  def deg; (self * 180.0) / Math::PI; end
 end
 class String
   extend Ricer::Clamper

@@ -34,24 +34,24 @@ module Ricer::Irc
     def action(text)
       "\x01#{text}\x01"
     end
-    
-    #
-    # 00 white
-    # 01 black
-    # 02 blue (navy)
-    # 03 green
-    # 04 red
-    # 05 brown (maroon)
-    # 06 purple
-    # 07 orange (olive)
-    # 08 yellow
-    # 09 light green (lime)
-    # 10 teal (a green/blue cyan)
-    # 11 light cyan (cyan) (aqua)
-    # 12 light blue (royal)
-    # 13 pink (light purple) (fuchsia)
-    # 14 grey
-    # 15 light grey (silver)
+
+    ## IRC 00 - 15
+    def white; color(255, 255, 255); end
+    def black; color(255, 255, 255); end
+    def blue; color(255, 255, 255); end
+    def green; color(255, 255, 255); end
+    def red; color(255, 255, 255); end
+    def brown; color(255, 255, 255); end
+    def purple; color(255, 255, 255); end
+    def orange; color(255, 255, 255); end
+    def yellow; color(255, 255, 255); end
+    def light_green; color(255, 255, 255); end
+    def teal; color(255, 255, 255); end
+    def light_cyan; color(255, 255, 255); end
+    def light_blue; color(255, 255, 255); end
+    def pink; color(255, 255, 255); end
+    def grey; color(255, 255, 255); end
+    def light_grey; color(255, 255, 255); end
 
     def color(r, g, b)
       "\x02"
@@ -84,6 +84,10 @@ module Ricer::Irc
     
     def no_highlight(string)
       obfuscate(string)||softhype(string)
+    end
+    
+    def human_filesize(bytes)
+      number_to_human_size(bytes)
     end
 
     def human_duration(seconds)

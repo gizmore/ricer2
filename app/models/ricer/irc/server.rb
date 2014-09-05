@@ -145,7 +145,9 @@ module Ricer::Irc
     end
 
     def ricer_replies_to(message)
-      puts "#{self.hostname} >> #{message.reply_data}"
+      bot.puts_mutex.synchronize do
+        puts "#{self.hostname} >> #{message.reply_data}"
+      end
       process_event('ricer_on_reply', message)
     end
     

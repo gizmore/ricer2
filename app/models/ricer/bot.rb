@@ -3,6 +3,8 @@ module Ricer
     
     def self.instance; instance_variable_get('@instance'); end
     
+    GLOBAL_MUTEX = Mutex.new
+    
     with_global_orm_mapping
     def should_cache?; true; end
     
@@ -170,9 +172,13 @@ module Ricer
       log_info("Going into cleanup loop.")
       while @running
         begin
-          sleep 10
+          if @started_up
+            sleep 30
+          else
+            sleep 1
+            @started_up = check_started_up
+          end
           #Ricer::Thread.cleanup_threads
-          @started_up = check_started_up unless @started_up
         rescue SystemExit, Interrupt => e
           ricer_on_exit
           servers.each do |server|
@@ -211,6 +217,14 @@ module Ricer
       server = servers.first
       server.process_event('ricer_on_global_startup', server.fake_message)
       true
+    end
+    
+    def puts_mutex
+      BotLog::PUTS_MUTEX
+    end
+
+    def global_mutex
+      GLOBAL_MUTEX
     end
     
   end

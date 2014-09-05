@@ -1,12 +1,12 @@
 module Ricer
   class BotLog
     
-    @@puts_mutex = Mutex.new
+    PUTS_MUTEX = Mutex.new
     
     attr_accessor :failed
     
     def initialize
-      @failed = false
+      @last_mail_time = 0
       @logfiles = {
         debug: logger('debug'),
         info: logger('info'),
@@ -31,7 +31,8 @@ module Ricer
     
     # Mail first exception after a message
     def mail_exception(exception)
-      return if @failed; @failed = true
+      return if (Time.now.to_i - @last_mail_time) < 30
+      @last_mail_time = Time.now.to_i
       Ricer::Thread.execute do
         BotMailer.exception(exception).deliver
       end
@@ -39,10 +40,10 @@ module Ricer
     
     def log(level, msg)
       msg = "[#{level.upcase}] #{msg}"
-      @@puts_mutex.synchronize do
+      PUTS_MUTEX.synchronize do
         puts msg
-        @logfiles[level.to_sym].send(level, msg)
       end
+      @logfiles[level.to_sym].send(level, msg)
     end
 
     def logger(filename)
@@ -52,10 +53,7 @@ module Ricer
         FileUtils.mkdir_p(dir) unless File.directory?(dir)
         Logger.new(filename)
       rescue => e
-        puts "Cannot create logfile!"
-        puts e
-        puts e.backtrace.join("\n")
-        mail_exception(e)
+        raise Exception.new("Cannot create logfile!")
       end
     end
     

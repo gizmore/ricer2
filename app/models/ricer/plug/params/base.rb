@@ -1,6 +1,8 @@
 module Ricer::Plug::Params
   class Base
 
+    def is_eater?; false; end
+
     def self.type_label(type); I18n.t!("ricer.plug.param.#{type}.label") rescue type.to_s.camelize; end
     
     def initialize(value=nil)
