@@ -31,8 +31,10 @@ module Ricer::Plugins::Poll
     # Close poll thread    
     def ricer_on_global_startup
       Ricer::Thread.execute do |t|
-        sleep 60.seconds
-        automatically_close_questions
+        loop do 
+          sleep 60.seconds
+          automatically_close_questions
+        end
       end
     end
     

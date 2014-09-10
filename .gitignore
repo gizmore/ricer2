@@ -39,6 +39,7 @@ config/secrets.yml
 
 # --- gizmore --- #
 .project
+pingo.rb
 /vendor
 /repos
 /log

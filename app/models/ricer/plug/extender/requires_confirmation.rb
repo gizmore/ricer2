@@ -15,13 +15,14 @@ module Ricer::Plug::Extender::RequiresConfirmation
       
       def execute_confirmation
         unless @@CONFIRM[user].nil?
-          waitingfor = @@CONFIRM[user] + ' ' + confirmationword
-          if waitingfor == line
+          waitingfor = @@CONFIRM[user] + " #{confirmationword}"
+          if waitingfor == privmsg_line
+            @message.args[1].substr_to!(" #{confirmationword}")
             @@CONFIRM.delete(user)
             return
           end
         end
-        @@CONFIRM[user] = line
+        @@CONFIRM[user] = privmsg_line
         raise Ricer::ExecutionException.new(tt('ricer.plug.extender.requires_confirmation.msg_confirm', command: @@CONFIRM[user], word: confirmationword))
       end
       
