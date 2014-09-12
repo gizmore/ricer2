@@ -11,7 +11,7 @@ module Ricer::Plugins::Tcp
 
     def submit(message)
       Ricer::Thread.execute do
-        tcp_connection = sender.instance_variable_get(:@ricer_tcp_plugin_connec$
+        tcp_connection = sender.instance_variable_get(:@ricer_tcp_plugin_connection)
         if tcp_connection.nil?
           reply "You aren't connected to anything yet!"
         else
