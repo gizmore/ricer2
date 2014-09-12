@@ -123,28 +123,24 @@ module Ricer
     end
     
     def load_export_dir(plugdir)
-      load_files(plugdir+'/export/*')
+      load_files(plugdir+'/export')
     end
     
     def load_model_dir(plugdir)
-      load_files(plugdir+'/model/*')
+      load_files(plugdir+'/model')
     end
     
-    def load_files(dir_pattern)
-      Dir[dir_pattern].each do |path|
-        if File.file?(path)
-          begin
-            @bot.log_info("Loading model or export class #{path}")
-            load path
-            # install_file(path)
-          rescue SystemExit, Interrupt
-            raise
-          rescue => e
-            @valid = false
-            @bot.log_error("ERROR IN: #{path}")
-            @bot.log_exception(e)
-            raise unless @bot.genetic_rice
-          end
+    def load_files(dir)
+      return unless File.directory?(dir)
+      Filewalker.traverse_files(dir, '*.rb') do |path|
+        begin
+          @bot.log_info("Loading model or export class #{path}")
+          load path
+        rescue StandardError => e
+          @valid = false
+          @bot.log_error("ERROR IN: #{path}")
+          @bot.log_exception(e)
+          raise unless @bot.genetic_rice
         end
       end
     end
