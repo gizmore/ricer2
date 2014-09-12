@@ -100,5 +100,5 @@ Known Bugs
 
 Windows installation help
 =========================
-- Download and install mysql-connector from oracle. Choose a dir without spaces! READ: http://stackoverflow.com/questions/24649052/cant-install-mysql2-0-3-16-gem-on-ruby
- 
+For building mysql2 gem on windows, see http://stackoverflow.com/questions/3608287/error-installing-mysql2-failed-to-build-gem-native-extension
+> gem install mysql2 -- '--with-mysql-lib="c:\Program Files\MySQL\MySQL Server 5.5\lib" --with-mysql-include="c:\Program Files\MySQL\MySQL Server 5.5\include"'
