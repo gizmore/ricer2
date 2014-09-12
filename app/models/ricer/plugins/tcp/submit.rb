@@ -15,7 +15,7 @@ module Ricer::Plugins::Tcp
         if tcp_connection.nil?
           reply "You aren't connected to anything yet!"
         else
-          tcp_connection.send("#{message}\n\n", 0)
+          tcp_connection.send("#{message}")
           reply "Sending message..."
           if response = tcp_connection.recv(1000)
             reply response unless response.nil?
