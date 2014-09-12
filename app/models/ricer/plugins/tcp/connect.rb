@@ -26,9 +26,8 @@ module Ricer::Plugins::Tcp
 
         #user.instance_variable_set(:@ricer_tcp_plugin_connection, socket)
           sender.instance_variable_set(:@ricer_tcp_plugin_connection, socket)
-          sender.instance_variable_set('@ricer_tcp_plugin_connection', socket)
-          sender.instance_variable_get(:@ricer_tcp_plugin_host)
-          sender.instance_variable_get(:@ricer_tcp_plugin_port, port)
+          sender.instance_variable_set(:@ricer_tcp_plugin_host, host)
+          sender.instance_variable_set(:@ricer_tcp_plugin_port, port)
         end
       rescue SocketError => se
         reply se
