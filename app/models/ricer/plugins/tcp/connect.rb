@@ -13,7 +13,7 @@ module Ricer::Plugins::Tcp
     has_usage :connect, '<host> <port>'
 
     def connect(host, port)
-      tcp_connection = sender.instance_variable_get(:@ricer_tcp_plugin_connecti$
+      tcp_connection = sender.instance_variable_get(:@ricer_tcp_plugin_connection)
       get_plugin('Tcp/Close').execute_close unless tcp_connection.nil?
       begin
         Ricer::Thread.execute do
