@@ -8,21 +8,21 @@ Main Features
 - Multilanguage support
 - Multi network support
 - Code reloading at runtime
-- Threadsafe
+- Threadsafe? (not tested with JRuby)
 - Easy plugin creation
 - Great debugging and error catching
 - Almost 100% plugin driven
 
 Notable plugins
 ===============
-- Cvs - Manage git and svn repositories
-- Rss - Manage rss feeds
-
+- Rss: Manage rss feeds
+- Cvs: Manage git and svn repositories (it´s a todo)
+- Purple: The bot features integration with libpurple 
 
 Future plans
 ============
 - Plugins should be able to offer http features
-- It should be possible to add servers via a rake task 
+- It should be possible to chain and pipe commands, like !hex abc | urlencode # => %34%31%34%32%34%33
 
 Install guide
 =============
@@ -53,9 +53,7 @@ Fill your DB with initial values
 > bundle exec rake db:seed
 
 Start the bot...
-> bundle exec rake ricer:start
-
-It might currently fail on first dry run, but a second start fixes it.
+The first start takes a while, as plugins install their databases.
 > bundle exec rake ricer:start
 
 Rice Up!
@@ -102,3 +100,5 @@ Windows installation help
 =========================
 For building mysql2 gem on windows, see http://stackoverflow.com/questions/3608287/error-installing-mysql2-failed-to-build-gem-native-extension
 > gem install mysql2 -- '--with-mysql-lib="c:\Program Files\MySQL\MySQL Server 5.5\lib" --with-mysql-include="c:\Program Files\MySQL\MySQL Server 5.5\include"'
+
+For building purple_ruby on windows, ...

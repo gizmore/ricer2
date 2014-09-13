@@ -1,3 +1,6 @@
+# Violet is an abstract connector for libpurple connections
+# On my box, i have these protocols available:
+# prpl-aim, prpl-icq, prpl-irc, prpl-msn, prpl-myspace, prpl-simple, prpl-jabber, prpl-yahoo, prpl-yahoojp
 module Ricer::Plugins::Purple
   class Violet < Ricer::Net::Connection
 
@@ -13,21 +16,31 @@ module Ricer::Plugins::Purple
     
     def connect!
       ensure_inited!
-      @account = PurpleRuby.login(protocol, username, password)
-      purple.add_purple_server(@account, server)
-      @connected = true
-      server.online = true
-      server.save!
-      server.started_up = true
+      if protocol_supported?(protocol)
+        @account = PurpleRuby.login(protocol, username, password)
+        purple.add_purple_server(@account, server)
+        @connected = true
+        server.online = true
+        server.save!
+        server.started_up = true
+      end
       Thread.kill(Thread.current)
     end
     
     def ensure_inited!
       unless defined?(@@inited)
         @@inited = true
+        bot.log_info("Init PurpleRuby!")
         PurpleRuby.init :debug => true, :user_dir => "#{Rails.root}/tmp/purple_users"
-        bot.log_info "Available protocols: #{PurpleRuby.list_protocols}"
+        @@protocols = PurpleRuby.list_protocols.collect{|p|p.id.to_s}
+        bot.log_info("PurpleRuby inited")
       end
+    end
+    
+    def protocol_supported?(protocol)
+      return true if @@protocols.include?(protocol.to_s)
+      bot.log_error("Purple/Violet protocol not supported in your libpurple distribution: #{protocol}")
+      return false
     end
     
     def watch_incoming_im(acc, sender, text)
@@ -47,7 +60,7 @@ module Ricer::Plugins::Purple
 
     ##################
     ### Like Ricer ###
-    ##################    
+    ##################
     def load_user(nickname); Ricer::Irc::User.where({server_id: server.id, nickname: nickname}).first; end
     def create_user(nickname)
 
@@ -68,7 +81,6 @@ module Ricer::Plugins::Purple
         user.ricer_on_joined_server(server) # We surely joined the server then :)
         #user = user.find(user.id)
         if created
-          #byebug
           user.permissions = Ricer::Irc::Permission.by_name(:operator).bit
           user.password = '11111111'
           user.save!
@@ -105,7 +117,6 @@ module Ricer::Plugins::Purple
       # send_line(message)
     end
     
-    
     def send_line(message)
       begin
         return unless message.reply_to.is_a?(Ricer::Irc::User)
@@ -122,69 +133,11 @@ module Ricer::Plugins::Purple
       nil
     end
     
-    # def parse(args)
-# 
-      # message = Ricer::Net::Message.new(args.join('; '))
-#       
-      # message.prefix = args[0];
-      # message.command = args[1].downcase;
-      # message.args = Array(args[2])
-# 
-      # message
-    # end
-    
-    ### TODO: Pick some naming for the include below: Ricer::Entities???
-    ### TODO: Make this an include and let plugins/rice/connect use it
-    private
-    
     def process_event(event)
       server.process_event(event, fake_message)
     end
     
-    def sender_nickname
-      
-      Ricer::Irc::Nickname.nickname_from_message(@message)      
-    end
-    
-    def load_user(nickname)
-      Ricer::Irc::User.where({server_id: server.id, nickname: nickname}).first
-    end
-#     
-    # def create_user(nickname)
-# 
-      # created = false
-      # user = load_user(nickname)
-      # if user.nil?
-        # user = Ricer::Irc::User.create!({server_id: server.id, nickname: nickname}) if user.nil?
-        # created = true
-      # end
-#       
-      # # Set current user in thread variable scope :(
-      # # This is needed as some events might need to know which user to process
-      # # But there might be no sender / receiver in that event or looping many users
-      # Ricer::Irc::User.current = user
-#       
-      # if !user.should_cache? # Not in mem cache yet?
-        # user.ricer_on_joined_server(server) # We surely joined the server then :)
-        # #user = user.find(user.id)
-        # if created
-          # #byebug
-          # user.permissions = Ricer::Irc::Permission.by_name(:operator).bit
-          # user.password = '11111111'
-          # user.save!
-          # process_event('ricer_on_user_created') # Oh we are brand new!
-        # end
-        # process_event('ricer_on_user_loaded') # And we got loaded :)
-        # if created
-          # process_event('ricer_on_user_registered')
-        # end
-        # user.login!
-        # process_event('ricer_on_user_authenticated')
-      # end
-#       
-      # user
-    # end
-    
+    # TODO: Support for channels in violet connectors
     # def load_channel(channel_name)
       # bot.log_debug "Connect.load_channel(#{channel_name})"
       # channel = Ricer::Irc::Channel.where(:name => channel_name, :server_id => server.id).first
@@ -194,7 +147,6 @@ module Ricer::Plugins::Purple
       # end
       # channel
     # end
-#     
     # def create_channel(channel_name)
       # channel = load_channel(channel_name)
       # if channel.nil?
@@ -204,9 +156,6 @@ module Ricer::Plugins::Purple
       # end
       # channel
     # end
-    
-    
-    
 
   end
 end

@@ -1,7 +1,22 @@
 module Ricer::Plugins::Purple
-  
   class Purple < Ricer::Plugin
     
+    #########################
+    ### Connected Servers ###
+    #########################    
+    # Here we will store the purple/violet connections
+    def on_init 
+      @@servers = {}
+    end
+
+    def add_purple_server(account, server)
+      key = account.protocol_id + account.username
+      @@servers[key] = server
+    end
+    
+    ##########################################################
+    ### Delegate GTK mainloop events to the correct Server ###
+    ##########################################################
     def violet_server(account)
       key = account.protocol_id + account.username
       @@servers[key]
@@ -9,11 +24,6 @@ module Ricer::Plugins::Purple
 
     def violet_connection(account)
       violet_server(account).connection
-    end
-    
-    def add_purple_server(account, server)
-      key = account.protocol_id + account.username
-      @@servers[key] = server
     end
     
     def delegate(method_name, *args)
@@ -24,14 +34,15 @@ module Ricer::Plugins::Purple
         bot.log_exception(e)
       end
     end
-    
-    def on_init 
-      @@servers = {}
-    end
-    
+
+    ################
+    ### Mainloop ###
+    ################    
+    # After all is connecting, init gtk mainloop
+    # It is not done when there is no violet connection at all
     def ricer_on_global_startup
       
-      return if @@servers.empty?
+      return if @@servers.empty? # Nothing to do ~o´
       
       #handle incoming im messages
       PurpleRuby.watch_incoming_im do |acc, sender, message|
@@ -63,19 +74,25 @@ module Ricer::Plugins::Purple
         delegate(:watch_new_buddy, acc, remote_user, message) || true
         #'true': accept; 'false': deny
       end
-      
+
+      # Whatever?
       PurpleRuby.watch_notify_message do |type, title, primary, secondary|
         puts "notification: #{type}, #{title}, #{primary}, #{secondary}"
 #        delegate(:watch_notify_message, type, title, primary, secondary)
       end
-      
+      mainloop
+      nil
+    end
+    #
+    # The mainloop is stepping in g_main_loop
+    # This way we have no problems with threading in gtk
+    def mainloop
       Ricer::Thread.execute do |t|
         loop do
           sleep 0.2
           PurpleRuby.main_loop_step
         end
       end
-
     end
 
   end
