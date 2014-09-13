@@ -30,16 +30,15 @@ Clone the project
 > git clone https://github.com/gizmore/ricer2
 
 Install gems
-> bundle install --path vendor/bundle
+> bundle install
 
-Update them (skip maybe)
-> bundle update
-
-Check config/environments/development.rb for your default irc server and other stuff.
-More servers can be added via irc commands later.
+Edit the configuration.
+Check for your default irc server and other stuff! More servers can be added via irc commands later.
+> cp config/environments/development.example.rb config/environments/development.rb
 > nano config/environments/development.rb
 
 Configure your database settings
+> cp config/database.example.yml config/database.yml
 > nano config/database.yml
 
 Configure some secret settings
