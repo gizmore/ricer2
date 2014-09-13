@@ -1,7 +1,5 @@
 require 'socket'
 
-require_relative 'disconnect'
-require_relative 'submit'
 require_relative 'connect'
 
 module Ricer::Plugins::Tcp
