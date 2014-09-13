@@ -5,6 +5,7 @@ module Ricer::Plug::Extender::IsListTrigger
     per_page: 5,
     pattern: '<search_term>',
     order: 'created_at',
+    with_search: true,
   }
 
   def is_list_trigger(trigger_name, options={})
@@ -14,9 +15,11 @@ module Ricer::Plug::Extender::IsListTrigger
     class_eval do |klass|
 
       # Sanity
-      search_class = options[:for]
-      throw Exception.new("#{klass.name} is_list_trigger #{options[:class_name]} class is not an ActiveRecord::Base") unless search_class < ActiveRecord::Base
-      throw Exception.new("#{klass.name} is_list_trigger has invalid per_page: #{options[:per_page]}") unless options[:per_page].to_i.between?(1, 50)
+      if options[:for] != true ### SKIP for runtime choice
+        search_class = options[:for]
+        throw Exception.new("#{klass.name} is_list_trigger #{options[:class_name]} class is not an ActiveRecord::Base") unless search_class < ActiveRecord::Base
+        throw Exception.new("#{klass.name} is_list_trigger has invalid per_page: #{options[:per_page]}") unless options[:per_page].to_i.between?(1, 50)
+      end
       
       # Register vars exist in class for reloading code
       Ricer::Plugin.register_class_variable('@list_per_page')
@@ -27,7 +30,6 @@ module Ricer::Plug::Extender::IsListTrigger
       klass.instance_variable_set('@search_class', options[:for])
       klass.instance_variable_set('@list_per_page', options[:per_page].to_i)
       klass.instance_variable_set('@list_ordering', options[:order])
-      def search_class; self.class.instance_variable_get('@search_class'); end
       
       ##############
       ### Plugin ###
@@ -36,25 +38,30 @@ module Ricer::Plug::Extender::IsListTrigger
       
       has_usage :execute_welcome, ''
       has_usage :execute_list, '<page>'
-      has_usage :execute_search, "#{options[:pattern]} <page>"
-      has_usage :execute_search, "#{options[:pattern]}"
       
       def execute_welcome
         execute_list(1)
       end
       
-      def list_ordering; self.class.instance_variable_get('@list_ordering'); end
+      def list_ordering
+        self.class.instance_variable_get('@list_ordering')
+      end
       
       def execute_list(page)
         show_items(visible_relation(search_class).order(list_ordering), page)
       end
 
-      def execute_search(search_term, page=1)
-        relation = search_class
-        relation = visible_relation(relation)
-        relation = search_relation(relation, search_term)
-        return execute_show_single_result(relation, page) if relation.count == 1
-        show_items(relation, page)
+      if options[:with_search]
+        has_usage :execute_search, "#{options[:pattern]} <page>"
+        has_usage :execute_search, "#{options[:pattern]}"
+        
+        def execute_search(search_term, page=1)
+          relation = search_class
+          relation = visible_relation(relation)
+          relation = search_relation(relation, search_term)
+          return execute_show_single_result(relation, page) if relation.count == 1
+          show_items(relation, page)
+        end
       end
       
       protected
@@ -63,6 +70,20 @@ module Ricer::Plug::Extender::IsListTrigger
         self.class.instance_variable_get('@list_per_page')
       end
       
+      def search_class
+        self.class.instance_variable_get('@search_class')
+      end
+      
+      def search_relation(relation, arg)
+        return relation.search(arg) if relation.respond_to?(:search)
+        relation.where(:id => arg)
+      end
+      
+      def visible_relation(relation)
+        return relation.visible(user) if relation.respond_to?(:visible)
+        relation
+      end
+     
       def execute_show_single_result(relation, page)
         number = 1
         item = relation.first
@@ -97,17 +118,6 @@ module Ricer::Plug::Extender::IsListTrigger
         return rplyr 'plug.extender.is_list_trigger.msg_list_item_page', classname: search_class.model_name.human, page:items.current_page, pages:items.total_pages, out:out.join(', ')
       end
       
-      def visible_relation(relation)
-        return relation.visible(user) if relation.respond_to?(:visible)
-        relation
-      end
-  
-      def search_relation(relation, arg)
-        return relation.search(arg) if relation.respond_to?(:search)
-        relation.where(:id => arg)
-      end
-      
     end
-
   end
 end

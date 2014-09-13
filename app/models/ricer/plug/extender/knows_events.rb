@@ -1,4 +1,8 @@
 module Ricer::Plug::Extender::KnowsEvents
+
+  def self.included(base); base.extend(self); end
+  
+  def bot; Ricer::Bot.instance; end
   
   def all_subscriptions
     Ricer::Event.class_variable_defined?(:@@sl5_event_subscriptions) ?
@@ -24,7 +28,6 @@ module Ricer::Plug::Extender::KnowsEvents
 
   def display_subscribed(event, subscription)
     "subscribe(#{event}) by #{subscription_location(subscription)}"
-    
   end
 
   def display_publish_consumed(event, subscription)

@@ -13,10 +13,10 @@ module Ricer::Plugins::Stats
       memory_peak
     end
     
-    def on_exit
-      increase_setting(:total_uptime, :bot, uptime)
-    end
-    
+#    subscribe('ricer/on/exit') do |bot|
+#      increase_setting(:total_uptime, :bot, uptime)
+#    end
+
     def ricer_on_trigger
       memory_peak
     end

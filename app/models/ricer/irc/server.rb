@@ -136,8 +136,7 @@ module Ricer::Irc
     
     def process(message)
       if @initial
-        @started_up = true
-        @initial = false
+        @initial, @started_up = false, true
         process_event('ricer_on_server_connected', message)
       end
       process_event("on_#{message.command}", message)

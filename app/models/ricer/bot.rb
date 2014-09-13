@@ -3,6 +3,8 @@ module Ricer
     
     def self.instance; instance_variable_get('@instance'); end
     
+    include Ricer::Plug::Extender::KnowsEvents
+    
     GLOBAL_MUTEX = Mutex.new
     
     with_global_orm_mapping
@@ -40,6 +42,10 @@ module Ricer
     
     def plugins
       @loader.plugins
+    end
+    
+    def get_plugin(name)
+      Ricer::Plugin.by_name(name)
     end
     
     def init
@@ -180,32 +186,31 @@ module Ricer
           end
           #Ricer::Thread.cleanup_threads
         rescue SystemExit, Interrupt => e
-          ricer_on_exit
           servers.each do |server|
             server.send_quit('Caught SystemExit exception.')
           end
           @running = false
         rescue Exception => e
-          ricer_on_exit
           @running = false
         end
       end
-      log_info "Ricer shuts down in 1 second."
-      sleep(1)
+      log_info "Ricer shuts down."
+      publish('ricer/on/exit', self, )
     end
     
-    def ricer_on_exit
-      server = servers.first
-      message = server.fake_message
-      @plugins.each do |plugin|
-        begin
-          plugin.message = message
-          plugin.on_exit
-        rescue => e
-          log_exception(e)
-        end
-      end
-    end
+    # def ricer_on_exit
+ # #     publish('ricer/before/exit', self)
+      # server = servers.first
+      # message = server.fake_message
+      # @plugins.each do |plugin|
+        # begin
+          # plugin.message = message
+          # plugin.on_exit
+        # rescue => e
+          # log_exception(e)
+        # end
+      # end
+    # end
     
     def check_started_up
       servers.each do |server|

@@ -1,12 +1,8 @@
 module Ricer::Plugins::Purple
-  class Icq < Purple
+  class Icq < Violet
     
-    def purple_protocol_symbol
-      'ICQ'
-    end
-    
-    def text_line(message)
-      message[6..-8].trim!
+    def protocol
+      'prpl-icq'
     end
 
   end

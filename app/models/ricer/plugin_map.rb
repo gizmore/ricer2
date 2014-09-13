@@ -2,6 +2,7 @@ module Ricer
   class PluginMap
     
     include Singleton
+    include Ricer::Plug::Extender::KnowsEvents
     
     attr_reader :event_count, :trigger_count
     
@@ -29,6 +30,7 @@ module Ricer
     def register_connector(symbol, klass)
       @connectors[symbol] = klass
       @connector_count += 1
+      
     end
     
     def load_connector(connector)

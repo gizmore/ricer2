@@ -7,9 +7,14 @@ module ActiveRecord
   class Base
     def self.with_global_orm_mapping
       class_eval do |klass|
-        klass.class_variable_set('@@CACHE', {}) unless klass.class_variable_defined?('@@CACHE')
+        # klass.class_variable_set('@@CACHE', {}) unless klass.class_variable_defined?('@@CACHE')
+        caches = ActiveRecord::Base.instance_variable_defined?(:@CURRY_CACHE) ? 
+          ActiveRecord::Base.instance_variable_get(:@CURRY_CACHE) :
+          ActiveRecord::Base.instance_variable_set(:@CURRY_CACHE, {})
+        caches[klass.table_name] ||= {}
         def global_cache
-          self.class.class_variable_get('@@CACHE')
+          ActiveRecord::Base.instance_variable_get(:@CURRY_CACHE)[self.class.table_name]
+#          self.class.class_variable_get('@@CACHE')
         end
         def global_cache_table(record)
           c = global_cache
