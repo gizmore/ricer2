@@ -194,8 +194,10 @@ module Ricer
           @running = false
         end
       end
-      log_info "Ricer shuts down."
-      publish('ricer/on/exit', self, )
+      log_info "Ricer shuts down in 5 seconds."
+      publish('ricer/on/exit', self)
+      sleep 5
+      log_info "Ricer shut down."
     end
     
     # def ricer_on_exit

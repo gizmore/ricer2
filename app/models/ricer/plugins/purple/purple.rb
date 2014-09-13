@@ -1,13 +1,10 @@
 module Ricer::Plugins::Purple
   
-  PurpleRuby.init :debug => true, :user_dir => "#{Rails.root}/tmp/purple_users"
-  puts "Available protocols:", PurpleRuby.list_protocols
-
   class Purple < Ricer::Plugin
     
     def violet_server(account)
       key = account.protocol_id + account.username
-      @servers[key]
+      @@servers[key]
     end
 
     def violet_connection(account)
@@ -16,7 +13,7 @@ module Ricer::Plugins::Purple
     
     def add_purple_server(account, server)
       key = account.protocol_id + account.username
-      @servers[key] = server
+      @@servers[key] = server
     end
     
     def delegate(method_name, *args)
@@ -28,13 +25,13 @@ module Ricer::Plugins::Purple
       end
     end
     
-    subscribe('ricer/on/exit') do |bot|
-      # PurpleRuby.main_loop_stop
+    def on_init 
+      @@servers = {}
     end
     
-    def on_init
+    def ricer_on_global_startup
       
-      @servers = {}
+      return if @@servers.empty?
       
       #handle incoming im messages
       PurpleRuby.watch_incoming_im do |acc, sender, message|

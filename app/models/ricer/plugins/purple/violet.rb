@@ -12,12 +12,22 @@ module Ricer::Plugins::Purple
     def purple; @@purple ||= bot.get_plugin('Purple/Purple'); end
     
     def connect!
+      ensure_inited!
       @account = PurpleRuby.login(protocol, username, password)
       purple.add_purple_server(@account, server)
       @connected = true
+      server.online = true
+      server.save!
+      server.started_up = true
       Thread.kill(Thread.current)
-      true
-#      @account.set_public_alias(nickname)
+    end
+    
+    def ensure_inited!
+      unless defined?(@@inited)
+        @@inited = true
+        PurpleRuby.init :debug => true, :user_dir => "#{Rails.root}/tmp/purple_users"
+        bot.log_info "Available protocols: #{PurpleRuby.list_protocols}"
+      end
     end
     
     def watch_incoming_im(acc, sender, text)
