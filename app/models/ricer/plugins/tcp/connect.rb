@@ -16,7 +16,6 @@ module Ricer::Plugins::Tcp
       tcp_connection = sender.instance_variable_get(:@ricer_tcp_plugin_connection)
       unless tcp_connection.nil?
         get_plugin('Tcp/Close').execute_close
-        reply "Previous connection closed"
       end
       Ricer::Thread.execute do
         begin
@@ -26,7 +25,7 @@ module Ricer::Plugins::Tcp
           else
             reply "Couldn't connect"
           end
-
+  
 
        # response = socket.read
        # reply response
