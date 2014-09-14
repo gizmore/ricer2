@@ -13,6 +13,6 @@ en:
          weather:
            trigger: 'weather'
            description: 'Get the temperature of a city.'
-           err_open_weather_connect: 'The connection to openweathermap failed.'
            err_open_weather_query: 'There could be no information found for your input.'
-           rpl_open_weather: 'The temperature is around %{temp} celsius in %{city} and the minimum temperature is %{min} while the max temperature is %{max}.'
+           err_open_weather_connect: 'The connection to openweathermap.org failed.'
+           rpl_open_weather: 'The temperature is around %{temp_avg} celsius in %{city} and the minimum temperature is %{temp_min} while the max temperature is %{temp_max}.'

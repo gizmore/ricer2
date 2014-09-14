@@ -5,17 +5,17 @@ module Ricer::Plugins::Data
 
     trigger_is :weather
 
-    has_usage :execute, '<...message...>'
+    has_usage :execute, '<..message..>'
 
     def execute(input)
-      url = "http://api.openweathermap.org/data/2.5/forecast?q=#{URI::encode(city)}&mode=xml"
       Ricer::Thread.execute do 
+        url = "http://api.openweathermap.org/data/2.5/forecast?q=#{URI::encode(input)}&mode=xml"
         doc = Nokogiri::XML(open(url), nil, "UTF-8") rescue (raise t(:err_open_weather_connect))
-        data = doc.xpath("//temperature").first rescue nil
-        return rply :err_open_weather_input if data.nil?
+        data = doc.xpath("//temperature").first or (return rply :err_open_weather_input)
+        byebug
         rply :rpl_open_weather,
-          city: input,
-          temp: data.attr("temp"),
+          city: 'CITY',
+          temp_avg: data.attr("temp"),
           temp_min: data.attr("min"),
           temp_max: data.attr("max")
       end
