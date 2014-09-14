@@ -20,8 +20,6 @@ module Ricer::Plugins::Purple
         @account = PurpleRuby.login(protocol, username, password)
         purple.add_purple_server(@account, server)
         @connected = true
-        server.online = true
-        server.save!
         server.started_up = true
       end
       Thread.kill(Thread.current)
@@ -43,8 +41,8 @@ module Ricer::Plugins::Purple
       return false
     end
     
-    def watch_incoming_im(acc, sender, text)
-      bot.log_debug("Violet#watch_incoming_im with #{acc.username}, #{sender}, #{text}")
+    def watch_incoming_im(account, sender, text)
+      bot.log_debug("Violet#watch_incoming_im with #{account.username}, #{sender}, #{text}")
       sender = sender.substr_to('/') || sender # discard anything after '/'
       text = (Hpricot(text)).to_plain_text
       user = create_user(sender)
@@ -56,6 +54,12 @@ module Ricer::Plugins::Purple
       message.args = [sender, text]
       server.process_event("on_privmsg", message)
       server.process_event("ricer_on_receive", message)
+    end
+    
+    def watch_signed_on_event(account)
+      bot.log_debug("Violet#watch_signed_on_event: #{account.username}")
+      server.online = true
+      server.save!
     end
 
     ##################

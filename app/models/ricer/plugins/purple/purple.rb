@@ -46,12 +46,12 @@ module Ricer::Plugins::Purple
       
       #handle incoming im messages
       PurpleRuby.watch_incoming_im do |acc, sender, message|
-        puts "message: #{acc.username} #{sender}: #{message}"
+        bot.log_debug "PurpleRuby.watch_incoming_im: #{acc.username} #{sender}: #{message}"
         delegate(:watch_incoming_im, acc, sender, message)
       end
       
       PurpleRuby.watch_signed_on_event do |acc| 
-        puts "signed on: #{acc.username}"
+        bot.log_debug "PurpleRuby.watch_signed_on_event: #{acc.username}"
         delegate(:watch_signed_on_event, acc)
       end
       
@@ -81,7 +81,6 @@ module Ricer::Plugins::Purple
 #        delegate(:watch_notify_message, type, title, primary, secondary)
       end
       mainloop
-      nil
     end
     #
     # The mainloop is stepping in g_main_loop
@@ -89,7 +88,7 @@ module Ricer::Plugins::Purple
     def mainloop
       Ricer::Thread.execute do |t|
         loop do
-          sleep 0.2
+          sleep 0.200
           PurpleRuby.main_loop_step
         end
       end
