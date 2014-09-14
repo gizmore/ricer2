@@ -4,11 +4,7 @@ module Ricer::Plugins::Conf
     trigger_is :lang
     
     def self.available
-      out = []
-      Ricer::Locale.all.each do |l|
-        out.push(l.iso)
-      end
-      out.join(', ')
+      Ricer::Locale.all.collect{|l|l.iso}.join(', ')
     end
     
     has_usage :execute_set_user_language, '<language>' 

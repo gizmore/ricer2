@@ -34,10 +34,6 @@ module Ricer::Plugins::Abbo
       item.display_show_item(n)
     end
     
-    def self.visible(user)
-      all
-    end
-    
     search_syntax do
       search_by :text do |scope, phrases|
         scope

@@ -67,37 +67,34 @@ module Ricer
     def self.register_class_variable(varname)
       class_variables = registered_class_variables
       class_variables.push(varname.to_sym) unless class_variables.include?(varname.to_sym)
-      instance_variable_set('@class_variables', class_variables)
     end
     
     def self.registered_class_variables
-      instance_variable_defined?('@class_variables') ? instance_variable_get('@class_variables') : []
+      Ricer::Plugin.instance_variable_define('@class_variables', [])
     end
     
     def self.clear_registered_class_variables
-      instance_variable_set('@class_variables', [])
+      Ricer::Plugin.instance_variable_set('@class_variables', [])
     end
     
     def self.register_exec_function(funcname)
       register_class_variable('@exec_functions')
       exec_functions = get_exec_functions
       exec_functions.push(funcname.to_sym) unless exec_functions.include?(funcname.to_sym)
-      instance_variable_set('@exec_functions', exec_functions)
     end
     
     def self.get_exec_functions
-      instance_variable_defined?('@exec_functions') ? instance_variable_get('@exec_functions') : []
+      instance_variable_define('@exec_functions', [])
     end
     
     def self.register_init_function(funcname)
       register_class_variable('@init_functions')
       init_functions = get_init_functions
       init_functions.push(funcname.to_sym) unless init_functions.include?(funcname.to_sym)
-      instance_variable_set('@init_functions', init_functions)
     end
     
     def self.get_init_functions
-      instance_variable_defined?('@init_functions') ? instance_variable_get('@init_functions') : []
+      instance_variable_define('@init_functions', [])
     end
     
     ###################

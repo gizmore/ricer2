@@ -4,6 +4,7 @@ module Ricer::Plug::Extender::AbboTriggers
     
     class_eval do |klass|
   
+      klass.register_class_variable('@abbo_for_class')
       klass.instance_variable_set('@abbo_for_class', options[:for])
   
       def abbo_class; self.class.instance_variable_get('@abbo_for_class'); end
@@ -87,7 +88,8 @@ module Ricer::Plug::Extender::AbboTriggers
       is_abbo_trigger(options)
       is_list_trigger options[:trigger]||:abbos, options
       def visible_relation(relation)
-        return Ricer::Plugins::Abbo::Abbonement.for_target(abbo_target)#(:abbo_target => ) #relation.abbonemented_by(@message.reply_target)
+        return Ricer::Plugins::Abbo::Abbonement.for_target(abbo_target)
+        #(:abbo_target => ) #relation.abbonemented_by(@message.reply_target)
       end
     end
   end

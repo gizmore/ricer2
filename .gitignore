@@ -39,10 +39,10 @@ config/secrets.yml
 
 # --- gizmore --- #
 .project
-pingo.rb
 /vendor
 /repos
 /log
+/config/locale_gen
 /config/database.yml
 /config/environments/development.rb
 /config/environments/production.rb
