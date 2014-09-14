@@ -3,28 +3,30 @@ module Ricer::Plug::Extender::IsListTrigger
   DEFAULT_OPTIONS = {
     :for => nil,
     per_page: 5,
-    pattern: '<search_term>',
     order: 'created_at',
-    with_search: true,
+    with_welcome: true,
+    search_pattern: '<search_term>', # falsy to disable
+    pagination_pattern: '<page>', # falsy to disable
   }
 
   def is_list_trigger(trigger_name, options={})
-    
-    merge_options(options, DEFAULT_OPTIONS)
-    
     class_eval do |klass|
 
+      merge_options(options, DEFAULT_OPTIONS)
+      
       # Sanity
       if options[:for] != true ### SKIP for runtime choice
-        search_class = options[:for]
-        throw Exception.new("#{klass.name} is_list_trigger #{options[:class_name]} class is not an ActiveRecord::Base") unless search_class < ActiveRecord::Base
-        throw Exception.new("#{klass.name} is_list_trigger has invalid per_page: #{options[:per_page]}") unless options[:per_page].to_i.between?(1, 50)
+        throw "#{klass.name} is_list_trigger #{options[:for]} class is not an ActiveRecord::Base" unless options[:for] < ActiveRecord::Base
+        throw "#{klass.name} is_list_trigger has invalid per_page: #{options[:per_page]}" unless options[:per_page].to_i.between?(1, 50)
+      end
+      unless options[:per_page].to_i.between?(1, 100)
+        throw "#{klass.name} is_list_trigger has invalid per_page option: #{options[:per_page]}"
       end
       
       # Register vars exist in class for reloading code
-      Ricer::Plugin.register_class_variable('@list_per_page')
-      Ricer::Plugin.register_class_variable('@search_class')
-      Ricer::Plugin.register_class_variable('@list_ordering')
+      klass.register_class_variable('@list_per_page')
+      klass.register_class_variable('@search_class')
+      klass.register_class_variable('@list_ordering')
 
       # Set the vars for this plugin
       klass.instance_variable_set('@search_class', options[:for])
@@ -36,35 +38,51 @@ module Ricer::Plug::Extender::IsListTrigger
       ##############
       trigger_is trigger_name
       
-      has_usage :execute_welcome, ''
-      has_usage :execute_list, '<page>'
-      
-      def execute_welcome
-        execute_list(1)
+      ### 
+      # No params
+      if options[:with_welcome]
+        klass.has_usage :execute_welcome
+        def execute_welcome
+          execute_list(1)
+        end
       end
       
-      def list_ordering
-        self.class.instance_variable_get('@list_ordering')
+      ###
+      # Paginated, all of them
+      if options[:pagination_pattern]
+        klass.has_usage :execute_list, options[:pagination_pattern]
       end
-      
       def execute_list(page)
-        show_items(visible_relation(search_class).order(list_ordering), page)
+        execute_show_items(all_visible_relation, page)
       end
 
-      if options[:with_search]
-        has_usage :execute_search, "#{options[:pattern]} <page>"
-        has_usage :execute_search, "#{options[:pattern]}"
-        
+      ###
+      # Paginated, some of them with search
+      if options[:search_pattern]
+        klass.has_usage :execute_search, "#{options[:search_pattern]} <page>"
+        klass.has_usage :execute_search, "#{options[:search_pattern]}"
         def execute_search(search_term, page=1)
-          relation = search_class
-          relation = visible_relation(relation)
-          relation = search_relation(relation, search_term)
-          return execute_show_single_result(relation, page) if relation.count == 1
-          show_items(relation, page)
+          relation = search_relation(all_visible_relation, search_term)
+          relation.count == 1 ?
+            execute_show_item(relation) :
+            execute_show_items(relation, page)
         end
       end
       
       protected
+
+      def raise_record_not_found
+        raise Ricer::ExecutionException.new(tr('plug.extender.is_list_trigger.err_not_found',
+          classname: search_class.model_name.human,
+        ))
+      end
+      
+      #################
+      ### Relations ###
+      #################
+      def list_ordering
+        self.class.instance_variable_get('@list_ordering')
+      end
       
       def list_per_page
         self.class.instance_variable_get('@list_per_page')
@@ -79,21 +97,22 @@ module Ricer::Plug::Extender::IsListTrigger
         relation.where(:id => arg)
       end
       
+      def order_relation(relation)
+        relation.order(list_ordering)
+      end
+      
       def visible_relation(relation)
         return relation.visible(user) if relation.respond_to?(:visible)
         relation
       end
-     
-      def execute_show_single_result(relation, page)
-        number = 1
-        item = relation.first
-        if item.respond_to?(:display_show_item)
-          reply item.display_show_item(1)
-        else
-          reply display_show_item(item, 1)
-        end
-      end
       
+      def all_visible_relation
+        order_relation(visible_relation(search_class))
+      end
+     
+      ###############
+      ### Display ###
+      ###############
       def display_list_item(item, number)
         "#{number}-#{item.class.name}"
       end
@@ -102,20 +121,63 @@ module Ricer::Plug::Extender::IsListTrigger
         "#{number}-#{item.inspect}"
       end
       
-      def show_items(relation, page)
-        items = relation.page(page.to_i).per(list_per_page)
-        out = []
-        number = items.offset_value
-        items.each do |item|
-          number += 1
-          if item.respond_to?(:display_list_item)
-            out.push(item.display_list_item(number))
-          else
-            out.push(display_list_item(item, number))
+      #####################
+      ### List Position ###
+      #####################
+      def calc_item_position(item)
+        calc_item_positions([item]).first
+      end
+      
+      def calc_item_positions(items)
+        positions = []
+        unless items.empty?
+          all_visible_relation.each_with_index do |visible, number|
+            if visible.id == items[positions.length].id
+              positions.push(number+1)
+              break if items[positions.length].nil?
+            end
           end
         end
-        return rplyr 'plug.extender.is_list_trigger.err_no_list_items', classname: search_class.model_name.human if out.length == 0
-        return rplyr 'plug.extender.is_list_trigger.msg_list_item_page', classname: search_class.model_name.human, page:items.current_page, pages:items.total_pages, out:out.join(', ')
+        positions
+      end
+      
+      ####################
+      ### Exec helpers ###
+      ####################
+      def execute_show_item(relation)
+        item = relation.first or raise_record_not_found
+        number = calc_item_position(item)
+        if item.respond_to?(:display_show_item)
+          reply item.display_show_item(number)
+        else
+          reply display_show_item(item, number)
+        end
+      end
+
+      def execute_show_items(relation, page)
+        # Load search result
+        items = relation.page(page.to_i).per(list_per_page).all
+        # Compute positions
+        positions = calc_item_positions(items)
+        # Output
+        out = []
+        items.each do |item|
+          if item.respond_to?(:display_list_item)
+            out.push(item.display_list_item(positions.shift))
+          else
+            out.push(display_list_item(item, positions.shift))
+          end
+        end
+        if out.length == 0
+          rplyr 'plug.extender.is_list_trigger.err_no_list_items',
+            classname: search_class.model_name.human 
+        else
+          rplyr 'plug.extender.is_list_trigger.msg_list_item_page',
+            classname: search_class.model_name.human,
+            page:items.current_page,
+            pages:items.total_pages,
+            out:out.join(', ')
+        end
       end
       
     end

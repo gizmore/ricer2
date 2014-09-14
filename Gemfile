@@ -20,6 +20,7 @@ gem 'ruby-git'
 
 group :development do
   gem 'byebug'
+  gem 'ruby-prof'
 end
 
 group :production do

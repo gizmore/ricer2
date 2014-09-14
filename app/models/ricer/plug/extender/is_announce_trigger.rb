@@ -1,18 +1,15 @@
 module Ricer::Plug::Extender::IsAnnounceTrigger
-
   DEFAULT_OPTIONS = {
     user: :public,
     user_default: false,
     channel: :operator,
     channel_default: false,
   }
-
-  def is_announce_trigger(trigger_name, options={channel:true, user:true})
-    
-    options = merge_options(options, DEFAULT_OPTIONS)
-
+  def is_announce_trigger(trigger_name, options={})
     class_eval do |klass|
       
+      merge_options(options, DEFAULT_OPTIONS)
+  
       trigger_is trigger_name
       
       has_setting name: :announce, type: :boolean, scope: :user,    permission: options[:user],    default: options[:user_default]    if options[:user]
@@ -49,5 +46,4 @@ module Ricer::Plug::Extender::IsAnnounceTrigger
     end
     
   end
-  
 end

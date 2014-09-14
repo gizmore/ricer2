@@ -1,34 +1,28 @@
 module Ricer::Plug::Extender::BruteforceProtected
-
   OPTIONS = {
     always: true,
-    timeout: 7.seconds
+#   attempts: 1,
+    timeout: 7.seconds,
   }
-
   def bruteforce_protected(options={})
     
     merge_options(options, OPTIONS)
 
     class_eval do |klass|
 
-      has_setting name: :bf_timeout, scope: :server, permission: :ircop,       type: :duration, default: options[:timeout]
-      has_setting name: :bf_timeout, scope: :bot,    permission: :responsible, type: :duration, default: options[:timeout]
+      klass.has_setting name: :bf_timeout, scope: :server, permission: :ircop,       type: :duration, default: options[:timeout]
+      klass.has_setting name: :bf_timeout, scope: :bot,    permission: :responsible, type: :duration, default: options[:timeout]
 
-      Ricer::Plugin.register_exec_function(:not_bruteforcing?) if options[:always]
+      klass.register_exec_function(:not_bruteforcing?) if options[:always]
       
       protected
       
       def timeout; get_setting(:bf_timeout); end
-      
-      def not_bruteforcing?
-        !bruteforcing?
-      end
-
+      def not_bruteforcing?; !bruteforcing?; end
       def bruteforcing?
         clear_tries
         if @@BF_TRIES[user].nil?
-          register_attempt
-          return false
+          register_attempt and return false
         else
           error_bruteforce
         end
@@ -47,7 +41,9 @@ module Ricer::Plug::Extender::BruteforceProtected
       end
       
       def error_bruteforce
-        raise Exception.new(I18n.t('ricer.plug.extender.bruteforce_protected.err_bruteforce', timeout: display_timeout))
+        raise Ricer::ExecutionException.new(
+          I18n.t('ricer.plug.extender.bruteforce_protected.err_bruteforce', time: display_timeout)
+        )
       end
       
       def register_attempt

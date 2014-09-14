@@ -9,7 +9,6 @@ module Ricer::Irc
     BOLD = "\x02"
     ITALIC = "\x03"
     
-    
     def green(text)
       text
     end
@@ -89,12 +88,7 @@ module Ricer::Irc
     def human_filesize(bytes)
       number_to_human_size(bytes)
     end
-
-    def human_duration(seconds)
-      return number_with_precision(seconds, precision:2)+'s' if seconds < 10
-      seconds
-    end
-
+    
     def human_fraction(fraction, precision=1)
       number_with_precision(fraction, precision: precision)
     end
@@ -103,18 +97,48 @@ module Ricer::Irc
       human_fraction(fraction*100, precision)+'%'
     end
     
-    def human_to_seconds(human)
-      human
+    ################
+    ### Duration ###
+    ################
+    def human_age(datetime)
+      human_duration_between(datetime, Time.now)
+    end
+
+    def human_duration_between(a, b)
+      human_duration((a.to_f - b.to_f).abs)
+    end
+
+    def human_duration(seconds, short=true, units=2)
+      if seconds < 10
+        number_with_precision(seconds, precision:2)+'s'
+      else
+        _human_duration(seconds, short, units)
+      end
     end
     
-    def human_join(array)
-      out = ''
-      return array[0] if array.count < 2
-      out = array[0..-2].join(I18n.t('ricer.comma'))
-      out += I18n.t('ricer.and')
-      out += array[-1]
-      out
+    def _human_duration(seconds, short=true, units=2)
+      short_name = {:second => :sec, :minute => :min, :hour => :hr, :day => :day, :week => :wk, :year => :yr}
+      [[60, :second], [60, :minute], [24, :hour], [7, :day], [52, :week], [1000, :year]].map{ |count, name|
+        if seconds > 0
+          seconds, n = seconds.divmod(count)
+          name = short_name[name] if short
+          "#{n.to_i} #{name}".pluralize(n.to_i) if n.to_i > 0
+        end
+      }.compact.last(units).reverse.join(' ')
     end
+
+    def human_to_seconds(human)
+      # TODO: Implement parsing of 3min2sec to 182
+      human
+    end
+
+    ############
+    ### Join ###
+    ############    
+    def join(array); array.join(comma); end
+    def und; I18n.t!('ricer.and') rescue ' and '; end
+    def comma; I18n.t!('ricer.comma') rescue ', '; end
+    def human_join(array); array.count < 2 ? (array[0]) : (join(array[0..-2]) + und + array[-1]); end
     
   end
 end

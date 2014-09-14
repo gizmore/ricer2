@@ -19,11 +19,13 @@ Ricer::Application.configure do
   config.ricer_default_server = 'irc://irc.giz.org:6668'
   # If you define this here, an icq/aim/oscar server is setup for you in rake db:seeds
   config.ricer_icq_enabled  = true
-  config.ricer_icq_url      = 'login.icq.com:5190'
   config.ricer_icq_login    = Ricer::Application.secrets.icq_login
   config.ricer_icq_password = Ricer::Application.secrets.icq_password
+  # Blacklist folders and plugins
+  config.ricer_embargo = ['shadowlamb','cvs','slapwarz','test','music']
+  config.ricer_malware = ['Stats/Plugstats']
   # END OF RICER2 STUFF
-  
+
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.

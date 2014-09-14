@@ -23,7 +23,8 @@ module Ricer
       
       load_i18n_dir('config/locales/rails/')
       load_i18n_dir('config/locales/ricer/')
-
+      load_i18n_dir('app/models/ricer/plug')
+      
       @plugins = []
       @plugdirs.each do |path|
         @plugins += load_path(path)
@@ -40,45 +41,37 @@ module Ricer
       @plugins
     end
     
+    def with_plugdirs(&block)
+      @plugdirs.each do |plugdir|
+        Dir[plugdir].each do |dir|
+          yield(dir) unless blacklisted_path?(dir)
+        end
+      end
+    end
+    
     def load_path(path)
       plugins = []
-
-      # Exports first (Cross plugin)     
-      @plugdirs.each do |plugdir|
-        Dir[plugdir].each do |dir|
-          load_export_dir dir
-        end
+      with_plugdirs{|dir|load_export_dir dir} # Exports first (Cross plugin)
+      with_plugdirs{|dir|load_model_dir dir} # Then models (Cross plugin)
+      with_plugdirs do |dir|
+        # Langfiles
+        load_i18n_dirs(dir)
+        # Plugins
+        modulename = dir.rsubstr_from('/').camelize
+        plugins += load_plugin_dir(dir, modulename)
       end
-      
-      # Then models (Cross plugin)
-      @plugdirs.each do |plugdir|
-        Dir[plugdir].each do |dir|
-          load_model_dir dir
-        end
-      end
-      
-      # Then the rest
-      @plugdirs.each do |plugdir|
-        Dir[plugdir].each do |dir|
-          # Langfiles
-          load_i18n_dirs(dir)
-          # Plugins
-          modulename = dir.rsubstr_from('/').camelize
-          plugins += load_plugin_dir(dir, modulename)
-        end
-      end
-      
       # Subcommands
-      subcommands = []
       plugins.each do |parent_plugin|
-        subcommands += load_command_dir(parent_plugin)
+        plugins += load_command_dir(parent_plugin)
       end
-      plugins += subcommands
-
-      # \o/
       plugins
     end
     
+    def blacklisted_path?(path)
+      bot.embargo.each{|pattern| return true if path.index(pattern)}
+      false
+    end
+
     def gather_subcommands(plugins, plugin)
       if plugin.respond_to?(:has_subcommands?)
         plugin.subcommand_names.each do |cmdname|
@@ -164,32 +157,39 @@ module Ricer
       @bot.log_info "Loading plugin module folder '#{modulename}' from '#{plugdir}'."
       plugins, length = [], plugdir.length + 1;
       Filewalker.proc_files(plugdir, '*.rb') do |path|
-        begin
-          classname = path[length..-4].camelize
-          @bot.log_info "Loading plugin '#{modulename}::#{classname}'."
-          load path
-          classobject = Object.const_get("Ricer::Plugins::#{modulename}::#{classname}")
-          if classobject < Ricer::Plugin
-            plugin = install_plugin(classobject)
-            raise Exception.new("Error loading plugin in #{path}") if plugin.nil?
-            plugin.plugin_module = modulename
-            plugin.plugin_dir = plugdir
-            plugin.module_dir = plugdir.substr_to("/#{modulename.underscore}/")||plugdir
-            PluginMap.instance.load_plugin(plugin)
-            plugins.push(plugin)
-          elsif classobject < Ricer::Net::Connection
-            PluginMap.instance.load_connector(classobject)
+        classname = path[length..-4].camelize
+        unless blacklisted_plugin?("#{modulename}/#{classname}")
+          begin
+            @bot.log_info "Loading plugin '#{modulename}::#{classname}'."
+            load path
+            classobject = Object.const_get("Ricer::Plugins::#{modulename}::#{classname}")
+            if classobject < Ricer::Plugin
+              plugin = install_plugin(classobject)
+              raise Exception.new("Error loading plugin in #{path}") if plugin.nil?
+              plugin.plugin_module = modulename
+              plugin.plugin_dir = plugdir
+              plugin.module_dir = plugdir.substr_to("/#{modulename.underscore}/")||plugdir
+              PluginMap.instance.load_plugin(plugin)
+              plugins.push(plugin)
+            elsif classobject < Ricer::Net::Connection
+              PluginMap.instance.load_connector(classobject)
+            end
+          rescue SystemExit, Interrupt
+            raise
+          rescue Exception => e
+            @valid = false
+            @bot.log_error("ERROR IN: #{path}")
+            raise unless @bot.genetic_rice
+            @bot.log_exception(e)
           end
-        rescue SystemExit, Interrupt
-          raise
-        rescue Exception => e
-          @valid = false
-          @bot.log_error("ERROR IN: #{path}")
-          raise unless @bot.genetic_rice
-          @bot.log_exception(e)
         end
       end
       plugins
+    end
+    
+    def blacklisted_plugin?(plugin_name)
+      bot.malware.each{|pattern| return true if plugin_name == pattern}
+      false
     end
     
     def install_plugin(classobject)

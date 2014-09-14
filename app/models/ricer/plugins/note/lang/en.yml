@@ -11,10 +11,10 @@ en:
           description: 'Browse messages from other users in your inbox.'
         
         note:
-          trigger: 'notes'
+          trigger: 'note'
           msg_new_notes:
-            one: 'Someone has sent you a note. Use "$TRIGGER$notes unread" to read it.'
-            other: 'You have %{count} unread notes. Use "$TRIGGER$notes unread" to read it.'
+            one: 'Someone has sent you a note. Use "$TRIGGER$note unread" to read it.'
+            other: 'You have %{count} unread notes. Use "$TRIGGER$note unread" to read it.'
         
         send:
           trigger: 'send'

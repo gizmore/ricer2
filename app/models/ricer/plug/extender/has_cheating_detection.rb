@@ -7,24 +7,25 @@ module Ricer::Plug::Extender::HasCheatingDetection
     max_attempts: 1
   }
   def has_cheating_detection(options={})
-    
-    # Options
-    options = merge_options(options, OPTIONS)
-    
     class_eval do |klass|
       
+      # Options
+      merge_options(options, OPTIONS)
+    
       public
       
       # Sanity
       options[:max_attempts] = options[:max_attempts].to_i
-      throw Exception.new("#{klass.name} has_cheating_detection max_attempts has to be between 1 and 10 but is: #{options[:max_attempts]}") unless options[:max_attempts].between?(1, 10)
+      unless options[:max_attempts].between?(1, 10)
+        throw "#{klass.name} has_cheating_detection max_attempts has to be between 1 and 10 but is: #{options[:max_attempts]}"
+      end
+
       klass.instance_variable_set(:@max_cheat_attempts, options[:max_attempts])
 
       # Register klass variables for reload cleanup
-      Ricer::Plugin.register_class_variable(:@cheat_cache)
-      Ricer::Plugin.register_class_variable(:@max_cheat_attempts)
-      
-      klass.instance_variable_set(:@cheat_cache, {})
+      klass.register_class_variable(:@cheat_cache)
+      klass.register_class_variable(:@max_cheat_attempts)
+      klass.instance_variable_define(:@cheat_cache, {})
       
       # Call this for checking       
       def cheat_detection!(slot)

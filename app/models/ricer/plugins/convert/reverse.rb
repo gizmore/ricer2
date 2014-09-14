@@ -3,9 +3,9 @@ module Ricer::Plugins::Convert
 
     trigger_is :reverse
 
-    has_usage :execute_reverse, '<...message...>'
-    def execute_reverse(message)
-      reply message.reverse
+    has_usage '<..text..>'
+    def execute(text)
+      reply text.reverse
     end
 
   end

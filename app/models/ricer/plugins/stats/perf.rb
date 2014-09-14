@@ -58,18 +58,18 @@ module Ricer::Plugins::Stats
     end
     
     def display_uptime
-      Ricer::Plug::Duration.new(uptime).to_label 
+      lib.human_duration(uptime)
     end
     
     def display_total_uptime
-      Ricer::Plug::Duration.new(total_uptime).to_label 
+      lib.human_duration(total_uptime)
     end
     
     def cpu_usage
       if OS.posix?
         `ps -o %cpu= -p #{Process.pid}`.to_f
       else
-        -0.1
+        "?.??(Win)"
       end
     end
     

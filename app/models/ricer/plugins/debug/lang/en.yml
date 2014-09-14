@@ -2,27 +2,43 @@ en:
   ricer:
     plugins:
       debug:
+
+        byebug:
+          description: 'Run into a breakpoint to be able to play in the console.'
+
         chandebug:
           description: 'Show logical info of a channel object.'
-          msg_chaninfo: '%{id}-%{name} is located on server %{server}. Memory Address: %{channel}'
-        console:
-          description: 'Execute system commands via $BOT$. This is a security hole and for the lulz only.'
+          msg_chaninfo: '%{channel} is located on server %{server}.'
+
         dbtrace:
           description: 'Toggle database console logging on and off.'
           msg_on: 'Database query inspector enabled.'
           msg_off: 'Database query inspector disabled.'
-        debugger:
-          description: 'Run into a breakpoint to be able to play in console.'
+
         plugdebug:
           description: 'Print logical info about a plugin.'
           msg_plug_info: 'Plugin %{modulename}/%{classname}. Path: %{path}. Trigger: %{trigger}. Scope: %{plugscope}. Permission: %{permission}.'
-        railsc:
+          
+        profiler:
+          trigger: 'profiler'
+          description: 'Toggle the profiler or profile a given command. Switching the profiler off sends statistics to pastebins.'
+          paste_title_s: "$BOT$ profiled %{command} at %{started} - %{runtime}."
+          paste_title_l: "$BOT$ profiler from %{started} to %{stopped} - %{runtime}."
+          err_not_enabled: "The profiler was not running and has no data."
+          err_already_enabled: "The profiler is still running. You profile this very error message."
+          msg_enabled: "The profiler has started capturing."
+          msg_capturing: "The profiler has started to capture your %{trigger} command."
+          msg_disabled: "The profiler has stopped recording."
+          msg_generating: "Profiler is generating graphs from the record file."
+          msg_uploading: "Profiler is uploading %{size} for \"%{title}\"."
+
+        ruby:
           description: 'Execute ruby commands inside the $BOT$ environment. This is a security hole and for debugging only.'
+
         servdebug:
           description: 'Show logical info of a server object'
+
         userdebug:
-          description: 'Show logical info of a user object.'
-          msg_userinfo: '%{id}-%{user} is known as %{hostmask} on %{server} Mode: %{usermode}. Perm: %{servpriv}.'
-        userdebugc:
-          description: 'Show logical info of a user object and his channel permissions.'
-          msg_userinfo: '%{id}-%{user} is known as %{hostmask} on %{server} Mode: %{usermode}. Perm: %{servpriv}. In %{channel} he got mode %{chanmode} with %{chanpriv}.'
+          description: 'Show logical info about a user object.'
+          msg_userinfo_u: '%{id}-%{user} is known as %{hostmask} on %{server} Mode: %{usermode}. Perm: %{servpriv}.'
+          msg_userinfo_c: '%{id}-%{user} is known as %{hostmask} on %{server} Mode: %{usermode}. Perm: %{servpriv}. In %{channel} he got mode %{chanmode} with %{chanpriv}.'

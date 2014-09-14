@@ -7,14 +7,17 @@ module Ricer::Plugins::Core
     
     has_setting name: :max_length, type: :integer, scope: :server, permission: :operator, default: 12
     
-#    has_usage :execute_with_language, '<programming_language> <..text..>'
-#    def execute_with_language(programming_language)
-#    end
+#   has_usage :execute_with_language, '<programming_language> <..text..>'
+#   def execute_with_language(programming_language)
+#   end
  
     has_usage :execute, '<..text..>'
     def execute(content)
-      byebug
-      send_pastebin(pastebin_title, content, content.length, 'text', :msg_pasted_it)
+      execute_upload(content)
+    end
+    
+    def execute_upload(content, pastelang='text', title=nil, langkey=:msg_pasted_it)
+      send_pastebin(title||pastebin_title, content, content.count("\n"), 'text', langkey)
     end
     
     def max_length
@@ -55,9 +58,17 @@ module Ricer::Plugins::Core
     
     def send_pastebin(title, content, lines, pastelang='text', langkey=:msg_pasted_this)
       Ricer::Thread.execute do
-        byebug
-        paste = Pile::Cxg.new({user_id:user.id}).upload(title, content, pastelang)
-        rply langkey, url: paste.url, size: paste.size, count: lines
+        begin
+          paste = Pile::Cxg.new({user_id:user.id}).upload(title, content, pastelang)
+          raise if paste.url.nil?
+          rply langkey,
+            url: paste.url,
+            title: title,
+            size: lib.human_filesize(paste.size),
+            count: lines
+        rescue Exception => e
+          rply :err_paste_failed, reason: e.to_s
+        end
       end
     end
     

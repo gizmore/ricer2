@@ -1,7 +1,7 @@
 module Ricer::Plug::Params
-  class ChannelParam < Base
-
-    def convert_in!(input, options, message)
+  class ChannelParam < BaseOnline
+    
+    def convert_in!(input, message)
       # Split channel:server
       sid = input.substr_from(':')
       input = input.substr_to(':') unless sid.nil?  
@@ -12,7 +12,7 @@ module Ricer::Plug::Params
       fail(:err_need_server) if server.nil?
 
       channels = Ricer::Irc::Channel
-      channels = channels.where(:online => options[:online]) unless options[:online].nil?
+      channels = channels.where(:online => online_option) unless online_option.nil?
 
       sid = server.id
       channel = channels.where(:id => input).first
@@ -20,11 +20,10 @@ module Ricer::Plug::Params
       channel = channels.where('name LIKE ? AND server_id=?', "#{input}%", sid).first if channel.nil?
       channel = channels.where('name LIKE ? AND server_id=?', "%#{input}%", sid).first if channel.nil?
 
-      failed_input if channel.nil?
-      channel
+      channel || failed_input
     end
     
-    def convert_out!(value, options, message)
+    def convert_out!(value, message)
       channel.displayname
     end
     

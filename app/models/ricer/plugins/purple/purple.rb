@@ -26,10 +26,10 @@ module Ricer::Plugins::Purple
       violet_server(account).connection
     end
     
-    def delegate(method_name, *args)
+    def delegate(method_name, *method_args)
       begin
-        connection = violet_connection(args[0])
-        connection.send(method_name, *args) if connection.respond_to?(method_name)
+        connection = violet_connection(method_args[0])
+        connection.send(method_name, *method_args) if connection.respond_to?(method_name)
       rescue Exception => e
         bot.log_exception(e)
       end

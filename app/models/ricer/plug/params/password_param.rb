@@ -1,9 +1,9 @@
 module Ricer::Plug::Params
   class PasswordParam < Base
-    def convert_in!(input, options, message)
+    def convert_in!(input, message)
       input
     end
-    def convert_out!(value, options, message)
+    def convert_out!(value, message)
       "$HASH$"
     end
   end

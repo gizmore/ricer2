@@ -2,19 +2,24 @@ en:
   ricer:
     plugins:
       core:
+
         begin:
           trigger: 'begin'
           description: 'Start a multiline command. End the command with $TRIGGER$end.'
           err_no_begin: 'You need to start a multiline command with $TRIGGER$begin first.'
+
         end:
           trigger: 'end'
           description: 'End a multiline command started with $TRIGGER$begin and execute it.'
+
         in:
           trigger: 'in'
           description: 'Execute a comand after a delay.'
+
         paste_out:
           pastebin_title: '%{user}´s paste from %{date}'
           pasteout_title: '$BOT$ response to %{user} for %{command} at %{date}'
           pastebin_content: '%{lines}'
-          msg_pasted_it: 'I have successfully pasted %{size} to: %{url} - (cxg.de is hosted by byte)'
+          err_paste_failed: 'Uploading the paste failed: %{reason}.'
+          msg_pasted_it: 'I have pasted "%{title}" to %{url} - %{count} lines / %{size} - cxg.de is hosted by byte.'
           msg_pasted_this: 'I have flushed and pasted your response queue to: %{url} - %{size} with %{count} lines - (cxg.de is hosted by byte)'

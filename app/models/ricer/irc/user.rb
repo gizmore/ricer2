@@ -44,7 +44,9 @@ module Ricer::Irc
     
     def get_queue; server.connection.queue_for(self); end
     def flush_queue; server.connection.flush_queue_for(self); end
-
+    
+    def usermode; @user_mode; end
+    
     #########################
     ### Memory Management ###
     #########################
@@ -105,9 +107,9 @@ module Ricer::Irc
     
     # Get permission object
     def chanperm_for(channel)
-      perm = Ricer::Irc::Chanperm.where({:user_id => self.id, :channel_id => channel.id}).first_or_create
-      perm.permissions |= self.permissions
-      perm
+      Ricer::Irc::Chanperm.
+        create_with(:permission => self.permission).
+        find_or_create_by(:user_id => self.id, :channel_id => channel.id)
     end
     
     # Check for channel against other permission object 
@@ -138,6 +140,21 @@ module Ricer::Irc
       has_permission?(Ricer::Irc::Permission.by_char(permchar))
     end
     
+    ################
+    ### Hostmask ###
+    ################
+    def hostmask
+      @hostmask
+    end
+    
+    def hostmask=(hostmask)
+      if @hostmask != hostmask
+        @hostmask = hostmask
+        logout!
+      end
+      hostmask
+    end
+
     ######################
     ### Authentication ###
     ######################
@@ -149,16 +166,18 @@ module Ricer::Irc
     def login!
       set_authed true
     end
+
     def logout!
       set_authed false
     end
+
     def set_authed(bool)
       @authenticated = bool
       Ricer::Irc::Chanperm.where(:user_id => self.id, :online => true).each do |chanperm|
         chanperm.authenticated = bool
       end
     end
-    
+
     def authenticated?; @authenticated == true; end
     def registered?; self.hashed_password != nil; end
     
@@ -170,6 +189,7 @@ module Ricer::Irc
     end
     
     private
+
     def register
       bits = Permission::REGISTERED.bit|Permission::AUTHENTICATED.bit
       self.permissions |= bits

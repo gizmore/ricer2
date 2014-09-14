@@ -39,14 +39,12 @@ module Ricer::Irc
     end
     
     def display
-      out = 'p'
-      bits = self.all_bits
-      bold = "\x02"
+      out = ''; bits = self.all_bits
       ALL.each do |p|
         if (p.bit & bits) > 0
-          out += "#{bold}#{p.priv}#{bold}"
-        elsif (p.bit & self.bit) > 0
-          out += "#{p.priv}"
+          out += "\x02#{p.priv}\x02"
+        else #elsif (p.bit & self.bit) > 0
+          out += p.priv
         end
       end
       out
@@ -58,18 +56,18 @@ module Ricer::Irc
     
     def self.by_char(char)
       char = char.to_s.downcase
-      ALL.each do |p|
-        return p if p.priv == char
-      end
+      ALL.each{|p| return p if p.priv == char }
       nil
     end
     
     def self.by_name(name)
       name = name.to_s.downcase.to_sym
-      ALL.each do |p|
-        return p if p.name == name
-      end
+      ALL.each{|p| return p if p.name == name }
       nil
+    end
+
+    def self.by_name!(name)
+      by_name(name) or raise "Unknown permission: #{name}"
     end
     
     def self.by_label(label)
@@ -93,24 +91,22 @@ module Ricer::Irc
     end
 
     def self.by_arg(arg)
-      negate = false
-      if arg[0] == '-'
-        negate = true
-      end
+      negate = arg.to_s[0] == '-'
       arg = arg.to_s.ltrim('+-')
       permission = self.by_name(arg) || self.by_label(arg)
       return nil if permission.nil?
-      return permission.negated if negate
-      return permission
+      return negate ? 
+        permission.negated :
+        permission
     end
     
     def negated
-      gotit = nil
-      ALL.each do |p|
-        gotit = p if p.bit == self.bit
+      gotit = false
+      ALL.reverse.each do |p|
         return p if gotit
+        gotit = p if p.bit == self.bit
       end
-      nil
+      PUBLIC
     end
     
     def self.by_permission(permissions, authenticated=false)

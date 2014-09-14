@@ -21,6 +21,9 @@ Rails.application.configure do
   config.ricer_icq_enabled  = false
   config.ricer_icq_login    = Ricer::Application.secrets.icq_login
   config.ricer_icq_password = Ricer::Application.secrets.icq_password
+  # Blacklist folders and plugins
+  config.ricer_embargo = ['shadowlamb','cvs','slapwarz','test','music','debug']
+  config.ricer_malware = ['Ai/Say', 'Ai/Privmsg', 'Ai/Notice']
   # END OF RICER2 STUFF
 
   # Code is not reloaded between requests.

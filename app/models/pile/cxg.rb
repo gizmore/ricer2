@@ -17,14 +17,15 @@ module Pile
       request.body = {title: title, content: content, format: format}.to_json
       request.add_field('User-Agent', 'ricer IRC bot; ruby2; https://github.com/gizmore/ricer2')
       response = http.request(request)
-
+      
+      #byebug
       if response.code.to_i == 201
         JSON.parse(response.body)['url'] or raise StandardError.new("CXG marked this as spam :(")
       else
-        nil
+        #byebug
+        raise StandardError.new("#{response.code} - #{response.inspect}.")
       end
     end
     
   end
-  
 end

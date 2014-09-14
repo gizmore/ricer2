@@ -68,7 +68,7 @@ module Ricer::Plugins::Websocket
           server_id: server.id,
           nickname: nickname,
           password: password,
-          permissions: Ricer::Irc::Permission.by_name(:operator).bit,
+          permissions: Ricer::Irc::Permission::VOICE.bit,
         })
         created = true
       else

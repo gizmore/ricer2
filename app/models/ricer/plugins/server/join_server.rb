@@ -2,6 +2,7 @@ module Ricer::Plugins::Server
   class JoinServer < Ricer::Plugin
     
     trigger_is :join_server
+    connector_is :irc
     permission_is :ircop
     
     has_setting name: :default_nick, type: :string, scope: :bot, permission: :responsible, default: Rails.configuration.ricer_nickname

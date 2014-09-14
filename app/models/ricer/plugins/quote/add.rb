@@ -2,7 +2,7 @@ module Ricer::Plugins::Quote
   class Add < Ricer::Plugin
     
     trigger_is :add
-    scope_is :channel
+#   scope_is :channel
     permission_is :voice
     
     has_usage :execute, '<..message..>'
@@ -13,7 +13,7 @@ module Ricer::Plugins::Quote
         channel: channel,
         message: text,
       })
-      rply :msg_quote_added, :quote_id => quote.id
+      rply :msg_added, :quote_id => quote.id
     end
     
   end

@@ -3,8 +3,6 @@ module Ricer::Plugins::Cvs
     
     def upgrade_1; Repo.upgrade_1; Permission.upgrade_1; end
 
-#    for_environment :development
-    
     has_subcommand :abbo
     has_subcommand :abbos
     has_subcommand :add

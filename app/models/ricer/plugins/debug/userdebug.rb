@@ -2,21 +2,30 @@ module Ricer::Plugins::Debug
   class Userdebug < Ricer::Plugin
     
     trigger_is :udbg
-    scope_is :user
+    permission_is :operator
     
-    has_usage :execute, ''
-    has_usage :execute_u, '<user>'
-    def execute; execute_u(sender); end
-    def execute_u(user)
-      user = sender if user.nil?
-      rply :msg_userinfo, {
+    has_usage and has_usage '<user>'
+    def execute(user=nil)
+      user ||= sender
+      args = {
         id: user.id,
         user: user.displayname,
         usermode: user.usermode.display,
-        servpriv: user.display_permissions,
-        hostmask: user.prefix,
+        servpriv: user.permission.display,
+        hostmask: user.hostmask,
         server: user.server.displayname,
       }
+      if channel = self.channel
+        chanperm = user.chanperm_for(channel)
+        args.merge!({
+          channel: channel.displayname,
+          chanmode: chanperm.chanmode.display,
+          chanpriv: chanperm.permission.display,
+        })
+        rply(:msg_userinfo_c, args)
+      else
+        rply(:msg_userinfo_u, args)
+      end
     end
 
   end

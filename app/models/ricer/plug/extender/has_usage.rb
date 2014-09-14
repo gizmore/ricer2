@@ -4,34 +4,37 @@ module Ricer::Plug::Extender::HasUsage
     usage_on_error: true,
     allow_trailing: false,
     force_throwing: false,
+    permission: :public,
+    scope: nil,
   }
   
   # Extender has_usage
-  def has_usage(function=:execute, pattern=nil, options={})
-    class_eval do |klass|
+  def has_usage(function=:execute, pattern=nil, options=DEFAULT_OPTIONS)
+    class_eval{|klass|
 
       # Allow pattern as function and nil pattern      
       pattern, function = function, :execute if pattern.nil? && function.is_a?(String)
       pattern = '' if pattern.nil?
+      pattern.trim!
   
       # Options
       merge_options(options, DEFAULT_OPTIONS)
       usage_on_error = options.delete(:usage_on_error)
   
       # Sanity
-      throw Exception.new("#{klass.name} has_usage expects function to be a Symbol, but it is: #{function}") unless function.is_a?(Symbol)
-      throw Exception.new("#{klass.name} has_usage expects pattern to be a String, but it is: #{pattern}") unless pattern.is_a?(String)
-      throw Exception.new("#{klass.name} has_usage expects options to be a Hash, but it is: #{options}") unless options.is_a?(Hash)
+      throw "#{klass.name} has_usage expects function to be a Symbol, but it is: #{function}" unless function.is_a?(Symbol)
+      throw "#{klass.name} has_usage expects pattern to be a String, but it is: #{pattern}" unless pattern.is_a?(String)
+      throw "#{klass.name} has_usage expects options to be a Hash, but it is: #{options}" unless options.is_a?(Hash)
     
       # Append precompiled param handlers as usage
-      Ricer::Plugin.register_class_variable('@usages')
-      usages = klass.instance_variable_defined?('@usages') ? klass.instance_variable_get('@usages') : Ricer::Plug::Usages.new
+      klass.register_class_variable('@usages')
+      usages = klass.instance_variable_define('@usages', Ricer::Plug::Usages.new) 
       usages.add_pattern(function, pattern, options)
-      klass.instance_variable_set('@usages', usages)
       
       # Register connector event handler by defining this here
       unless klass.respond_to?(:on_privmsg)
-        def on_privmsg; end
+        def on_privmsg
+        end
       end
 
       def trigger_visible?; true; end
@@ -61,30 +64,28 @@ module Ricer::Plug::Extender::HasUsage
       #####################      
       private
       def try_handlers
-        return unless trigger_possible?
-        not_even_failed_one = true
+#        return false unless trigger_possible? # XXX: Ugly and unnecessary
+#        not_even_failed_one = true
+#        return false if usages.empty?
         usages = usages_in_scope
-        return if usages.empty?
         throw_error = usages.length
         usages.each do |pattern, usage|
           throw_error -= 1
-          args = usage.parse_args(self, @message, (throw_error == 0))
-          unless args.nil?
+          execute_args = usage.parse_args(self, @message, (throw_error == 0))
+          unless execute_args.nil?
             @message.plugin_id = plugin_id
-            process_event('ricer_on_trigger')
-            before_execution
+            process_event('ricer_on_trigger') rescue nil
             begin
-              send(usage.function, *args)
-            rescue => e
+              before_execution
+              send(usage.function, *execute_args)
+            ensure
               after_execution
-              raise
             end
-            after_execution
             return true
           end
-          not_even_failed_one = false
+          # not_even_failed_one = false
         end
-        not_even_failed_one
+        false # not_even_failed_one
       end
       
       def usages_in_scope
@@ -127,10 +128,11 @@ module Ricer::Plug::Extender::HasUsage
       ####################
       ### Input Helper ###
       ####################
-      def failed_input(key, *args)
-        raise Ricer::ExecutionException.new(key.is_a?(Symbol) ? t(key,*args) : tt(key,*args))
+      def failed_input(key, args={})
+        raise Ricer::ExecutionException.new(t(key, args))
       end
       
-    end
+    }
+    true
   end
 end

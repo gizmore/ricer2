@@ -44,12 +44,14 @@ module Ricer
     
     def self.plugin_id; instance_variable_get('@plugin_id'); end
     def plugin_id; self.class.plugin_id; end
-    def plugin_revision; 1; end
-    def plugin_license; 'MIT'; end
-    def plugin_author; 'gizmore@wechall.net'; end
-#    def plugin_module; self.class.name.split('::')[-2]; end
-    def plugin_name; self.class.name.split('::').slice(-2, 2).join('/'); end
-    def plugin_shortname; self.class.name.rsubstr_from('::').undescore.to_sym; end
+
+    def plugin_revision; self.class.instance_variable_define(:@plugin_revision, 1); end
+    def plugin_license; self.class.instance_variable_define(:@plugin_license, :unlicensed); end
+    def plugin_author; self.class.instance_variable_define(:@plugin_author, 'gizmore@wechall.net'); end
+
+#    def plugin_module; self.class.name.split('::')[-2]; end # XXX: Is Accessor
+    def plugin_name; @_plugin_name ||= self.class.name.split('::').slice(-2, 2).join('/'); end
+    def plugin_shortname; @_short_name ||= self.class.name.rsubstr_from('::').undescore.to_sym; end
 
     ### XXX: This is not nice, it is recognized as chat event in the plugmap
     ### XXX: Rename this to plugin_on_init, plugin_on_load, ...
@@ -155,37 +157,47 @@ module Ricer
       false
     end
     
-    def self.merge_options(options, default_options, check_unknowns=false)
+    def self.merge_options(options, default_options, check_unknowns=true)
       Ricer::Plug::Param.merge_options(options, default_options, check_unknowns)
     end
     
     ##############
     ### Static ###
     ##############
-    def self.by_arg(arg)
-      by_trigger(arg) || by_name(arg)
-    end
-    
     # def self.by_id(id)
       # bot.plugins.each do |plugin|
         # return plugin if plugin.id == id
       # end
       # nil
     # end
-
+    def self.by_arg(arg)
+      by_trigger(arg) || by_name(arg)
+    end
+    def self.subcommand_by_arg(arg, subcommands)
+      _by_trigger(arg, subcommands) || _by_name(arg, subcommands)
+    end
     def self.by_trigger(trigger)
-      bot.plugins.each do |plugin|
+      _by_trigger(trigger, bot.plugins)
+    end
+    def self._by_trigger(trigger, plugins)
+      plugins.each{|plugin|
         return plugin if plugin.trigger.to_s == trigger.to_s
-      end
+      }
       nil
     end
-    
     def self.by_name(plugin_name)
+      _by_name(plugin_name, bot.plugins)
+    end
+    def self._by_name(plugin_name, plugins)
       plugin_name = plugin_name.to_s
-      bot.plugins.each do |plugin|
-        return plugin if plugin.plugin_name == plugin_name
-      end
-      nil
+      bot.plugins.each{|plugin| return plugin if plugin.plugin_name == plugin_name } and nil
+    end
+
+    #########################
+    ### Subcommand by arg ###
+    #########################    
+    def subcommand_by_arg(arg)
+      self.class.subcommand_by_arg(arg, subcommands)
     end
     
     ###################
@@ -265,33 +277,33 @@ module Ricer
     ############
     ### I18n ###
     ############
-    def i18n_key; self.class.name.gsub('::', '.').underscore; end
-    def i18n_pkey; i18n_key.rsubstr_to('.'); end
+    def i18n_key; @_18nkey ||= self.class.name.gsub('::','.').underscore; end
+    def i18n_pkey; @_18npkey ||= i18n_key.rsubstr_to('.'); end
     def description; t(:description); end
-    def t(key, *args); tt "#{i18n_key}.#{key}", *args; end
-    def tp(key, *args); tt "#{i18n_pkey}.#{key}", *args; end
-    def tr(key, *args); tt "ricer.#{key}", *args; end
-    def tt(key, *args); rt i18t(key, *args); end
+    def tkey(key); key.is_a?(Symbol) ? "#{i18n_key}.#{key}" : key; end
+    def l(date, format=:long); I18n.l(date, :format => format) rescue date.to_s; end
+    def t(key, args={}); tt tkey(key), args; end
+    def tp(key, args={}); tt "#{i18n_pkey}.#{key}", args; end
+    def tr(key, args={}); tt "ricer.#{key}", args; end
+    def tt(key, args={}); rt i18t(key, args); end
     def rt(response)
       response.to_s.
-      gsub('$BOT$', server.nickname.name).
-      gsub('$COMMAND$', trigger.to_s).
-      gsub('$TRIGGER$', server.triggers[0]||'')
+        gsub('$BOT$', server.nickname.name).
+        gsub('$COMMAND$', trigger.to_s).
+        gsub('$TRIGGER$', server.triggers[0]||'')
+      rescue response
     end
-    
-    # Own I18n.t that rescues into key: arg.inspect
-    def i18t(key, *args)
+    def i18t(key, args={}) # Own I18n.t that rescues into key: arg.inspect
       begin
-        I18n.t!(key, *args)
-      rescue => e
+        I18n.t!(key, args)
+      rescue Exception => e
         bot.log_exception(e)
         i18ti(key, args)
       end
     end
-    def i18ti(key, args); "#{key.to_s.rsubstr_from('.')||key}: #{args.inspect.trim('[{}]')}"; end
-    
-    def l(date, format=:long)
-      I18n.l(date, :format => format)
+    def i18ti(key, args={}) # Inspector version
+      vars = args.length == 0 ? "" : ":#{args.to_json}"
+      "#{key.to_s.rsubstr_from('.')||key}#{vars}"
     end
     
     #####################
@@ -301,11 +313,6 @@ module Ricer
     def message_to(target, text); target.send_message(text); end
     def notice_to(target, text); target.send_notice(text); end
     def privmsg_to(target, text); target.send_privmsg(text); end
-    
-    ##############
-    ### IrcLib ###
-    ##############
-    def bold(text); lib.bold(text); end
     
     ##############
     ### Emails ###

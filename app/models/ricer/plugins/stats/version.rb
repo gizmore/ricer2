@@ -12,7 +12,7 @@ module Ricer::Plugins::Stats
         ruby: RUBY_VERSION,
         os: os_signature,
         time: l(Time.now),
-        environment: ENV['RAILS_ENV']
+        environment: Rails.env
     end
     
     private

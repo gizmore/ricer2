@@ -2,5 +2,7 @@ en:
   ricer:
     plugins:
       convert:
+
         reverse:
+          trigger: 'reverse'
           description: 'Reverse a string so you cannot read it anymore!'

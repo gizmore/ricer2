@@ -22,7 +22,7 @@ module Ricer::Irc
     scope :online, -> { where(:online => 1) }
     scope :enabled, -> { where(:enabled => 1) }
     scope :in_domain, lambda { |url| joins(:server_url).where('url LIKE ?', "%.#{URI::Generic.domain(url)}:%") }
-    
+    scope :with_url_like, lambda { |url| joins(:server_url).where('url LIKE ?', "%#{url}%") }
     validates_numericality_of :cooldown, :larger_than => 0.0, :max => 2.0
     validates_numericality_of :throttle, :min => 1.0, :max => 800, :float => false
     validates_format_of :triggers, :with => /[-.,*!\"\''§$%&]/
@@ -41,12 +41,13 @@ module Ricer::Irc
     def guid; "*:#{self.id}"; end
     def peer_verify; server_url.peer_verify; end
     def connector_symbol; self.connector.to_sym; end
-    
+
+    def users; Ricer::Irc::User.where(:server_id => self.id); end
     def channels; Ricer::Irc::Channel.where(:server_id => self.id); end
-    def joined_channels; channels.where(:online => true);  end
     
-    def displayname; "#{self.id}-#{uri.domain}"; end
-    
+    def displayid; self.online ? "\x02#{self.id}\x02" : self.id.to_s; end
+    def displayname; "#{displayid}-#{uri.domain}"; end
+
     def started_up?; @started_up != nil; end
     
     def startup
@@ -160,16 +161,10 @@ module Ricer::Irc
       bot.plugins_for_event(event).each do |plugin|
         # sieve out unsupported connectors
         if plugin.connector_supported?(self.connector)
-          
-          # if plugin.plugin_name == 'Test/Ping'
-            # byebug
-          # end
-
-          # EVENT
           # Simply call the func after cloning the plugin
           begin
             plugin.clone_plugin(message).send(event)
-          rescue Exception => e
+          rescue e
             bot.log_exception e
           end
           

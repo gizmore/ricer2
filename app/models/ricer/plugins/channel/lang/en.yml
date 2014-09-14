@@ -2,6 +2,7 @@ en:
   ricer:
     plugins:
       channel:
+
         join:
           trigger: 'join'
           description: 'Make $BOT$ join a channel.'
@@ -9,14 +10,14 @@ en:
           msg_trying_to_join: 'Trying to join this channel.'
           config:
             autojoin: 'Join channel on startup?'
+
         kick:
           trigger: 'kick'
           description: 'Kick a user and manage kick events.'
           config:
             kickjoin: 'Rejoin a channel after being kicked?'
+
         part:
           trigger: 'part'
           description: 'Make $BOT$ leave a channel.'
-        partu:
-          trigger: 'part'
-          description: 'Make $BOT$ leave a channel.'
+          msg_autojoin_off: "I have disabled autojoin for %{channel}."

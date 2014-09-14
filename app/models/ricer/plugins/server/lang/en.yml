@@ -2,7 +2,25 @@ en:
   ricer:
     plugins:
       server:
+        
         join_server:
-          description: 'Make $BOT$ reconnect or connect to a new irc network.'
+          description: 'Make $BOT$ connect or reconnect to an irc network.'
           err_already_connected: 'This server is already connected.'
           msg_connected: 'I have successfully connected to %{server} as %{nickname}. The superword is %{superword}, so try /msg #{nickname} super #{superword} to lift your priviledges.'
+          
+        nick:
+          trigger: 'nick'
+          description: "Change the nickname for $BOT$."
+        
+        quit_server:
+          trigger: 'quit_server'
+          description: 'Make $BOT$ quit a network and disable it permanently.'
+            
+        server:
+          trigger: 'server'
+          description: 'Search and display a given network.'
+          show_server: "%{server}. %{connector} via %{url}. Users: %{users_online}/%{users_total}. Throttle: %{throttle}. Since: %{date_added}."
+
+        servers:
+          trigger: 'servers'
+          description: 'Search and list available $BOT$ networks.'

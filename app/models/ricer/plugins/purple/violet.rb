@@ -70,9 +70,14 @@ module Ricer::Plugins::Purple
 
       # Try load or create
       created = false
-      user = load_user(nickname)
-      if user.nil?
-        user, created = Ricer::Irc::User.create!({server_id: server.id, nickname: nickname}), true
+      unless user = load_user(nickname)
+        created = true
+        user = Ricer::Irc::User.create!({
+          server_id: server.id,
+          nickname: nickname,
+          password: '11111111',
+          permissions: Ricer::Irc::Permission::VOICE.bit,
+        })
       end
 
       # Set current user in extra thread variable scope :(
@@ -83,17 +88,9 @@ module Ricer::Plugins::Purple
       # Register, login, etc.
       if !user.should_cache? # Not in mem cache yet?
         user.ricer_on_joined_server(server) # We surely joined the server then :)
-        #user = user.find(user.id)
-        if created
-          user.permissions = Ricer::Irc::Permission.by_name(:operator).bit
-          user.password = '11111111'
-          user.save!
-          process_event('ricer_on_user_created') # Oh we are brand new!
-        end
+        process_event('ricer_on_user_created') if created # Oh we are brand new!
         process_event('ricer_on_user_loaded') # And we got loaded :)
-        if created
-          process_event('ricer_on_user_registered')
-        end
+        process_event('ricer_on_user_registered') if created
         user.login!
         process_event('ricer_on_user_authenticated')
       end

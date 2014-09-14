@@ -1,24 +1,42 @@
-#require "nokogiri"
-#require "open-uri"
 module Ricer::Plugins::Data
   class Weather < Ricer::Plugin
 
     trigger_is :weather
 
-    has_usage :execute, '<..message..>'
-
+    has_usage '<..message..>'
     def execute(input)
       Ricer::Thread.execute do 
-        url = "http://api.openweathermap.org/data/2.5/forecast?q=#{URI::encode(input)}&mode=xml"
-        doc = Nokogiri::XML(open(url), nil, "UTF-8") rescue (raise t(:err_open_weather_connect))
-        temperature = doc.xpath("//temperature").first or (return rply :err_open_weather_input)
-        byebug
-        rply :rpl_open_weather,
-          city: doc.xpath("//location/name").inner_html,
-          temp_avg: temperature.attr("value"),
-          temp_min: temperature.attr("min"),
-          temp_max: temperature.attr("max")
+        begin
+          url = "http://api.openweathermap.org/data/2.5/weather?q=#{URI::encode(input)}&units=metric&lang=#{best_owm_lang}"
+          data = Net::HTTP.get(URI.parse(url))
+          json = JSON.parse!(data)
+          if json["cod"].to_i != 200
+            rply :err_location
+          else
+            rply(:msg_openweather,
+              city: json["name"],
+              country: json["sys"]["country"],
+              temp_avg: lib.human_fraction(json["main"]["temp"]),
+              temp_min: lib.human_fraction(json["main"]["temp_min"]),
+              temp_max: lib.human_fraction(json["main"]["temp_max"]),
+            )
+          end
+        rescue => e
+          bot.log_exception(e)
+          return rply :err_connect, reason: e.to_s
+        end
       end
+    end
+    
+    def best_owm_lang
+      # TODO: Map the best choice for users locale
+      # AVAILABLE IN OWM:
+      # English - en, Russian - ru, Italian - it, Spanish - es (or sp)
+      # Ukrainian - uk (or ua), German - de, Portuguese - pt, Romanian - ro,
+      # Polish - pl, Finnish - fi, Dutch - nl, French - fr, Bulgarian - bg
+      # Swedish - sv (or se), Chinese Traditional - zh_tw, Chinese Simplified - zh (or zh_cn)
+      # Turkish - tr, Croatian - hr, Catalan - ca 
+      "de"
     end
     
   end

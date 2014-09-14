@@ -21,7 +21,7 @@ module Ricer::Plug
     end
     
     def usages_in_scope(message)
-      @usages.select { |pattern, usage|; matches_scope_and_permission?(usage, message) }
+      @usages.select{|pattern, usage| matches_scope_and_permission?(usage, message) }
     end
     
     def matches_scope_and_permission?(usage, message)
@@ -75,7 +75,7 @@ module Ricer::Plug
         usages.each do |pattern, usage|
           if param = usage.param(n) # pattern has column? (yes)
             type = param.to_label
-            if param.is_optional?
+            if false # param.is_optional?
               col[type] = 1
               o1 = true # At least one optional
             else

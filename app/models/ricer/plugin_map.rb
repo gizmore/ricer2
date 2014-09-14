@@ -76,18 +76,37 @@ module Ricer
     ############
     ### Sort ###
     ############
-    def sort_plugins
-      @event_map.each do |k, plugins|
-        plugins.sort! do |a,b|
-          b.trigger_permission.bit - a.trigger_permission.bit rescue 0
-        end
-        plugins.sort! do |a,b|
-          b.scope.bit - a.scope.bit
-        end
-        plugins.sort! do |a,b|
-          a.priority - b.priority
+    def sort_plugin_map
+      @event_map.each{|k,plugins| sort_plugins(plugins) }
+    end
+    
+    def sort_plugins(plugins)
+      plugins.sort!{|a,b| a.subcommand_depth - b.subcommand_depth }
+      plugins.sort!{|a,b| b.trigger_permission.bit - a.trigger_permission.bit rescue 0 }
+      plugins.sort!{|a,b| b.scope.bit - a.scope.bit }
+      plugins.sort!{|a,b| a.priority - b.priority }
+    end
+    
+    ##################
+    ### After Load ###
+    ##################
+    def validate_plugins!
+      validate_duplicate_triggers!
+    end
+    
+    def validate_duplicate_triggers!
+      all_valid = true
+      triggers = {}
+      bot.plugins.each do |plugin|
+        trigger = plugin.trigger
+        if triggers[trigger].nil?
+          triggers[trigger] = plugin
+        else
+          bot.log_warning("'#{plugin.class.name}' and '#{triggers[trigger].class.name}', share the same trigger: #{trigger}.")
+          all_valid = false and sleep 10.seconds
         end
       end
+      all_valid
     end
     
   end

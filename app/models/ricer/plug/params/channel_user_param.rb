@@ -1,7 +1,7 @@
 module Ricer::Plug::Params
   class ChannelUserParam < Base
 
-    def convert_in!(input, options, message)
+    def convert_in!(input, message)
       
       channel = message.channel
       users = channel.users.online.human
@@ -14,7 +14,7 @@ module Ricer::Plug::Params
       
     end
     
-    def convert_out!(user, options, message)
+    def convert_out!(user, message)
       user.displayname
     end
     

@@ -6,16 +6,17 @@
 ##
 module Ricer::Plug::Extender::TriggerIs
   def trigger_is(trigger)
-
-    Ricer::Plugin.register_class_variable('@default_trigger')
-
     class_eval do |klass|
+
+      trigger = trigger.to_sym
+      
+      klass.register_class_variable('@default_trigger')
       
       unless klass.instance_variable_defined?('@default_trigger')
 
         permission_is :public
-        scope_is  :everywhere
-        default_enabled  true
+        scope_is :everywhere
+        default_enabled true
         flooding_protected true
         
         def_enabled = klass.instance_variable_get('@default_enabled')        
@@ -48,22 +49,25 @@ module Ricer::Plug::Extender::TriggerIs
         connection.send_notice(@message.reply_clone, text)
       end
       
-      def rply(key, *args); reply t(key, *args); end
-      def rplyp(key, *args); reply tp(key, *args); end
-      def rplyr(key, *args); reply tr(key, *args); end
+      def rply(key, args={}); reply t(key, args); end
+      def rplyp(key, args={}); reply tp(key, args); end
+      def rplyr(key, args={}); reply tr(key, args); end
 
-      def arply(key, *args); areply t(key, *args); end
-      def arplyp(key, *args); areply tp(key, *args); end
-      def arplyr(key, *args); areply tr(key, *args); end
+      def arply(key, args={}); areply t(key, args); end
+      def arplyp(key, args={}); areply tp(key, args); end
+      def arplyr(key, args={}); areply tr(key, args); end
 
-      def nrply(key, *args); nreply t(key, *args); end
-      def nrplyp(key, *args); nreply tp(key, *args); end
-      def nrplyr(key, *args); nreply tr(key, *args); end
+      def nrply(key, args={}); nreply t(key, args); end
+      def nrplyp(key, args={}); nreply tp(key, args); end
+      def nrplyr(key, args={}); nreply tr(key, args); end
       
       def reply_exception(e)
         return if e.is_a?(Ricer::SilentCancel)
-        return reply e.to_s if e.is_a?(Ricer::ExecutionException) || e.is_a?(ActiveRecord::RecordInvalid)
-             #ActiveRecord::StatementInvalid
+        if(e.is_a?(Ricer::ExecutionException) ||
+           e.is_a?(ActiveRecord::RecordInvalid) || e.is_a?(ActiveRecord::RecordNotFound)
+        )
+          return reply e.to_s
+        end
         bot.log_exception(e)
         return reply e.to_s if e.is_a?(Ricer::TriggerException)
         return reply(exception_message(e))
@@ -83,16 +87,12 @@ module Ricer::Plug::Extender::TriggerIs
       private
       
       def exception_message(e)
-        I18n.t('ricer.err_exception', :message => e.message, :location => reply_backtrace(e))
+        tt('ricer.err_exception', :message => e.message, :location => reply_backtrace(e))
       end
       
       def reply_backtrace(e)
-        e.backtrace.each do |line|
-          return line unless line.index('/models/ricer/plugins').nil?
-        end
-        e.backtrace.each do |line|
-          return line unless line.index('/models/ricer').nil?
-        end
+        e.backtrace.each{|line| return line if line.index('/models/ricer/plugins') }
+        e.backtrace.each{|line| return line if line.index('/models/ricer') }
         e.backtrace[0]
       end
       

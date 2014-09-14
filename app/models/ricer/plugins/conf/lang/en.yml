@@ -2,6 +2,7 @@ en:
   ricer:
     plugins:
       conf:
+
         err_no_such_var: 'This setting is unknown'
         err_conflicting: 'Not sure which scope you mean. Try $TRIGGER$confb, $TRIGGER$confs, $TRIGGER$confc or $TRIGGER$confu to speciy the scope.'
         err_permission: 'You are not allowed to change this setting.'
@@ -14,13 +15,11 @@ en:
         msg_no_change: '%{configscope} settings for %{trigger}/%{varname} are still %{samevalue}.'
         msg_saved_setting: '%{configscope} settings for %{trigger}/%{varname} changed from %{oldvalue} to %{newvalue}.'
         
-        bot:
-          description: '???'
-
-        channellang:
+        channel_lang:
+          trigger: clang
           description: 'Show or set the channels language settings.'
-          msg_set: 'This channels main language has been changed from %{old} to %{new}.'
-          msg_show: 'This channel has set it´s main language to %{iso}. Available iso codes: %{available}.'
+          msg_set: "The main language in %{channel} has been changed from %{old} to %{new}."
+          msg_show: "The main language in %{channel} is currently %{iso}. Available iso codes: %{available}."
           
         channel_set:
           description: 'Manage raw channel values like "triggers".'

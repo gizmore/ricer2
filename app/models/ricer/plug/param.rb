@@ -5,15 +5,14 @@ module Ricer::Plug
     ### Options ###
     ###############
     def self.merge_options(options, default_options, check_unknown=true)
-      options.reverse_merge!(default_options)
-      if check_unknown
+      if check_unknown # Reverse merge only known options.
         options.keys.each do |k|
           unless default_options.key?(k)
             throw Exception.new("Unexpected option key: #{k}")
           end
         end
       end
-      options
+      options.reverse_merge!(default_options)
     end
     
     #################
@@ -22,33 +21,52 @@ module Ricer::Plug
     def self.parser_class(type)
       Object.const_get("Ricer::Plug::Params::#{type.camelize}Param")
     end
+
     def self.parser(type, value=nil)
       self.parser!(type, value) rescue nil
     end
+
     def self.parser!(type, value=nil)
-      parser_class(type).new(value)
+      options = parse_options!(type)
+      parser_class(type).new(options, value)
+    end
+
+    def self.parse_options!(type)
+      option_string = type.substr_from('[') or return nil
+      type.substr_to!('[')
+      _parse_options(option_string.rtrim!(']'))
+    end
+
+    def self._parse_options(string)
+      options = nil
+      string.split(/ *, */).each do |pair|
+        pair = pair.split(/ *= */, 2)
+        options ||= {}
+        options[pair[0].to_sym] = pair[1]||pair[0].to_sym
+      end
+      options
     end
 
     #############
     ### Input ###
     #############
-    def self.parse(type, input=nil, options={}, message=nil)
-      parse!(type,input,options,message) rescue nil
+    def self.parse(type, input=nil, message=nil)
+      parse!(type, input, message) rescue nil
     end
 
-    def self.parse!(type, input, options={}, message=nil)
-      parser!(type).convert_in!(input,options,message)
+    def self.parse!(type, input, message=nil)
+      parser!(type).convert_in!(input, message)
     end
     
     ##############
     ### Output ###
     ##############
-    def self.display(type, value, options={}, message=nil)
-      display!(type,input,options,message) rescue 'PARSE DISPLAY ERROR!!!'
+    def self.display(type, value, message=nil)
+      display!(type, input, message) rescue 'PARSE DISPLAY ERROR!!!'
     end
 
-    def self.display!(type, value, options={}, message=nil)
-      parser!(type).convert_out!(value,options,message)
+    def self.display!(type, value, message=nil)
+      parser!(type).convert_out!(value, message)
     end
     
   end

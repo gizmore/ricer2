@@ -1,8 +1,8 @@
 module Ricer::Plug::Params
   class IdParam < IntegerParam
 
-    def min(options)
-      options[:min].nil? || options[:min].is_not_a?(Integer) ? 1 : options[:min]
+    def default_options
+      { min: 1, max: 2123123123 }
     end
 
   end

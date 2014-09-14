@@ -9,7 +9,7 @@ module Ricer::Plugins::Auth
 
     bruteforce_protected
 
-    has_usage :execute, '<password>' 
+    has_usage :execute, '<password>'
     def execute(password)
       return rply :err_already_authenticated if user.authenticated?
       return rplyp :err_wrong_password unless user.authenticate!(password)

@@ -2,19 +2,16 @@ module Ricer::Plugins::Debug
   class Chandebug < Ricer::Plugin
     
     trigger_is :cdbg
+    permission_is :operator
     
-    has_usage :execute_channel, '<channel>'
-    def execute_channel(channel)
-      rply :msg_chaninfo,
-        id: channel.id,
-        name: channel.displayname,
+    has_usage :execute, '', :scope => :channel
+    has_usage '<channel>'
+    def execute(channel=nil)
+      channel ||= self.channel
+      rply(:msg_chaninfo,
+        channel: channel.displayname,
         server: channel.server.displayname,
-        channel: channel
-    end
-
-    has_usage
-    def execute
-      execute_channel(channel)
+      )
     end
     
   end

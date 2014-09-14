@@ -3,16 +3,16 @@ en:
     plugins:
       data:
 
-#        google:
-#          description: 'Displays a google search link.'
+#       google:
+#         description: 'Displays a google search link.'
 
-#        ytsearch:
-#          description: 'Displays a youtube search link.'
-#          link: 'http://ytsearch.net/%{message}'
-          
-         weather:
-           trigger: 'weather'
-           description: 'Get the temperature of a city.'
-           err_open_weather_query: 'There could be no information found for your input.'
-           err_open_weather_connect: 'The connection to openweathermap.org failed.'
-           rpl_open_weather: 'The temperature is around %{temp_avg} celsius in %{city} and the minimum temperature is %{temp_min} while the max temperature is %{temp_max}.'
+#       ytsearch:
+#         description: 'Displays a youtube search link.'
+#         link: 'http://ytsearch.net/%{message}'
+
+        weather:
+          trigger: 'weather'
+          description: 'Get the temperature of a city or area, using openweathermap.org.'
+          err_connect: 'The connection to openweathermap.org failed: %{reason}'
+          err_location: 'There could be no information found for your input.'
+          msg_openweather: 'The temperature is around %{temp_avg}°C in %{city}, %{country}. The minimum temperature is %{temp_min}°C while the max temperature is %{temp_max}°C.'

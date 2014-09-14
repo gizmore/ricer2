@@ -14,13 +14,14 @@ module Ricer::Plug::Extender::DenialOfServiceProtected
   }
   
   def denial_of_service_protected(options={})
-    
-    merge_options(options, OPTIONS)
-    
-    throw Exception.new("#{klass.name} denial_of_service_protected scope is invalid: #{options[:scope]}") if Ricer::Irc::Scope.by_name(options[:scope]).nil?
-    
     class_eval do |klass|
 
+      merge_options(options, OPTIONS)
+      
+      if Ricer::Irc::Scope.by_name(options[:scope]).nil?
+        throw "#{klass.name} denial_of_service_protected scope is invalid: #{options[:scope]}"
+      end
+    
       # Set option scope      
       klass.register_class_variable(:@dos_protection_scope)
       klass.instance_variable_set(:@dos_protection_scope, options[:scope])

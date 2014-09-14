@@ -2,21 +2,27 @@ en:
   ricer:
     plugins:
       fun:
+
         badjoke:
           description: 'You can use this function when maddinw makes any joke.'
           badum: 'Ba dum! tssss...'
           cricket: 'makes the cricket sound.'
           tumbleweed: 'makes the tumbleweed sound.'
+
         badphp:
-          description: 'http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/'
+          description: 'http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/ -'
+
         happy_hour:
-          description: 'Used by gizmore to inititate happy hour mode in #wechall'
+          description: 'Used by gizmore to inititate happy hour mode in #wechall.'
+
         hirsch:
           description: 'Rööööhr'
           msg_hirsch: 'Röööööööööööööööhr! HIRSCH!'
+
         ronja:
           description: 'Wer oder was ist Ronja?'
           msg_ronja: 'Ronja ist cool!'
+
         wtf:
           description: 'Checks urban dictionary for a definition of your input.'
           msg_example: 'e.g. %{example}'

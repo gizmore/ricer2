@@ -20,10 +20,13 @@ module Ricer::Irc
     def self.by_arg(arg)
       self.by_name(arg) || self.by_label(arg)
     end
-    
+
     def self.by_name(name)
       @@all[name]
-      # @@all[name.to_s.downcase.to_sym]
+    end
+
+    def self.by_name!(name)
+      by_name(name) or raise "Invalid scope: #{name}"
     end
 
     def self.by_label(name)

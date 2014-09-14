@@ -25,11 +25,8 @@ namespace :ricer do
 
     bot.log_info "Updating translation files."
 
-    # Fire the translator    
-    translator = Translator::Translator.new(:en)
-    targets = []
-    Ricer::Locale.all.each{|locale| targets.push(locale.iso.to_sym) unless locale.iso == "en"}
-    translator.generate(targets)
+    # Fire the translator
+    bot.export_translations    
     
     bot.log_info "Done. Thx for flying ricer!"
     

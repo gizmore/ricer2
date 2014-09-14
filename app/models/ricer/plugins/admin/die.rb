@@ -6,23 +6,16 @@ module Ricer::Plugins::Admin
     
     requires_retype
 
-    has_usage :execute
-    def execute
-      execute_with_message(default_message)
-    end
-
-    has_usage :execute_with_message, '<..message..>'
-    def execute_with_message(message)
-      bot.servers.each do |server|
-        server.connection.send_quit(@message, message) if server.connected?
-      end
+    has_usage and has_usage '<..message..>'
+    def execute(message=nil)
       bot.running = false
+      bot.servers.online.each do |server|
+        server.localize!.connection.send_quit(@message, message||default_quit_message)
+      end
     end
     
-    private
-    
-    def default_message
-      t(:default_message, :user => sender.displayname)
+    def default_quit_message
+      t :default_message, user: sender.displayname
     end
     
   end

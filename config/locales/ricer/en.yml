@@ -1,17 +1,28 @@
 en:
   ricer:
+
     and: ' and '
     comma: ', '
-    dateformats:
-      day: 'Tag'
-      date: 'Tag.Monat.Jahr'
-      long: 'Tag.Monat.Jahr HH:II'
+    
+    err_user: 'This user is unknown.'
+    err_exception: 'Exception: %{message} in %{location}.'
+    
+    duration:
+      short:
+      long:
+    
+    # dateformats:
+      # day: 'Tag'
+      # date: 'Tag.Monat.Jahr'
+      # long: 'Tag.Monat.Jahr HH:II'
+      
     locale:
       en: 'English'
       de: 'German'
       fam: 'Famster'
       bot: 'Bot'
       ibdes: 'IBDES'
+      
     irc:
       permission:
         public: 'Public'
@@ -27,6 +38,7 @@ en:
         ircop: 'IRCOP'
         owner: 'Owner'
         responsible: 'Responsible'
+
       scope:
         usage:
           e: 'everywhere'
@@ -38,12 +50,15 @@ en:
         a: 'global'
         b: 'bot'
         s: 'server'
+        
     plug:
+
       setting:
         nil: "\x03null\x03"
         bool_0: 'off'
         bool_1: 'on'
         err_save: 'Invalide value for %{name}: %{value} is not %{hint}.'
+
       settings:
         blanked_password: "\x03$BCRYPT$\x03"
         hint:
@@ -55,84 +70,3 @@ en:
           password: 'password with at least %{min} chars'
           permission: 'permission name'
           string: 'text between %{min} and %{max} chars'
-      params:
-        boolean:
-          label: 'bool'
-          error: 'Not a boolean value.'
-        channel:
-          label: 'channel'
-          error: 'Unknown channel.'
-        channel_name:
-          label: 'channel'
-          error: 'Invalid channel name.'
-        duration:
-          label: 'duration'
-          error: 'Invalid duration.'
-        id:
-          label: 'ID'
-          error: 'Not a numeric ID'
-        language:
-          label: 'lang'
-          error: 'Unknown language iso code.'
-        message:
-          label: 'message'
-          error: 'Message out of bounds.'
-        name:
-          label: 'name'
-          error: 'Invalid NamedID.'
-        nickname:
-          label: 'nickname'
-          error: 'Invalid IRC nickname.'
-        page:
-          label: 'page'
-          error: 'Invalid page.'
-        password:
-          label: 'password'
-          error: 'Password invalid.'
-        plugin:
-          label: 'plugin'
-          error: 'Unknown Plugin.'
-        server:
-          label: 'server'
-          error: 'Unknown server.'
-        trigger:
-          label: 'plugin'
-          error: 'Plugin not found.'
-        user:
-          label: 'user'
-          error: 'Unknown User'
-      extender:
-        default_enabled:
-          err_disabled: 'This plugin is disabled here.'
-        has_usage:
-          msg_usage: 'Usage: %{trigger}%{usage}. %{description}%{permission}'
-          scopeinfo_scope: 'This works only in %{scopelabel}.'
-          scopeinfo_perm: 'This requires %{permission} permissions.'
-          scopeinfo_both: 'This works in %{scopelabel} and requires %{permission} permissions.'
-        has_cheating_detection:
-          cheating_detected: 'You may not do this again as the maximum tasks for this are %{max_attempts}.'
-        has_connectors:
-          err_connector_unsupported: 'This plugin does not work in #{connector}.'
-        permission_is:
-          err_permission: 'This requires %{permission} permissions.'
-        scope_is:
-          err_only_private: 'This works only in private.'
-          err_only_channel: 'This works only in channels.'
-        requires_confirmation:
-          word: IAmSure
-          msg_confirm: "Please type \"%{command} %{word}\" to execute your command."
-        requires_retype:
-          msg_retype: 'Please retype that to execute your command.'
-        is_show_trigger:
-          err_not_found: 'There is no %{classname} with that number.'
-        is_list_trigger:
-          description:
-            one: 'Search or list the %{classname} database. There is %{count} record in the db.'
-            other: 'Search or list the %{classname} database. There are %{count} records in the db.'
-          msg_list_item_page: '%{classname}, page %{page}/%{pages}: %{out}.'
-          err_no_list_items: 'There could be no %{classname} found.'
-        forces_authentication:
-          err_authenticate: 'You have to authenticate in order to use this functionality.'
-    err_user: 'This user is unknown.'
-    err_exception: 'Ruby Exception: %{message} in %{location}'
-    

@@ -3,16 +3,21 @@ module Ricer::Plugins::Quote
     
     trigger_is :stats
     
-    has_usage :execute
+    has_usage
     def execute
-      
-      rply :msg_stats,
-        count: 4,
-        votes: 24,
-        last_id: 8,
-        last_by: 'gizm',
-        last_date: '54'
-      
+      quotes = Ricer::Plugins::Quote::Model::Quote
+      args = {
+        count: quotes.count,
+        votes: 1,
+      }
+      if last = quotes.last
+        args.merge!({
+          last_id: last.id,
+          last_by: last.user.displayname,
+          last_date: last.displaydate,
+        })
+      end
+      rply :msg_stats, args
     end
     
   end

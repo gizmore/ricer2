@@ -48,7 +48,7 @@ module Ricer::Plugins::Conf
     def grouped_output(grouped)
       out = []
       grouped.each do |k,v|
-        group = bold(k) + ': '
+        group = lib.bold(k) + ': '
         group += v.join(', ')
         out.push(group)
       end
@@ -56,5 +56,4 @@ module Ricer::Plugins::Conf
     end
     
   end
-
 end

@@ -14,21 +14,33 @@ module Ricer::Irc
     with_global_orm_mapping
     def should_cache?; self.online == true; end
     
-    scope :online, -> { where(:online => 1) }
-
+    belongs_to :server
     belongs_to :locale
     belongs_to :timezone
     belongs_to :encoding
-    
-    belongs_to :server
-#    def server; bot.servers.find(self.server_id); end
 
-    def displayname; guid; end
-#    def displayname; "#{self.name}:#{self.server_id}"; end
-    def guid; "#{self.name}:#{self.server_id}"; end
+    scope :online, -> { where(:online => 1) }
+
+    ###
+    def self.by_arg_and_message(arg, message) # FIXME: Remove this function
+      byebug
+      Ricer::Plug::Params::ChannelParam.new().convert_in!(arg, message)
+    end
     
-    def self.by_arg_and_message(arg, message)
-      Ricer::Plug::Params::ChannelParam.new().convert_in!(arg, {}, message)
+    ###############
+    ### Display ###
+    ###############
+    def guid
+      "#{self.name}:#{self.server_id}"
+    end
+
+    def displayname
+      @_displayname || _displayname
+    end
+    
+    def _displayname
+      b = self.online ? "\x02" : ''
+      @_displayname = "#{b}#{self.id}#{b}-#{self.name}:#{self.server.domain}"
     end
     
     #########################

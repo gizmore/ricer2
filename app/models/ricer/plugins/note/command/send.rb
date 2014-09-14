@@ -4,6 +4,7 @@ module Ricer::Plugins::Note
     trigger_is :send
 
     has_usage :execute, '<user> <..message..>'
+    
     def execute(receiver, text)
       
       return rply :err_send_self if sender == receiver 

@@ -8,7 +8,7 @@ module Ricer::Plugins::Debug
       ActiveRecord::Base.logger = nil
     end
     
-    has_usage :execute, '<boolean>'
+    has_usage '<boolean>'
     def execute(bool)
       if bool
         ActiveRecord::Base.logger = Logger.new(STDOUT)

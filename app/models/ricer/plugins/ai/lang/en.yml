@@ -2,21 +2,23 @@ en:
   ricer:
     plugins:
       ai:
+
         action:
           trigger: 'do'
           description: 'Sends an action to a user or channel.'
+
         echo:
           trigger: 'echo'
           description: 'Replies the text you give as parameter.'
+
         message:
           trigger: 'send'
-          description: 'Sends a message to a user or channel, which respects user preferences of notice and privmsg.'
+          description: 'Sends a message to a user or channel, which respects user preferences of notice or privmsg.'
+
         notice:
           trigger: 'notice'
           description: 'Sends a notice to a user or channel.'
+
         privmsg:
           trigger: 'say'
           description: 'Sends a privmsg to a user or channel.'
-        raw:
-          trigger: 'raw'
-          description: 'Sends a raw irc message.'

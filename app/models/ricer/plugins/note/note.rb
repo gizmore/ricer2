@@ -1,16 +1,10 @@
 module Ricer::Plugins::Note
   class Note < Ricer::Plugin
 
-    def plugin_revision; 2; end
+    def plugin_revision; 3; end
     def upgrade_1; Message.upgrade_1; end
     def upgrade_2; Message.upgrade_2; end
-    
-    trigger_is :notes
-
-    has_subcommand :list
-    has_subcommand :send
-    has_subcommand :sent
-    has_subcommand :unread
+    def upgrade_3; Message.upgrade_3; end
     
     def ricer_on_user_loaded
       deliver_messages unless Ricer::Irc::User.current.registered?

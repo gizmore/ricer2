@@ -1,0 +1,53 @@
+en:
+  ricer:
+    plug:
+      params:
+        boolean:
+          label: 'bool'
+          error: 'Not a boolean value.'
+        channel:
+          label: 'channel'
+          error: 'Unknown channel.'
+        channel_name:
+          label: 'channel'
+          error: 'Invalid channel name.'
+        duration:
+          label: 'duration'
+          error: 'Invalid duration.'
+        id:
+          label: 'ID'
+          error: 'Not a numeric ID'
+        language:
+          label: 'lang'
+          error: 'Unknown language iso code.'
+        message:
+          label: 'message'
+          error: 'Message out of bounds.'
+        name:
+          label: 'name'
+          error: 'Invalid NamedID.'
+        nickname:
+          label: 'nickname'
+          error: 'Invalid IRC nickname.'
+        page:
+          label: 'page'
+          error: 'Invalid page.'
+        password:
+          label: 'password'
+          error: 'Password invalid.'
+        plugin:
+          label: 'plugin'
+          error: 'Unknown Plugin.'
+        server:
+          label: 'server'
+          error: 'Unknown server.'
+        string:
+          label: 'string'
+          err_too_long: 'The string may not exceed %{max} chars.'
+          err_too_short: 'The string has to be at least %{min} chars long.'
+        trigger:
+          label: 'plugin'
+          error: 'Plugin not found.'
+        user:
+          label: 'user'
+          error: 'Unknown User'

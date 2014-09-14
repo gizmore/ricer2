@@ -4,8 +4,15 @@ module Ricer::Plugins::Stats
     trigger_is :plugstats
     
     def upgrade_1; TriggerCounter.upgrade_1; end
-    def ricer_on_trigger; TriggerCounter.count(@message.plugin_id, user.id); end
+
+    # Count when something is triggered    
+    def ricer_on_trigger
+      TriggerCounter.count(@message.plugin_id, user.id) rescue nil
+    end
     
+    ################
+    ### Handlers ###
+    ################
     has_usage :execute_show_total
     has_usage :execute_show_sum, '<plugin>'
     has_usage :execute_show_topten, '<plugin> <page>'

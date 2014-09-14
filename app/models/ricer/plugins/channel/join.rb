@@ -18,6 +18,10 @@ module Ricer::Plugins::Channel
       server.connection.send_join(message, channel_name)
     end
     
+    def on_join
+      save_channel_setting(channel, :autojoin, true) # Re-Enable autojoin
+    end
+    
     def on_001
       bot.log_debug("Channel/Join.ricer_on_server_connected")
       server.channels.each do |channel|
@@ -31,8 +35,9 @@ module Ricer::Plugins::Channel
     
     # Disable autojoin on a ban
     def on_474
-      channel = Ricer::Irc::Channel.where(:name => args[1], :server_id => server.id).first
-      channel_setting(channel, :autojoin).save_value(false) unless channel.nil?
+      if channel = Ricer::Irc::Channel.where(:name => args[1], :server_id => server.id).first
+        save_channel_setting(channel, :autojoin, false)
+      end
     end
     
   end

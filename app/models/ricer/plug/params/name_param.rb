@@ -1,7 +1,7 @@
 module Ricer::Plug::Params
   class NameParam < Base
 
-    def convert_in!(input, options, message)
+    def convert_in!(input, message)
 
       min = 3
       max = 32
@@ -11,7 +11,7 @@ module Ricer::Plug::Params
 
     end
 
-    def convert_out!(value, options, message)
+    def convert_out!(value, message)
       value
     end
     

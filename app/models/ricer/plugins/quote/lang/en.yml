@@ -3,12 +3,12 @@ en:
     plugins:
       quote:
 
-        display_list_item: '%{id}'
-        display_show_item: 'Quote #%{id} - "%{message}" - added by %{by} - Liked %{likes} times.'
+        display_list_item: 'Quote#%{id} by %{by} %{ago} ago(+%{likes})'
+        display_show_item: 'Quote#%{id}: "%{message}" - added by %{by} on %{date} - Liked %{likes} times.'
 
         add:
           description: 'Add a quote to the database.'
-          msg_quote_added: 'A new quote has been added to the database with ID: %{quote_id}.'
+          msg_added: 'A new quote has been added to the database with ID: %{quote_id}.'
           
         search:
           description: 'Search the quote database.'
@@ -16,6 +16,6 @@ en:
         stats:
           description: 'Show statistics about the quote database.'
           msg_stats:
-            zero: 'There are no quotes in the database yet. :('
-            one: 'There is only one quote in the database.'
-            other: 'There are %{count} quotes in the database which have been voted %{votes} times. The last quote with ID %{last_id} has been added by %{last_by} at %{last_date}.'
+            zero: 'There are no quotes in the database yet.'
+            one: 'There is only one quote in the database at the moment.'
+            other: 'There are %{count} quotes in the database which have been voted %{votes} times. The last quote with ID %{last_id} has been added by %{last_by} on %{last_date}.'

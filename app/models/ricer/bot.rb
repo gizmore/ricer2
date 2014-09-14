@@ -7,11 +7,11 @@ module Ricer
     
     GLOBAL_MUTEX = Mutex.new
     
-    with_global_orm_mapping
-    def should_cache?; true; end
+    with_global_orm_mapping; def should_cache?; true; end
     
     attr_reader :rand, :botlog
-    attr_accessor :needs_restart, :running, :reboot
+    
+    attr_accessor :needs_restart, :running
     
     def running?; @running; end
     def servers; @servers; end
@@ -24,6 +24,8 @@ module Ricer
     def version; Ricer::Application.config.ricer_version; end
     def builddate; Ricer::Application.config.ricer_version_date; end
     def owner_name; Ricer::Application.config.ricer_owner; end
+    def malware; Ricer::Application.config.ricer_malware rescue []; end
+    def embargo; Ricer::Application.config.ricer_embargo rescue []; end
 
     def log_debug(s); @botlog.log_debug(s) if chopsticks; end
     def log_info(s); @botlog.log_info(s); end
@@ -51,7 +53,6 @@ module Ricer
     def init
       ActiveRecord::Base.logger = paddy_queries ? Logger.new(STDOUT) : nil
       init_random
-      @reboot = false
       @running = false
       @needs_restart = false
       load_extenders
@@ -80,32 +81,27 @@ module Ricer
     ### but this way we get ActiveRecord syntax and maybe later
     ### there is a nice fast solution.
     def save_all_offline
-      Ricer::Irc::User.update_all(:online => false)
-      Ricer::Irc::Server.update_all(:online => false)
-      Ricer::Irc::Channel.update_all(:online => false)
+      Ricer::Irc::User.update_all(:online => false) &&
+      Ricer::Irc::Server.update_all(:online => false) &&
+      Ricer::Irc::Channel.update_all(:online => false) &&
       Ricer::Irc::Chanperm.update_all(:online => false)
     end
     
     def load_plugins(reload=false)
-      PluginMap.instance.clear_cache
+      map = PluginMap.instance
+      map.clear_cache
+      I18n.load_path.clear
       @plugins = @loader.load_all
       reload ? reloaded_plugins : init_plugins
       I18n.reload!
-      sort_plugins
-      PluginMap.instance.sort_plugins
+      map.validate_plugins!
+      map.sort_plugins(@plugins)
+      map.sort_plugin_map
+      @plugins
     end
     
     def sort_plugins
-      @plugins.sort! do |a,b|
-        b.trigger_permission.bit - a.trigger_permission.bit rescue 0
-      end
-      @plugins.sort! do |a,b|
-        b.scope.bit - a.scope.bit
-      end
-      @plugins.sort! do |a,b|
-        a.priority - b.priority
-      end
-#      plugins.each do |p|; puts p.plugin_name; end; byebug
+      PluginMap.sort_plugins(@plugins)
     end
     
     def load_plugin(klass, reload=false)
@@ -119,13 +115,19 @@ module Ricer
       @plugins.each do |plugin|
         begin
           plugin.on_init
-          plugin.class.get_init_functions.each do |func|
-            plugin.send(func)
-          end
+          plugin.class.get_init_functions.each{|func| plugin.send(func) }
         rescue Exception => e
           log_exception(e)
         end
       end
+      export_translations
+    end
+    
+    def export_translations
+      log_info("Generating locale files.")
+      Translator::Translator.new(:en).generate(
+        Ricer::Locale.all.collect{|locale|locale.iso.to_sym}
+      )
     end
     
     def plugin_by_id(id)
@@ -158,7 +160,7 @@ module Ricer
     end
     
     def run
-      log_info "Starting servers..."
+      log_info "Starting servers."
       @running = true
       servers.each do |server|
         begin
@@ -169,22 +171,20 @@ module Ricer
         end
       end
       cleanup_loop
-      # Return 1 unless we get killed with .reboot
-      Kernel.exit(@reboot)
+      log_info "Ricer has quit."
     end
     
     def cleanup_loop
+      log_debug "Going into cleanup loop."
       @started_up = false
-      log_info("Going into cleanup loop.")
       while @running
         begin
           if @started_up
-            sleep 30
+            sleep 4
           else
             sleep 1
             @started_up = check_started_up
           end
-          #Ricer::Thread.cleanup_threads
         rescue SystemExit, Interrupt => e
           servers.each do |server|
             server.send_quit('Caught SystemExit exception.')
@@ -194,10 +194,8 @@ module Ricer
           @running = false
         end
       end
-      log_info "Ricer shuts down in 5 seconds."
       publish('ricer/on/exit', self)
-      sleep 5
-      log_info "Ricer shut down."
+      sleep 1
     end
     
     # def ricer_on_exit

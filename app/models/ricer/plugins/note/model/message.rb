@@ -30,6 +30,13 @@ module Ricer::Plugins::Note
       m = ActiveRecord::Migration
       m.rename_column table_name, :sent_at, :created_at
     end
+    def self.upgrade_3
+      m = ActiveRecord::Migration
+      m.add_foreign_key table_name, :users,       :name => :note_senders,   :column => :sender_id
+      m.add_foreign_key table_name, :users,       :name => :note_receivers, :column => :receiver_id
+      m.add_index       table_name, :sender_id,   :name => :note_sender_index
+      m.add_index       table_name, :receiver_id, :name => :note_receiver_index
+    end
     
     search_syntax do
       search_by :text do |scope, phrases|
@@ -54,7 +61,7 @@ module Ricer::Plugins::Note
     end
     
     def unread_bold
-      self.read? == false ? Ricer::Irc::Lib::BOLD : '' 
+      self.read? == false ? "\x02" : ''
     end
 
     def display_show_item(number=1)

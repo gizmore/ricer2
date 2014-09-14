@@ -1,6 +1,8 @@
 module Ricer::Plugins::Conf
   class ConfBase < Ricer::Plugin
   
+    def description; tt("ricer.plugins.conf.conf.description"); end
+  
     private
     
     def config_settings(plugin)
@@ -41,14 +43,14 @@ module Ricer::Plugins::Conf
     end
     
     def show_var(plugin, varname)
-      plugin.message = @message
       settings = config_settings(plugin)[varname]
       return rplyp :err_no_such_var if settings.nil?
       out = ''
+      plugin.message = @message
       settings.each do |options|
         setting = plugin.setting(varname, options[:scope])
-        bold = setting.persisted? ? "\x02" : ''
-        out += " #{setting.scope.to_label}=#{bold}#{setting.to_label}#{bold}"
+        b = setting.persisted? ? "\x02" : ''
+        out += " #{setting.scope.to_label}=#{b}#{setting.to_label}#{b}"
       end
       out += " = #{plugin.setting(varname, config_scope).to_label}"
       rplyp :msg_show_var, trigger: plugin.trigger, varname: varname, values: out.ltrim

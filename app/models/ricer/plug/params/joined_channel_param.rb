@@ -1,9 +1,8 @@
 module Ricer::Plug::Params
   class JoinedChannelParam < ChannelParam
-
-    def convert_in!(input, options, message)
-      options[:online] = true
-      super(input, options, message)
+    
+    def online_option
+      true
     end
     
   end

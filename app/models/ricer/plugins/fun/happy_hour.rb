@@ -1,7 +1,7 @@
 module Ricer::Plugins::Fun
   class HappyHour < Ricer::Plugin
     
-    trigger_is :happy_hour
+    trigger_is :happyhour
     permission_is :responsible
 
     has_usage

@@ -1,7 +1,15 @@
 module Ricer::Plug::Params
   class UserParam < Base
+    
+    def default_options; { online: nil, offline: nil }; end
+    
+    def online_option
+      return true if options[:online]
+      return false if options[:offline]
+      return nil
+    end
 
-    def convert_in!(input, options, message)
+    def convert_in!(input, message)
       
       # Get server from user:sid or message
       sid = input.substr_from(':')
@@ -16,7 +24,7 @@ module Ricer::Plug::Params
       sid = server.id
       
       users = Ricer::Irc::User
-      users = users.where(:online => options[:online]) unless options[:online].nil?
+      users = users.where(:online => online_option) unless online_option.nil?
       
       user = nil
       # user = users.where(:id => input).first
@@ -30,7 +38,7 @@ module Ricer::Plug::Params
      
     end
 
-    def convert_out!(value, options, message)
+    def convert_out!(value, message)
       value.displayname
     end
 

@@ -19,10 +19,10 @@ module Ricer::Plug::Extender::KnowsEvents
     event_subscriptions(event).push(block)
   end
 
-  def publish(event, *args)
+  def publish(event, *event_args)
     event_subscriptions(event).each do |subscription|
       bot.log_debug(display_publish_consumed(event, subscription))
-      subscription.call(*args)
+      subscription.call(*event_args)
     end
   end
 

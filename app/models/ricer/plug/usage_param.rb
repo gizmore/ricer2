@@ -4,26 +4,29 @@ module Ricer::Plug
     def to_label; @parser.param_label; end
 
     def is_eater?; @eater||@parser.is_eater?; end
-    def is_optional?; @optional; end
-    def is_mandatory?; !@optional; end
+    # def is_optional?; @optional; end
+    # def is_mandatory?; !@optional; end
     
     def initialize(paramstring)
-      
-      @eater = paramstring.index('.') != nil
-      @optional = paramstring.index('[') != nil
+      @eater = !!paramstring.index('.')
+      #@optional = paramstring.index('[') != nil
       #@type = paramstring.trim('[<.>]')
       unless @eater
-        @parser = Param.parser!(paramstring.trim!('[<.>]'))
+        @parser = Param.parser!(paramstring.trim!('<.>'))
       else
         @parser = Param.parser!('message')
       end
     end
     
-    def parse(input, options, message)
-      @parser.convert_in!(input, options, message)
+    def parser
+      @parser
     end
     
-    # def print(value, options, message)
+    def parse(input, message)
+      @parser.convert_in!(input, message)
+    end
+    
+    # def print(value, message)
       # @parser.convert_out!(value, options, message)
     # end
     
