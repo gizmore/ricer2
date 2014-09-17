@@ -57,6 +57,7 @@ module Ricer
       @needs_restart = false
       load_extenders
       save_all_offline
+      # Ricer::Net::Message.new
     end
     
     ### Seed the random generator with seed from config
@@ -114,7 +115,7 @@ module Ricer
     def init_plugins
       @plugins.each do |plugin|
         begin
-          plugin.on_init
+          plugin.plugin_init
           plugin.class.get_init_functions.each{|func| plugin.send(func) }
         rescue Exception => e
           log_exception(e)
@@ -197,20 +198,6 @@ module Ricer
       publish('ricer/on/exit', self)
       sleep 1
     end
-    
-    # def ricer_on_exit
- # #     publish('ricer/before/exit', self)
-      # server = servers.first
-      # message = server.fake_message
-      # @plugins.each do |plugin|
-        # begin
-          # plugin.message = message
-          # plugin.on_exit
-        # rescue => e
-          # log_exception(e)
-        # end
-      # end
-    # end
     
     def check_started_up
       servers.each do |server|

@@ -10,7 +10,7 @@ module Ricer::Plugins::Core
 
     def on_privmsg
       if has_line? # something to operate on?
-        if @message.is_trigger_char? # Explicit triggered with!.,?
+        if current_message.is_trigger_char? # Explicit triggered with!.,?
           remove_line # we remove, and just execute this
         else
           append_line # Catch in our queue
@@ -28,11 +28,11 @@ module Ricer::Plugins::Core
     
     def set_line(line)
       user.instance_variable_set(:@multiline_command, line)
-      @message.processed = true
+      current_message.processed = true
     end
     
     def remove_line
-      @message.processed = true
+      current_message.processed = true
       user.remove_instance_variable(:@multiline_command) if has_line?
     end
     
@@ -48,7 +48,9 @@ module Ricer::Plugins::Core
     
     def finish
       return rply :err_no_begin unless has_line?
-      exec_line(remove_line)
+      exec_newline(remove_line)
+#      # Remove line and put it into the message. it will get processed then :)
+#      current_message.args[1] = remove_line
     end
 
   end

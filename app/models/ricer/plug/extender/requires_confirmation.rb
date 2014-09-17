@@ -17,7 +17,7 @@ module Ricer::Plug::Extender::RequiresConfirmation
         unless @@CONFIRM[user].nil?
           waitingfor = @@CONFIRM[user] + " #{confirmationword}"
           if waitingfor == privmsg_line
-            @message.args[1].substr_to!(" #{confirmationword}")
+            current_message.args[1].substr_to!(" #{confirmationword}")
             @@CONFIRM.delete(user)
             return
           end

@@ -18,8 +18,8 @@ module Ricer::Plug::Extender::IsAnnounceTrigger
       has_usage :execute_toggle_announce, '<boolean>'
       def execute_toggle_announce(boolean)
         boolean = boolean ? '1' : '0'
-        methodn = @message.is_query? ? 'confu' : 'confc'
-        exec_line("#{methodn} #{trigger} announce #{boolean}")
+        methodn = current_message.is_query? ? 'Confu' : 'Confc'
+        exec_newline("#{methodn} #{trigger} announce #{boolean}")
       end
       
       def announce_channels(&block)

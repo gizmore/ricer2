@@ -20,12 +20,6 @@ module Ricer::Irc
     belongs_to :encoding
 
     scope :online, -> { where(:online => 1) }
-
-    ###
-    def self.by_arg_and_message(arg, message) # FIXME: Remove this function
-      byebug
-      Ricer::Plug::Params::ChannelParam.new().convert_in!(arg, message)
-    end
     
     ###############
     ### Display ###

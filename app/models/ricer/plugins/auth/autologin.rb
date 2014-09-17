@@ -10,11 +10,11 @@ module Ricer::Plugins::Auth
     
     def probe_server
       bot.log_debug "Probing #{server.displayname} on NickServ STATUS"
-      server.connection.send_raw(@message, "PRIVMSG NickServ :STATUS #{server.nickname.name}")
+      server.connection.send_raw(current_message, "PRIVMSG NickServ :STATUS #{server.nickname.name}")
     end
 
     def on_privmsg
-      if @message.is_triggered?
+      if current_message.is_triggered?
         do_autologin if should_autologin
       end
     end
@@ -66,9 +66,9 @@ module Ricer::Plugins::Auth
     
     def do_autologin
       if server.instance_variable_defined?('@has_nickserv_status')
-        server.connection.send_raw(@message, "PRIVMSG NickServ :STATUS #{user.name}")
+        server.connection.send_raw(current_message, "PRIVMSG NickServ :STATUS #{user.name}")
       else
-        server.connection.send_raw(@message, "WHOIS #{user.name}")
+        server.connection.send_raw(current_message, "WHOIS #{user.name}")
       end
     end
     

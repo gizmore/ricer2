@@ -52,7 +52,7 @@ module Ricer::Plugins::Debug
       Ricer::Thread.execute do
         begin
           enable_profiler
-          exec_line(@@profiler_command = line)
+          exec_newline(@@profiler_command = line)
         ensure
           disable_profiler
         end

@@ -10,6 +10,7 @@ module Ricer::Plug::Extender::HasUsage
   
   # Extender has_usage
   def has_usage(function=:execute, pattern=nil, options=DEFAULT_OPTIONS)
+    
     class_eval{|klass|
 
       # Allow pattern as function and nil pattern      
@@ -19,7 +20,7 @@ module Ricer::Plug::Extender::HasUsage
   
       # Options
       merge_options(options, DEFAULT_OPTIONS)
-      usage_on_error = options.delete(:usage_on_error)
+      usage_on_error = options[:usage_on_error]
   
       # Sanity
       throw "#{klass.name} has_usage expects function to be a Symbol, but it is: #{function}" unless function.is_a?(Symbol)
@@ -46,8 +47,12 @@ module Ricer::Plug::Extender::HasUsage
       else
         klass.register_exec_function(:exec_has_usage)
       end
-      def exec_has_usage; try_handlers; end
-      def exec_has_usage!; show_usage unless try_handlers; end
+      def exec_has_usage!
+        show_usage unless try_handlers
+      end
+      def exec_has_usage
+        try_handlers
+      end
 
       # Usage
       def has_usage?; true; end
@@ -71,9 +76,9 @@ module Ricer::Plug::Extender::HasUsage
         throw_error = usages.length
         usages.each do |pattern, usage|
           throw_error -= 1
-          execute_args = usage.parse_args(self, @message, (throw_error == 0))
+          execute_args = usage.parse_args(self, current_message, (throw_error == 0))
           unless execute_args.nil?
-            @message.plugin_id = plugin_id
+            current_message.plugin_id = plugin_id
             process_event('ricer_on_trigger') rescue nil
             begin
               before_execution
@@ -89,7 +94,7 @@ module Ricer::Plug::Extender::HasUsage
       end
       
       def usages_in_scope
-        self.usages.usages_in_scope(@message)
+        usages.usages_in_scope(current_message)
       end
       
       ################

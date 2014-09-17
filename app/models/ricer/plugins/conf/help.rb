@@ -35,7 +35,6 @@ module Ricer::Plugins::Conf
     def collect_groups()
       grouped = {}
       help_plugins.each do |plugin|
-        plugin.message = @message
         if plugin.in_scope? && plugin.has_permission?
           m = plugin.plugin_module
           grouped[m] = [] if grouped[m].nil?

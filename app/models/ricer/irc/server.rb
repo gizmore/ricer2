@@ -152,7 +152,11 @@ module Ricer::Irc
     end
     
     def process_event(event, message)
-      bot.log_debug "Server.process_event(#{event}, #{message.plugin_id})"
+      if message.plugin_id
+        bot.log_debug "Server.process_event(#{event}) CAUSE: #{message.plugin.plugin_name}"
+      else
+        bot.log_debug "Server.process_event(#{event}) NEW"
+      end
       
       is_privmsg = event == 'on_privmsg'
       
@@ -163,25 +167,26 @@ module Ricer::Irc
         if plugin.connector_supported?(self.connector)
           # Simply call the func after cloning the plugin
           begin
-            plugin.clone_plugin(message).send(event)
-          rescue e
+            plugin.send(event)
+          rescue StandardError => e
             bot.log_exception e
           end
           
           # PRIVMSG trigger has_usage
           # Done via calling plugin.exec_plugin which
           # calls the exec_function chain of a plugin
-          if message.unprocessed? && is_privmsg
+          if is_privmsg
             triggered ||= message.is_triggered?
             if triggered
               argline ||= message.privmsg_line.ltrim(message.trigger_chars)
               if plugin.triggered_by?(argline)
-                plug = plugin.clone_plugin(message)
-                plug.exec_plugin(plug)
+                plugin.exec_plugin
               end
             end 
           end
           
+          return nil unless message.unprocessed? 
+
         end # .connector_supported?
       end # .plugins_for_event
       nil

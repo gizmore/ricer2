@@ -48,7 +48,7 @@ module Ricer::Plug::Extender::DenialOfServiceProtected
       def service_issuer
         scope = denial_of_service_scope
         if scope == :user
-          @message.prefix.substr_from('!').substr_from('@') rescue 'HAX0R'
+          current_message.prefix.substr_from('!').substr_from('@') rescue 'HAX0R'
         else
           send(denial_of_service_scope).name
         end

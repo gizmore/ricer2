@@ -22,17 +22,21 @@ module Ricer
     ### Debug and Exception handling ###
     ####################################
     def self.execute(&proc)
-      new do
+      # First copy the network message into current thread
+      old_message = Thread.current[:ricer_message]
+      new do # Start thread
+        # copy the network message
+        Thread.current[:ricer_message] = old_message 
+        # Count global thread counter up, for debugging purposes
         guid = 0
         @@mutex.synchronize do
           guid = @@thread_guid; @@thread_guid += 1;
         end
+        # Try to exec
         begin
           bot.log_debug "[#{guid}] Started thread at #{display_proc(proc)}"
           yield proc
           bot.log_debug "[#{guid}] Stopped thread at #{display_proc(proc)}"
-#       rescue ActiveRecord::NoDatabaseError => e
-#          bot.running = false
         rescue Exception => e
           bot.log_exception(e)
           bot.log_debug "[#{guid}] Killed thread at #{display_proc(proc)}"

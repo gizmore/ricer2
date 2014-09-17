@@ -13,7 +13,7 @@ module Ricer::Plugins::Auth
       user.save!
       user.login!
       rply :msg_registered
-      server.process_event('ricer_on_user_registered', @message)
+      server.process_event('ricer_on_user_registered', current_message)
     end
     
     has_usage :change_password, '<password> <password>'

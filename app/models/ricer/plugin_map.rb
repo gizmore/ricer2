@@ -102,7 +102,7 @@ module Ricer
         if triggers[trigger].nil?
           triggers[trigger] = plugin
         else
-          bot.log_warning("'#{plugin.class.name}' and '#{triggers[trigger].class.name}', share the same trigger: #{trigger}.")
+          bot.log_warn("'#{plugin.class.name}' and '#{triggers[trigger].class.name}', share the same trigger: #{trigger}.")
           all_valid = false and sleep 10.seconds
         end
       end

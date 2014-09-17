@@ -41,7 +41,7 @@ module Ricer::Plug::Extender::AbboTriggers
         Ricer::Plugins::Abbo::AbboTarget.for(abbo_target)
       end
       def abbo_target
-        @message.reply_target
+        current_message.reply_target
       end
     end
     
@@ -89,7 +89,7 @@ module Ricer::Plug::Extender::AbboTriggers
       is_list_trigger options[:trigger]||:abbos, options
       def visible_relation(relation)
         return Ricer::Plugins::Abbo::Abbonement.for_target(abbo_target)
-        #(:abbo_target => ) #relation.abbonemented_by(@message.reply_target)
+        #(:abbo_target => ) #relation.abbonemented_by(current_message.reply_target)
       end
     end
   end

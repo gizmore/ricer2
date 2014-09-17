@@ -67,7 +67,7 @@ module Ricer::Plug::Extender::HasCheatingDetection
       
       # Get the IP hostmask cloak part to detect renaming techniques
       def cheat_key
-        @message.prefix.substr_from('!').substr_from('@') rescue 'HAX0R'
+        current_message.prefix.substr_from('!').substr_from('@') rescue 'HAX0R'
       end
       
       def cheat_cache

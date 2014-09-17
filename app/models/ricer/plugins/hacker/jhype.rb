@@ -10,7 +10,7 @@ module Ricer::Plugins::Hacker
     has_setting name: :stocksize, scope: :bot, permission: :responsible, type: :integer, default: 0
 
     def ricer_on_global_startup
-      Ricer::Thread.new do |t|
+      Ricer::Thread.execute do |t|
         loop {
           begin
             check_for_new_pictures

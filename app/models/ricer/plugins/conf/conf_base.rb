@@ -46,7 +46,6 @@ module Ricer::Plugins::Conf
       settings = config_settings(plugin)[varname]
       return rplyp :err_no_such_var if settings.nil?
       out = ''
-      plugin.message = @message
       settings.each do |options|
         setting = plugin.setting(varname, options[:scope])
         b = setting.persisted? ? "\x02" : ''

@@ -50,7 +50,7 @@ module Ricer::Plug::Extender::VoteTriggers
         # Ricer::Plugins::Abbo::AbboTarget.for(abbo_target)
       # end
       # def abbo_target
-        # @message.reply_target
+        # current_message.reply_target
       # end
     end
     

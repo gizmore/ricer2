@@ -11,7 +11,7 @@ module Ricer::Plugins::Core
 #   def execute_with_language(programming_language)
 #   end
  
-    has_usage :execute, '<..text..>'
+    has_usage '<..text..>'
     def execute(content)
       execute_upload(content)
     end
@@ -44,7 +44,7 @@ module Ricer::Plugins::Core
       t :pastebin_title, user: user.name, date: l(Time.now)
     end
     def pasteout_title(messages)
-      t :pasteout_title, user: user.name, date: l(Time.now), command: @message.args[1]
+      t :pasteout_title, user: user.name, date: l(Time.now), command: current_message.args[1]
     end
 
     def pastebin_message(messages)

@@ -6,8 +6,7 @@ module Ricer::Plug::Params
     end
 
     def convert_in!(input, message)
-      plugin = param_subcommand.subcommand_by_arg(input) || failed_input
-      plugin.message = message and return plugin
+      param_subcommand.subcommand_by_arg(input) || failed_input
     end
 
     def convert_out!(plugin, message)

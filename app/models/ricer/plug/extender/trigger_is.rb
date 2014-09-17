@@ -40,13 +40,13 @@ module Ricer::Plug::Extender::TriggerIs
       end
       
       def reply(text)
-        connection.send_privmsg(@message.reply_clone, text)
+        connection.send_privmsg(current_message.reply_clone, text)
       end
       def areply(text)
-        connection.send_action(@message.reply_clone, text)
+        connection.send_action(current_message.reply_clone, text)
       end
       def nreply(text)
-        connection.send_notice(@message.reply_clone, text)
+        connection.send_notice(current_message.reply_clone, text)
       end
       
       def rply(key, args={}); reply t(key, args); end
@@ -76,12 +76,12 @@ module Ricer::Plug::Extender::TriggerIs
       protected
 
       def connection
-        @message.server.connection
+        current_message.server.connection
       end
 
       # Send back to channel or query      
       def reply_target
-        @message.is_query? ? sender : receiver
+        current_message.is_query? ? sender : receiver
       end
       
       private

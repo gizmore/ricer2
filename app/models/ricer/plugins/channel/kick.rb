@@ -15,7 +15,7 @@ module Ricer::Plugins::Channel
     
     def on_kick
       if get_setting(:kickjoin)
-        server.connection.send_join(@message, channel.name)
+        server.connection.send_join(current_message, channel.name)
       end
     end
         

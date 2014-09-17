@@ -37,12 +37,12 @@ module Ricer::Plug::Extender::PermissionIs
       end
       
       def respect_permission
-        return Ricer::Irc::Permission::REGISTERED if @message.is_query?
+        return Ricer::Irc::Permission::REGISTERED if current_message.is_query?
         return sender.chanperm_for(channel).permission
       end
       
       def current_permission
-        return sender.permission if @message.is_query?
+        return sender.permission if current_message.is_query?
         return sender.chanperm_for(channel).merged_permission
 #        sender.permission.merge(sender.chanperm_for(channel).permission)
       end

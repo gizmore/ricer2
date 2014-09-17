@@ -49,7 +49,11 @@ module Ricer::Plug
       end
     end
 
+    def bot; Ricer::Bot.instance; end
+
     def parse_param_args(plugin, message, throw_errors)
+      
+      bot.log_debug("Usage#parse_param_args#{plugin.plugin_name}@#{plugin.object_id}: #{message}")
       
       back, argline = [], plugin.argline.trim(' ')
       

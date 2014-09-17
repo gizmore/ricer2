@@ -7,10 +7,11 @@ module Ricer::Plugins::Admin
 
     has_usage :execute, '<plugin>'
     def execute(plugin)
+      byebug
       rply :msg_purging
       purge_plugin_tables(plugin)
       purge_plugin_rows(plugin)
-      exec_line('Admin/Die '+t(:msg_purged_and_die))
+      exec_newline('Admin/Die '+t(:msg_purged_and_die))
     end
     
     private

@@ -7,7 +7,7 @@ module Ricer::Plugins::Admin
     
     has_usage :execute, '<..message..>'
     def execute(message)
-      server.connection.send_raw(@message, message)
+      server.connection.send_raw(current_message, message)
     end
     
   end

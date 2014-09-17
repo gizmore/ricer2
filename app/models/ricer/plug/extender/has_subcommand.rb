@@ -1,38 +1,36 @@
 module Ricer::Plug::Extender::HasSubcommand
-  def has_subcommand(plugin_name)
+  def has_subcommand(*plugin_names)
     class_eval do |klass|
       
-      klass.register_class_variable('@subcommands')
-      klass.register_class_variable('@subcommand_names')
-      klass.register_class_variable('@subcommand_depth')
-      klass.register_class_variable('@parent_command')
-
-      # Append to subcommands
-      commands = klass.instance_variable_define('@subcommand_names', [])
-      klass.instance_variable_set('@subcommand_depth', 1)
-      klass.instance_variable_set('@subcommands', [])
-      commands.push(plugin_name) unless commands.include?(plugin_name)
-      
-      def is_subcommand?
-        subcommand_depth > 1
+      plugin_names.each do |plugin_name|
+        # Append to subcommand names
+        klass.register_class_variable('@subcommand_names')
+        commands = klass.instance_variable_define('@subcommand_names', [])
+        commands.push(plugin_name) unless commands.include?(plugin_name)
+        def subcommand_names
+          self.class.instance_variable_get('@subcommand_names')
+        end
       end
-
+      
       def has_subcommands?
-        subcommands.length > 0
+        true
       end
-      
-      def subcommand_names
-        self.class.instance_variable_get('@subcommand_names')
-      end
+
+      # def is_subcommand?
+        # subcommand_depth > 1
+      # end
 
       def subcommands
-        self.class.instance_variable_get('@subcommands')
+        @subcommands
       end
       
       def add_subcommand(plugin)
-        plugin.increase_subcommand_depth
-        plugin.class.instance_variable_set('@parent_command', self)
-        subcommands.push(plugin)
+        plugin.parent_command = self
+        @subcommand_depth ||= 1 
+        plugin.subcommand_depth = @subcommand_depth + 1
+        @subcommands ||= []
+        @subcommands.push(plugin)
+        puts plugin.trigger
         bot.log_info "Added subcommand to '#{self.short_class_name}': '#{plugin.short_class_name}'."
         self
       end

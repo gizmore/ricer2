@@ -16,15 +16,15 @@ module Ricer::Plug::Extender::ScopeIs
 
         def exec_scope
           unless in_scope?
-            raise Ricer::ExecutionException.new(I18n.t('ricer.plug.extender.scope_is.err_only_private')) if @message.is_channel?
-            raise Ricer::ExecutionException.new(I18n.t('ricer.plug.extender.scope_is.err_only_channel')) if @message.is_query?
+            raise Ricer::ExecutionException.new(I18n.t('ricer.plug.extender.scope_is.err_only_private')) if current_message.is_channel?
+            raise Ricer::ExecutionException.new(I18n.t('ricer.plug.extender.scope_is.err_only_channel')) if current_message.is_query?
           end
         end
       
       end
       
       def in_scope?
-        scope.in_scope?(@message.scope)
+        scope.in_scope?(current_message.scope)
       end
         
       def scope

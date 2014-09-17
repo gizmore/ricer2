@@ -110,6 +110,7 @@ module Ricer::Plugins::Rice
     
     def send_line(message)
       begin
+        Thread.current[:ricer_message] = message
         @server.ricer_replies_to(message)
         text = message.reply_data.gsub("\n", '').gsub("\r", '')
         @socket.write "#{text}\r\n"

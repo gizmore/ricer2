@@ -7,7 +7,7 @@ module Ricer::Plugins::Stats
 
     # Count when something is triggered    
     def ricer_on_trigger
-      TriggerCounter.count(@message.plugin_id, user.id) rescue nil
+      TriggerCounter.count(current_message.plugin_id, user.id) rescue nil
     end
     
     ################

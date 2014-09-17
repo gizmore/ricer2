@@ -20,8 +20,8 @@ module Ricer::Plugins::Log
     
     def log(input)
       case get_setting(:logtype)
-      when :Binlog; Binlog.irc_message(@message, input)
-      when :Textlog; Textlog.irc_message(@message, input)
+      when :Binlog; Binlog.irc_message(current_message, input)
+      when :Textlog; Textlog.irc_message(current_message, input)
       end
     end
     

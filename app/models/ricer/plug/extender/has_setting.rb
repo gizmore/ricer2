@@ -156,7 +156,7 @@ module Ricer::Plug::Extender::HasSetting
       
       def memory_settings_filter(scopes)
         Array(scopes).select do |scope|
-          Ricer::Irc::Scope.matching?(scope, @message.scopes, channel)
+          Ricer::Irc::Scope.matching?(scope, current_message.scopes, channel)
         end
       end
 

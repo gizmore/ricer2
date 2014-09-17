@@ -11,28 +11,42 @@ module Ricer
 
     DEFAULT_PRIORITY = 50
     
-    attr_accessor :message, :plugin_module, :plugin_dir, :module_dir
+    attr_accessor :plugin_module, :plugin_dir, :module_dir
     
     def lib; Ricer::Irc::Lib.instance; end
     def bot; Ricer::Bot.instance; end
     def self.bot; Ricer::Bot.instance; end
     
-    def user; @message.sender; end
-    def sender; @message.sender; end
-    def server; @message.server; end
-    def channel; @message.receiver if @message.is_channel?; end
-    def args; @message.args; end
-    def argv; @message.privmsg_args; end
-    def argc; @message.privmsg_args.length; end
+    
+    # Current message for current thread
+    def message
+      bot.log_exception(StandardError.new("DEPRECATED accessor plugin#message!!!"))
+      current_message
+    end
+    def current_message
+      Thread.current[:ricer_message]
+    end
+    # def current_message=(message)
+      # Thread.current[:ricer_message] = message
+    # end
+
+    def user; current_message.sender; end
+    def sender; current_message.sender; end
+    def server; current_message.server; end
+    def channel; current_message.receiver if current_message.is_channel?; end
+    def args; current_message.args; end
+    def argv; current_message.privmsg_args; end
+    def argc; current_message.privmsg_args.length; end
     def line; args[1]; end
-    def privmsg_line; @message.privmsg_line; end
+    def privmsg_line; current_message.privmsg_line; end
     def argline
-      return @argline unless @argline.nil?
+#      return @_argline unless @argline.nil?
       back = line
       subcommand_depth.times do |n|
         back = back.substr_from(' ').ltrim(' ') rescue back = ''
       end
-      @argline = back
+      back
+#      @_argline = back
       ## .ping a , d1, s1 
       # return nil if line.count(' ') < subcommand_depth
       # return line.split(/ +/, subcommand_depth+1)[-1]
@@ -100,39 +114,43 @@ module Ricer
     ###################
     ### Subcommands ###
     ###################
-    def parent_command
-      self.class.instance_variable_get('@parent_command')
-    end
-    
+    attr_accessor :parent_command
+    # def subcommand_depth; 1; end
     def subcommand_depth
-      self.class.instance_variable_defined?('@subcommand_depth') ? self.class.instance_variable_get('@subcommand_depth') : 1
+      @subcommand_depth||1
+    end
+    def subcommand_depth=(depth)
+      @subcommand_depth = depth
     end
 
-    def increase_subcommand_depth(by=1)
-      self.class.instance_variable_set('@subcommand_depth', subcommand_depth+by)
-    end
-    
     ###############
     ### Trigger ###
     ###############
     def default_trigger
+      @_default_trigger || _default_trigger
+    end
+    def _default_trigger
       if self.class.instance_variable_defined?('@default_trigger')
-        self.class.instance_variable_get('@default_trigger').to_s
+        @_default_trigger = self.class.instance_variable_get('@default_trigger').to_s
       else
-        self.class.name.rsubstr_from('::').downcase
+        @_default_trigger = self.class.name.rsubstr_from('::').downcase
+      end
+    end
+    
+    def i18n_trigger
+      begin
+        I18n.t!("#{i18n_key}.trigger")
+      rescue Exception => e
+        default_trigger
       end
     end
     
     def trigger
-      begin
-        back = I18n.t!("#{i18n_key}.trigger")
-      rescue Exception => e
-        back = default_trigger
+      if _pc = parent_command
+        _pc.trigger + ' ' + i18n_trigger
+      else
+        i18n_trigger        
       end
-      if subcommand_depth > 1
-        back = "#{parent_command.trigger} #{back}" rescue back
-      end
-      back
     end
         
     def triggered_by?(argline)
@@ -162,12 +180,6 @@ module Ricer
     ##############
     ### Static ###
     ##############
-    # def self.by_id(id)
-      # bot.plugins.each do |plugin|
-        # return plugin if plugin.id == id
-      # end
-      # nil
-    # end
     def self.by_arg(arg)
       by_trigger(arg) || by_name(arg)
     end
@@ -206,64 +218,37 @@ module Ricer
     end
 
     def ricer_itself?
-      @message.is_ricer?
+      current_message.is_ricer?
     end
     
     def get_plugin(name)
-      Ricer::Plugin.by_name(name).clone_plugin(@message)
-    end
-    
-    def clone_plugin(message)
-      back = self.class.new(self.attributes)
-#      message.plugin_id = self.id
-#      back = self.class.new({id:self.id})
-      back.message = message
-      back
-    end
-
-    def exec_privmsg(message)
-      bot.log_debug "Plugin.exec_privmsg #{message.args[1]}"
-      # Trim the !
-      argline = message.args[1].ltrim(message.trigger_chars)
-      # Exec the argline without trim
-      exec(argline)
-    end
-    
-    def exec_line(line)
-      message = @message.clone
-      message.args[1] = line
-      clone_plugin(message).exec(line)
-    end
-    
-    def exec(line)
-      bot.log_debug "Plugin.exec #{line}"
-      plugins_for_line(line).each do |plugin|
-        exec_plugin(plugin.clone_plugin(@message))
-      end
+      Ricer::Plugin.by_name(name)
     end
     
     def plugins_for_line(line, check_scope=true)
-      bot.plugins.select { |plugin|; plugin.triggered_by?(line); }
+      bot.plugins.select { |plugin|
+        plugin.triggered_by?(line)
+      }
     end
     
     def plugin_for_line(line, check_scope=true)
       plugins_for_line(line, check_scope)[0] rescue nil
     end
     
-    def exec_plugin(plugin)
+    def exec_plugin
       begin
-        plugin.class.get_exec_functions.each do |func|
-          plugin.send(func)
+        self.class.get_exec_functions.each do |func|
+          send(func)
         end
-      rescue ActiveRecord::NoDatabaseError => e
-        bot.running = false
+#      rescue ActiveRecord::NoDatabaseError => e
+#        bot.running = false
       rescue Exception => e
-        plugin.reply_exception e
+        reply_exception e
       end
     end
     
     def process_event(event_name)
-      server.process_event(event_name, @message)
+      server.process_event(event_name, current_message)
     end
     
     def event_listeners
@@ -272,6 +257,22 @@ module Ricer
       end
     end
     
+    ##########################
+    ### Exec Line Wrappers ###
+    ##########################
+    # Execute this plugin with given full line
+    # Example: Login#exec_argline("login test")
+    def exec_argline(line)
+      bot.log_debug("Plugin#exec_argline(#{line})")
+      current_message.args[1] = line
+      exec_plugin
+    end
+    
+    # Execute a complete new line, like the user would have typed it 
+    def exec_newline(line)
+      plugin_for_line(line).exec_argline(line)
+    end
+
     ############
     ### I18n ###
     ############

@@ -15,7 +15,7 @@ module Ricer::Plugins::Rice
     def ricer_on_server_handshake
       bot.log_debug "Ricer::Plugins::Rice::Connect.ricer_on_server_handshake()"
 #      server.next_nickname
-      server.login(@message)
+      server.login(current_message)
     end
     
     def ricer_on_server_connected
@@ -29,79 +29,78 @@ module Ricer::Plugins::Rice
     
     def on_001
       process_event('ricer_on_server_authenticated') unless server.nickname.can_authenticate?
-      server.authenticate(@message)
+      server.authenticate(current_message)
     end
     
     def on_002
-      bot.log_debug('Connect.on_002: '+message.raw)
+      bot.log_debug('Connect.on_002: '+current_message.raw)
     end
     
     def on_nick
       old_user = create_user(sender_nickname)
       new_user = create_user(args[0])
-      @message.sender = new_user
+      current_message.sender = new_user
       Ricer::Irc::Chanperm.where(:user_id => old_user.id, :online => true).each do |chanperm|
         new_user.ricer_on_joined_channel(chanperm.channel)
       end
     end
     
     def on_notice
-      on_privmsg unless @message.prefix.index('!').nil? rescue nil
+      on_privmsg unless current_message.prefix.index('!').nil? rescue nil
     end
 
     def on_privmsg
-      bot.log_debug('Rice/Connect.on_privmsg')
       # Every privmsg origins from a user
-      @message.sender = create_user(sender_nickname)
+      current_message.sender = create_user(sender_nickname)
       # And maybe belongs to a channel
-      @message.receiver = load_channel(@message.args[0])
+      current_message.receiver = load_channel(current_message.args[0])
       
       # Set the hostmask
-#      @message.sender.hostmask = @message.prefix
+#      current_message.sender.hostmask = current_message.prefix
 
       # Else it belongs to bot itself
-#     @message.receiver = bot if message.receiver.nil?
+#     current_message.receiver = bot if message.receiver.nil?
     end
     
     def on_ping
-      server.connection.send_pong(@message, args[0])
+      server.connection.send_pong(current_message, args[0])
     end
     
     def on_error
-      server.disconnect!(@message)
+      server.disconnect!(current_message)
     end
     
     def on_quit
-      @message.sender = create_user(sender_nickname)
-      unless @message.is_ricer?
-        @message.sender.ricer_on_parted_server(server)
+      current_message.sender = create_user(sender_nickname)
+      unless current_message.is_ricer?
+        current_message.sender.ricer_on_parted_server(server)
       else
-        server.disconnect!(@message)
+        server.disconnect!(current_message)
       end
     end
     
     def on_join
-      @message.sender = create_user(sender_nickname)
-      @message.receiver = channel = create_channel(args[0])
+      current_message.sender = create_user(sender_nickname)
+      current_message.receiver = channel = create_channel(args[0])
       channel.ricer_on_join
       user.ricer_on_joined_channel(channel)
       process_event('ricer_on_user_joined') unless ricer_itself?
     end
     
     def on_part
-      @message.sender = create_user(sender_nickname)
-      @message.receiver = channel = create_channel(args[0])
-      if @message.is_ricer?
+      current_message.sender = create_user(sender_nickname)
+      current_message.receiver = channel = create_channel(args[0])
+      if current_message.is_ricer?
         channel.ricer_on_part
         Ricer::Irc::Chanperm.where(:channel_id => channel.id).update_all(:online => false)
       else
-        @message.sender.ricer_on_parted_channel(channel)
+        current_message.sender.ricer_on_parted_channel(channel)
       end
     end
     
     def on_kick
-      @message.sender = create_user(sender_nickname)
-      @message.receiver = channel = create_channel(args[0])
+      current_message.sender = create_user(sender_nickname)
+      current_message.receiver = channel = create_channel(args[0])
       kicked_user = create_user(args[1])
       if (kicked_user.is_ricer?)
         channel.ricer_on_part
@@ -112,7 +111,7 @@ module Ricer::Plugins::Rice
     end
     
     def on_353
-      @message.receiver = channel = create_channel(args[2])
+      current_message.receiver = channel = create_channel(args[2])
       args[3].split(' ').each do |username|
         username.strip!
         unless username.empty?
@@ -124,13 +123,13 @@ module Ricer::Plugins::Rice
     
     def on_433
       server.next_nickname
-      server.send_nick(@message)
+      server.send_nick(current_message)
     end
     
     private
     
     def sender_nickname
-      Ricer::Irc::Nickname.nickname_from_message(@message)      
+      Ricer::Irc::Nickname.nickname_from_message(current_message)      
     end
     
     def load_user(nickname)
@@ -163,7 +162,7 @@ module Ricer::Plugins::Rice
     end
     
     def load_channel(channel_name)
-      bot.log_debug "Connect.load_channel(#{channel_name})"
+      # bot.log_debug "Rice/Connect#load_channel(#{channel_name})"
       channel = Ricer::Irc::Channel.where(:name => channel_name, :server_id => server.id).first
       return nil if channel.nil?
       unless (channel.should_cache?)

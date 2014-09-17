@@ -28,7 +28,7 @@ module Ricer::Plugins::Channel
        bot.log_debug("Channel/Join.ricer_on_server_connected #{channel}")
         if get_channel_setting(channel, :autojoin)
           bot.log_debug("Channel/Join.ricer_on_server_connected #{channel} is autojoin")
-          server.connection.send_join(message, channel.name)
+          server.connection.send_join(current_message, channel.name)
         end
       end
     end

@@ -13,10 +13,11 @@ module Ricer::Plugins::Core
  
     def execute_in_with_args(delay, plugin, parameters)
       Ricer::Thread.execute do
-        sleep(delay)
         line = plugin.trigger
-        line += " #{parameters}" unless parameters.nil?
-        exec_line(line)
+        line += " #{parameters}" if parameters
+        bot.log_debug("Sleeping for #{delay} and then execute #{line}")
+        sleep(delay)
+        plugin.exec_argline(line)
       end
     end
     

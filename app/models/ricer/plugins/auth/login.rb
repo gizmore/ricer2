@@ -2,14 +2,13 @@ module Ricer::Plugins::Auth
   class Login < Ricer::Plugin
 
     trigger_is :login  
-    scope_is :user
-    permission_is :registered
-    
     connector_is :irc
+    permission_is :registered
+    scope_is :user
 
     bruteforce_protected
-
-    has_usage :execute, '<password>'
+    
+    has_usage '<password>'
     def execute(password)
       return rply :err_already_authenticated if user.authenticated?
       return rplyp :err_wrong_password unless user.authenticate!(password)

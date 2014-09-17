@@ -10,7 +10,7 @@ module Ricer::Plugins::Admin
     def execute(message=nil)
       bot.running = false
       bot.servers.online.each do |server|
-        server.localize!.connection.send_quit(@message, message||default_quit_message)
+        server.localize!.connection.send_quit(current_message, message||default_quit_message)
       end
     end
     

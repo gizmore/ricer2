@@ -32,7 +32,7 @@ module Ricer::Plug::Extender::ConnectorIs
       # Register connector checker exec function
       klass.register_exec_function(:exec_connector_check)
       def exec_connector_check
-        unless connector_supported?(@message.server.connector_symbol)
+        unless connector_supported?(current_message.server.connector_symbol)
           raise Ricer::ExecutionException.new I18n.t('ricer.plug.extender.connector_is.err_connector_unsupported')
         end 
       end
