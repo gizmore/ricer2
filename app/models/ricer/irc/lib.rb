@@ -14,12 +14,11 @@ module Ricer::Irc
     end
         
     def nickname_valid?(nickname)
-      /^[^\x00-\x1F\XFF!@%+]+$/i.match(nickname)
+      !!/^[^\x00-\x1F\XFF!@%+]+$/i.match(nickname)
     end
 
     def channelname_valid?(channelname)
-      /^[&#][^\x00-\x1F,\x7F]{1,199}$/iu.match(channelname)
-     #/^[#&][-a-z0-9_]{1,199}$/.match(channelname) != nil
+      !!/^[&#][^\x00-\x1F,\x7F]{1,199}$/iu.match(channelname)
     end
     
     def bold(text)

@@ -13,6 +13,7 @@ module Ricer::Irc
     
     with_global_orm_mapping
     def should_cache?; self.online == true; end
+    def global_cache_key; self.name.downcase; end
     
     belongs_to :server
     belongs_to :locale

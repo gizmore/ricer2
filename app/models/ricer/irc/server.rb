@@ -11,7 +11,7 @@ module Ricer::Irc
   class Server < ActiveRecord::Base
     
     with_global_orm_mapping
-    def should_cache?; self.enabled == true; end
+    def should_cache?; true; end # self.enabled == true; end
     
     attr_reader   :connection, :nickname
     attr_accessor :started_up, :try_more
@@ -191,6 +191,24 @@ module Ricer::Irc
       end # .plugins_for_event
       nil
     end # def process_event
+    
+    #############
+    ### Cache ###
+    #############
+    def load_user(nickname)
+      unless user = Ricer::Irc::User.global_cache[nickname.downcase]
+        user = Ricer::Irc::User.where({server_id: self.id, nickname: nickname}).first
+      end
+      user
+    end
+    
+    def load_channel(channel_name)
+      return nil unless Ricer::Irc::Lib.instance.channelname_valid?(channel_name)
+      unless channel = Ricer::Irc::Channel.global_cache[channel_name.downcase]
+        channel = Ricer::Irc::Channel.where(:name => channel_name, :server_id => self.id).first
+      end
+      channel
+    end
     
     #####################
     ### Communication ###

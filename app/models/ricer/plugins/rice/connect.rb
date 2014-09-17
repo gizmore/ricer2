@@ -53,7 +53,7 @@ module Ricer::Plugins::Rice
       # Every privmsg origins from a user
       current_message.sender = create_user(sender_nickname)
       # And maybe belongs to a channel
-      current_message.receiver = load_channel(current_message.args[0])
+      current_message.receiver = server.load_channel(current_message.args[0])
       
       # Set the hostmask
 #      current_message.sender.hostmask = current_message.prefix
@@ -82,7 +82,6 @@ module Ricer::Plugins::Rice
     def on_join
       current_message.sender = create_user(sender_nickname)
       current_message.receiver = channel = create_channel(args[0])
-      channel.ricer_on_join
       user.ricer_on_joined_channel(channel)
       process_event('ricer_on_user_joined') unless ricer_itself?
     end
@@ -132,14 +131,14 @@ module Ricer::Plugins::Rice
       Ricer::Irc::Nickname.nickname_from_message(current_message)      
     end
     
-    def load_user(nickname)
-      Ricer::Irc::User.where({server_id: server.id, nickname: nickname}).first
-    end
+    # def load_user(nickname)
+      # Ricer::Irc::User.where({server_id: server.id, nickname: nickname}).first
+    # end
     
     def create_user(nickname)
-
+      
       created = false
-      user = load_user(nickname)
+      user = server.load_user(nickname)
       if user.nil?
         user = Ricer::Irc::User.create!({server_id: server.id, nickname: nickname}) if user.nil?
         created = true
@@ -161,21 +160,25 @@ module Ricer::Plugins::Rice
       user
     end
     
-    def load_channel(channel_name)
-      # bot.log_debug "Rice/Connect#load_channel(#{channel_name})"
-      channel = Ricer::Irc::Channel.where(:name => channel_name, :server_id => server.id).first
-      return nil if channel.nil?
-      unless (channel.should_cache?)
-        process_event('ricer_on_channel_loaded') # And we got loaded :)
-      end
-      channel
-    end
+    # def load_channel(channel_name)
+      # # bot.log_debug "Rice/Connect#load_channel(#{channel_name})"
+      # channel = server.load_channel(channel_name)
+      # channelname_valid?
+      # channel = Ricer::Irc::Channel.where(:name => channel_name, :server_id => server.id).first
+      # return nil if channel.nil?
+      # unless (channel.should_cache?)
+      # end
+      # channel
+    # end
     
     def create_channel(channel_name)
-      channel = load_channel(channel_name)
+      channel = server.load_channel(channel_name)
       if channel.nil?
         channel = Ricer::Irc::Channel.create!({server_id:server.id ,name:channel_name})
         process_event('ricer_on_channel_created') # Oh we are brand new!
+      end
+      unless channel.online
+        channel.ricer_on_join
         process_event('ricer_on_channel_loaded') # And we got loaded :)
       end
       channel

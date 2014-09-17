@@ -14,6 +14,11 @@ en:
           description: 'Toggle database console logging on and off.'
           msg_on: 'Database query inspector enabled.'
           msg_off: 'Database query inspector disabled.'
+          
+        dbglog:
+          description: 'Toggle the debug output on and off.'
+          msg_on: 'Debug output enabled.'
+          msg_off: 'Debug output disabled.'
 
         plugdebug:
           description: 'Print logical info about a plugin.'

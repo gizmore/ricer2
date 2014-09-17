@@ -18,18 +18,21 @@ module Ricer::Irc
     NOTICE = 'n'
     PRIVMSG = 'p'
     
+    belongs_to :server
     belongs_to :locale
     belongs_to :timezone
     belongs_to :encoding
     
     with_global_orm_mapping
     def should_cache?; self.online == true; end
+    def global_cache_key; self.nickname.downcase; end
     
     def name; self.nickname; end
     def quietname; Ricer::Irc::Lib.instance.no_highlight(self.nickname); end
     def displayname; "\x02#{quietname}\x02:#{self.server_id}" end
     def guid; "#{self.name}:#{self.server_id}"; end
-    def server; Ricer::Bot.instance.servers.find(self.server_id); end
+#    def server; Ricer::Bot.instance.servers.find(self.server_id); end
+#    def server; Ricer::Bot.instance.servers.find(self.server_id); end
     def is_ricer?; self.server.nickname.name.downcase == self.nickname.downcase; end
 
     # Current user for current thread

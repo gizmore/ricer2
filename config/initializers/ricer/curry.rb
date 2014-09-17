@@ -5,6 +5,10 @@
 module ActiveRecord
 
   class Base
+    def self.global_cache
+      ActiveRecord::Base.instance_variable_get(:@CURRY_CACHE)[table_name]
+#      ActiveRecord::Base.instance_variable_get(:@CURRY_CACHE)[table_name]
+    end
     def self.with_global_orm_mapping
       class_eval do |klass|
         # klass.class_variable_set('@@CACHE', {}) unless klass.class_variable_defined?('@@CACHE')
@@ -13,22 +17,26 @@ module ActiveRecord
           ActiveRecord::Base.instance_variable_set(:@CURRY_CACHE, {})
         caches[klass.table_name] ||= {}
         def global_cache
-          ActiveRecord::Base.instance_variable_get(:@CURRY_CACHE)[self.class.table_name]
+          self.class.global_cache
+#          ActiveRecord::Base.instance_variable_get(:@CURRY_CACHE)[self.class.table_name]
 #          self.class.class_variable_get('@@CACHE')
         end
         def global_cache_table(record)
-          c = global_cache
-          c[record.id] ||= record if record.should_cache?
-#          record = c[record.id] || record; puts "Curry#get_cached: '#{record.class.name}'#{record.id} with object_id #{record.object_id}." ## DEBUG
-          c[record.id] || record
+          c, rid = global_cache, record.global_cache_key
+          c[rid] ||= record if record.should_cache?
+#          record = c[record.id] || record; puts "Curry#get_cached: '#{record.class.name}'#{record.global_cache_key} with object_id #{record.object_id}." ## DEBUG
+          c[rid] || record
         end
         def global_cache_add
-#          puts "Curry#global_cache_add: '#{self.class.name}'#{self.id} with object_id #{self.object_id}."
+#          puts "Curry#global_cache_add: '#{self.class.name}'#{self.global_cache_key} with object_id #{self.object_id}."
           global_cache_table(self)
         end
         def global_cache_remove
-#          puts "Curry#global_cache_remove: '#{self.class.name}'#{self.id} with object_id #{self.object_id}."
-          global_cache.delete(self.id)
+#          puts "Curry#global_cache_remove: '#{self.class.name}'#{self.global_cache_key} with object_id #{self.object_id}."
+          global_cache.delete(self.global_cache_key)
+        end
+        def global_cache_key
+          self.id
         end
       end
     end
