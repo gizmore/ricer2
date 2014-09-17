@@ -8,10 +8,13 @@ module Ricer::Plugins::Abbo
       unless table_exists?
         m = ActiveRecord::Migration.new
         m.create_table table_name do |t|
-          t.integer :abbo_item_id,     null:false
-          t.integer :abbo_target_id,   null:false
+          t.integer :abbo_item_id,   null:false
+          t.integer :abbo_target_id, null:false
           t.timestamps
         end
+        m = ActiveRecord::Migration.new
+        m.add_index table_name, :abbo_item_id,   :name => :abbo_item_index
+        m.add_index table_name, :abbo_target_id, :name => :abbo_target_index
       end
     end
     
@@ -24,7 +27,7 @@ module Ricer::Plugins::Abbo
     end
 
     def item
-      abbo_item.object
+      abbo_item.item
     end
     
     def display_list_item(n=0)
