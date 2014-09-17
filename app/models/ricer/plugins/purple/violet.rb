@@ -65,12 +65,11 @@ module Ricer::Plugins::Purple
     ##################
     ### Like Ricer ###
     ##################
-    def load_user(nickname); Ricer::Irc::User.where({server_id: server.id, nickname: nickname}).first; end
     def create_user(nickname)
 
       # Try load or create
       created = false
-      unless user = load_user(nickname)
+      unless user = server.load_user(nickname)
         created = true
         user = Ricer::Irc::User.create!({
           server_id: server.id,
@@ -95,6 +94,7 @@ module Ricer::Plugins::Purple
         process_event('ricer_on_user_authenticated')
       end
       user
+
     end
     
     def send_raw(message, line); send_line(message.reply_text(line)); end
