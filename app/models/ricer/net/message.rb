@@ -28,7 +28,6 @@ module Ricer::Net
     end
     
     def initialize(rawmessage=nil)
-      puts "!!!!!!!!!!!!!!!!!1 Message.new#{rawmessage}"
       Thread.current[:ricer_message] = self
       @time = Time.new
       @raw = rawmessage

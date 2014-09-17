@@ -17,12 +17,16 @@ module Ricer::Plugins::Admin
     
     def clear_plugin_class_variables
       bot.plugins.each do |plugin|
+        Ricer::Plugin.clear_registered_instance_variables.each do |varname|
+          plugin.instance_variable_set(varname, nil)
+        end
         Ricer::Plugin.registered_class_variables.each do |varname|
           if plugin.class.instance_variable_defined?(varname)
             plugin.class.remove_instance_variable(varname)
           end
         end
       end
+      Ricer::Plugin.clear_registered_instance_variables
       Ricer::Plugin.clear_registered_class_variables
     end
     

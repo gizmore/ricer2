@@ -78,37 +78,50 @@ module Ricer
     ############
     ### Core ###
     ############
+    def self.register_instance_variable(varname)
+      instance_variables = registered_instance_variables
+      instance_variables.push(varname.to_sym) unless instance_variables.include?(varname.to_sym)
+    end
+    
+    def self.registered_instance_variables
+      Ricer::Plugin.instance_variable_define(:@instance_variables, [])
+    end
+    
+    def self.clear_registered_instance_variables
+      Ricer::Plugin.instance_variable_set(:@instance_variables, [])
+    end
+    
     def self.register_class_variable(varname)
       class_variables = registered_class_variables
       class_variables.push(varname.to_sym) unless class_variables.include?(varname.to_sym)
     end
     
     def self.registered_class_variables
-      Ricer::Plugin.instance_variable_define('@class_variables', [])
+      Ricer::Plugin.instance_variable_define(:@class_variables, [])
     end
     
     def self.clear_registered_class_variables
-      Ricer::Plugin.instance_variable_set('@class_variables', [])
+      Ricer::Plugin.instance_variable_set(:@class_variables, [])
     end
     
     def self.register_exec_function(funcname)
-      register_class_variable('@exec_functions')
+      register_class_variable(:@exec_functions)
       exec_functions = get_exec_functions
       exec_functions.push(funcname.to_sym) unless exec_functions.include?(funcname.to_sym)
     end
     
     def self.get_exec_functions
-      instance_variable_define('@exec_functions', [])
+      instance_variable_define(:@exec_functions, [])
     end
     
     def self.register_init_function(funcname)
-      register_class_variable('@init_functions')
+      register_class_variable(:@init_functions)
       init_functions = get_init_functions
       init_functions.push(funcname.to_sym) unless init_functions.include?(funcname.to_sym)
     end
     
     def self.get_init_functions
-      instance_variable_define('@init_functions', [])
+      instance_variable_define(:@init_functions, [])
     end
     
     ###################
