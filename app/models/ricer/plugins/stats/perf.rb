@@ -6,7 +6,7 @@ module Ricer::Plugins::Stats
     
     has_setting name: :total_uptime, scope: :bot, type: :duration, permission: :responsible
     
-    def on_init
+    def plugin_init
       @@start = Time.now
       @@max_memory = 0
       @@max_mem_time = Time.now

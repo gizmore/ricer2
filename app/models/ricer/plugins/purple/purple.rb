@@ -5,7 +5,7 @@ module Ricer::Plugins::Purple
     ### Connected Servers ###
     #########################    
     # Here we will store the purple/violet connections
-    def on_init 
+    def plugin_init 
       @@servers = {}
     end
 

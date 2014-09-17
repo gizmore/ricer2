@@ -53,12 +53,10 @@ module Ricer
     def plugin_name; @_plugin_name ||= self.class.name.split('::').slice(-2, 2).join('/'); end
     def plugin_shortname; @_short_name ||= self.class.name.rsubstr_from('::').undescore.to_sym; end
 
-    ### XXX: This is not nice, it is recognized as chat event in the plugmap
-    ### XXX: Rename this to plugin_on_init, plugin_on_load, ...
-    def on_init; end
-    def on_load; end
-    def on_reload; end
-    def on_install; end
+    def plugin_init; end
+    def plugin_load; end
+    def plugin_reload; end
+    def plugin_install; end
     
     def short_class_name; self.class.short_class_name; end
     def self.short_class_name; name.split('::')[-1]; end

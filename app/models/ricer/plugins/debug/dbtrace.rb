@@ -4,7 +4,7 @@ module Ricer::Plugins::Debug
     trigger_is :dbtrace
     permission_is :responsible
     
-    def on_init
+    def plugin_init
       ActiveRecord::Base.logger = nil
     end
     

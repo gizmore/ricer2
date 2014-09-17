@@ -25,7 +25,7 @@ module Ricer::Plugins::Debug
     permission_is :responsible
     environment_is :development
     
-    def on_init
+    def plugin_init
       @@profiler_running = false
       @@profiler_command = nil
       @@profiler_started = @@profiler_stopped = nil

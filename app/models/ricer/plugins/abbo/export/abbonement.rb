@@ -4,7 +4,7 @@ module Ricer::Plugins::Abbo
     belongs_to :abbo_item,   :class_name => 'Ricer::Plugins::Abbo::AbboItem'
     belongs_to :abbo_target, :class_name => 'Ricer::Plugins::Abbo::AbboTarget'
     
-    def self.on_install
+    def self.upgrade_1
       unless table_exists?
         m = ActiveRecord::Migration.new
         m.create_table table_name do |t|
@@ -42,6 +42,6 @@ module Ricer::Plugins::Abbo
     
   end
   
-  Abbonement.on_install
+  Abbonement.upgrade_1
   
 end

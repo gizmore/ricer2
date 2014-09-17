@@ -152,7 +152,7 @@ module Ricer
     def reloaded_plugins
       @plugins.each do |plugin|
         begin
-          plugin.on_reload 
+          plugin.plugin_reload
         rescue Exception => e
           log_exception(e)
         end

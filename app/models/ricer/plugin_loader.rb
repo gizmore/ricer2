@@ -31,7 +31,7 @@ module Ricer
       end
       
       @plugins.each do |plugin|
-        plugin.on_load
+        plugin.plugin_load
       end
 
       @plugins.each do |plugin|
@@ -214,7 +214,7 @@ module Ricer
       if db_version < plug_version
         
         @bot.log_info "Installing #{plugin.plugin_name}"
-        db_plugin.on_install
+        db_plugin.plugin_install
         
         begin
           while db_version < plug_version

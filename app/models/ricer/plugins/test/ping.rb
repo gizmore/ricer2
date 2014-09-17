@@ -7,7 +7,7 @@ module Ricer::Plugins::Test
     has_setting name: :count, type: :integer, scope: :bot, permission: :responsible, default: 0
     
     # Static var that is reset on reload
-    def on_init
+    def plugin_init
       @@count = 0
     end
   
