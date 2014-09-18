@@ -15,7 +15,7 @@ module Ricer::Plugins::Channel
     has_usage :execute, '<channel_name>'
     def execute(channel_name)
       rply :msg_trying_to_join
-      server.connection.send_join(message, channel_name)
+      server.connection.send_join(current_message, channel_name)
     end
     
     def on_join

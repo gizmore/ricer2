@@ -77,6 +77,7 @@ module Ricer::Plug::Extender::HasUsage
         usages.each do |pattern, usage|
           throw_error -= 1
           execute_args = usage.parse_args(self, current_message, (throw_error == 0))
+          bot.log_debug("tried handler #{pattern}: #{execute_args.inspect}")
           unless execute_args.nil?
             current_message.plugin_id = plugin_id
             process_event('ricer_on_trigger') rescue nil

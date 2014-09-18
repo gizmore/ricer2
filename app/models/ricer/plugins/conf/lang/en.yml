@@ -46,11 +46,8 @@ en:
           msg_event_info: '%{name}: %{info}'
 
         server_set:
-          description: 'Set raw server values like triggers, throttle or cooldown.'
-          msg_set: 'The setting for %{varname} in %{server} is now "%{value}" (was "%{old_value}").' 
-
-        server_show:
-          description: 'Show raw server values like triggers, throttle or cooldown.'
+          description: 'Set or show raw server values like triggers, throttle or cooldown.'
+          msg_set: 'The setting for %{varname} on %{server} is now "%{value}" (was "%{old_value}").' 
           msg_show: 'The setting for %{varname} on %{server} is "%{value}".'
 
         userlang:

@@ -130,7 +130,7 @@ module Ricer
     attr_accessor :parent_command
     # def subcommand_depth; 1; end
     def subcommand_depth
-      @subcommand_depth||1
+      @subcommand_depth ||= (trigger.to_s.count(' ')+1)
     end
     def subcommand_depth=(depth)
       @subcommand_depth = depth
