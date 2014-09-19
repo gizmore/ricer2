@@ -159,7 +159,7 @@ module Ricer::Irc
       end
       
       is_privmsg = event == 'on_privmsg'
-      argline = nil
+      argline, triggered = nil, false
       
       # all plugins that have this event registered
       # sorted by priority
