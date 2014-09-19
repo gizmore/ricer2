@@ -159,6 +159,7 @@ module Ricer::Irc
       end
       
       is_privmsg = event == 'on_privmsg'
+      argline = nil
       
       # all plugins that have this event registered
       # sorted by priority
@@ -178,7 +179,11 @@ module Ricer::Irc
           if is_privmsg
             triggered ||= message.is_triggered?
             if triggered
-              argline ||= message.privmsg_line.ltrim(message.trigger_chars)
+              if argline.nil?
+                argline = message.privmsg_line.ltrim(message.trigger_chars)
+                argline = multiball!(message, argline)
+                message.args[1] = argline
+              end
               if plugin.triggered_by?(argline)
                 plugin.exec_plugin
               end
@@ -191,6 +196,83 @@ module Ricer::Irc
       end # .plugins_for_event
       nil
     end # def process_event
+
+    #################################
+    ### Mu-Mu-Mu-Multiiii Balllll ### (thx Hirsch)
+    #################################
+    def multiball!(message, argline)
+      argline = quoteparam_parser(message, argline)
+      argline = multicommand_parser(message, argline)
+      argline = pipecommand_parser(message, argline)
+      argline
+    end
+    # Parse into ricer2 quote style
+    # Params in quotes become a single string by changing space to \x01
+    # Quote characters are then removed 
+    def quoteparam_parser(message, argline)
+      back, part, quoting = "", "", false
+      argline.length.times do |i|
+        c = argline[i]
+        if c == '"'
+          if quoting
+            quoting = false
+            back += part.gsub(' ', "\x01")
+            part = ""
+          else
+            quoting = true
+          end
+        else
+          back += c
+        end
+      end
+      back + part
+    end
+
+    # Now split by space&&space and exec the commands seperately 
+    def multicommand_parser(message, argline)
+#      return message unless message.index(' && ')
+      firstline = nil
+      argline.split(/ +&& +/).each do |newline|
+        if firstline.nil?
+          firstline = newline
+        else
+          add_nextcommand(message, newline)
+        end
+      end
+      return firstline
+    end
+
+    def add_nextcommand(message, nextline)
+      next_plugin = get_multiplug(nextline)
+      message.add_chainline(next_plugin, nextline)
+    end
+    
+    def pipecommand_parser(message, argline)
+      firstcommand = nil
+      argline.split(/ +\| +/).each do |pipeline|
+        if firstcommand.nil?
+          firstcommand = pipeline
+        else
+          add_pipecommand(message, pipeline)
+        end
+      end
+      firstcommand
+    end
+    
+    def add_pipecommand(message, pipeline)
+      pipe_plugin = get_multiplug(pipeline)
+      message.add_pipeline(pipe_plugin, pipeline)
+    end
+    
+    def get_multiplug(line)
+      bot.plugins.each do |plugin|
+        if plugin.triggered_by?(line)
+          #line.replace(line.substr_from(line)||'')
+          return plugin
+        end
+      end
+      raise Ricer::ExecutionException.new(I18n.t('ricer.err_multicommand'))
+    end
     
     #############
     ### Cache ###

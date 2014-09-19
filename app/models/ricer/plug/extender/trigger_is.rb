@@ -39,17 +39,31 @@ module Ricer::Plug::Extender::TriggerIs
         (argline + ' ').start_with?(trigger+' ')
       end
       
-      def reply(text)
+      def ereply(text)
+        current_message.errorneous = true
         connection.send_privmsg(current_message.reply_clone, text)
       end
+      def reply(text)
+        return if current_message.pipe!(text)
+        connection.send_privmsg(current_message.reply_clone, text)
+        current_message.chain!
+      end
       def areply(text)
+        return if current_message.pipe!(text)
         connection.send_action(current_message.reply_clone, text)
+        current_message.chain!
       end
       def nreply(text)
+        return if current_message.pipe!(text)
         connection.send_notice(current_message.reply_clone, text)
+        current_message.chain!
       end
       
-      def rply(key, args={}); reply t(key, args); end
+      def erply(key, args={}); ereply t(key, args); end
+      def rply(key, args={})
+        return ereply t(key, args) if key.to_s.start_with?('err_')
+        return reply t(key, args)
+      end
       def rplyp(key, args={}); reply tp(key, args); end
       def rplyr(key, args={}); reply tr(key, args); end
 
@@ -66,11 +80,11 @@ module Ricer::Plug::Extender::TriggerIs
         if(e.is_a?(Ricer::ExecutionException) ||
            e.is_a?(ActiveRecord::RecordInvalid) || e.is_a?(ActiveRecord::RecordNotFound)
         )
-          return reply e.to_s
+          return ereply e.to_s
         end
         bot.log_exception(e)
-        return reply e.to_s if e.is_a?(Ricer::TriggerException)
-        return reply(exception_message(e))
+        return ereply e.to_s if e.is_a?(Ricer::TriggerException)
+        return ereply(exception_message(e))
       end
       
       protected

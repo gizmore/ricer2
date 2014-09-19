@@ -8,7 +8,7 @@ module Ricer::Net
     
     attr_accessor :reply_to, :reply_prefix, :reply_data  # These are set when there is a reply for this msg generated, else all are nil
     
-    attr_accessor :plugin_id, :commandline
+    attr_accessor :plugin_id, :commandline, :errorneous
     
     def bot; self.class.bot; end
     def plugin; bot.plugin_by_id(@plugin_id); end
@@ -147,6 +147,36 @@ module Ricer::Net
     def privmsg_line
       args[1]
     end
+    
+    #############
+    ### Pipes ###
+    #############
+    def add_chainline(plugin, line)
+      @chainplugs ||= [];       @chainlines ||= []
+      @chainplugs.push(plugin); @chainlines.push(line)
+    end
+
+    def add_pipeline(plugin, line)
+      @pipeplugs ||= [];       @pipelines ||= []
+      @pipeplugs.push(plugin); @pipelines.push(line)
+    end
+    
+    def chain!
+      return false if @chainlines.nil? || @chainlines.length == 0
+      plugin = @chainplugs.shift
+      line = @chainlines.shift
+      self.args[1] = line
+      plugin.exec_plugin
+    end
+    
+    def pipe!(text)
+      return false if @errorneous || @pipelines.nil? || @pipelines.length == 0
+      plugin = @pipeplugs.shift
+      line = @pipelines.shift + ' ' + text
+      self.args[1] = line
+      plugin.exec_plugin
+    end
+    
 
   end
 end

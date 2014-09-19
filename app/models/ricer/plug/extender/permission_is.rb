@@ -2,11 +2,10 @@ module Ricer::Plug::Extender::PermissionIs
   def permission_is(permission=:public)
     class_eval do |klass|
       
-      Ricer::Plugin.register_class_variable('@default_permission')
-      
       permission = Ricer::Irc::Permission.by_name(permission)
       throw Exception.new("#{klass} permission_is invalid: #{permission}") if permission.nil?
       
+      klass.register_class_variable('@default_permission')
       klass.instance_variable_set('@default_permission', permission.name)
 
       if permission.name != :public
