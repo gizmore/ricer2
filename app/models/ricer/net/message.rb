@@ -185,14 +185,12 @@ module Ricer::Net
       next_message = self.clone
       next_message.args = self.args.clone
       next_message.clean_chain
-      next_message
     end
     
     def clean_chain
       @pipeout = ''
-      @pipeplugs = []
-      @pipelines = []
-      @chainplugs = []
+      @pipeplugs, @pipelines, @chainplugs = [], [], []
+      self
     end
 
     def add_chainline(message)
