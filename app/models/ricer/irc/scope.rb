@@ -46,6 +46,7 @@ module Ricer::Irc
     def private?; self.bit == USER.bit; end
 
     def self.matching?(scope, scopes, channel)
+      #scope = :bot if scope.nil?
       bit = self.by_name(scope).bit
       Array(scopes).each do |sa|
         if (sa.to_sym != :channel && scope.to_sym != :channel) || (channel != nil)

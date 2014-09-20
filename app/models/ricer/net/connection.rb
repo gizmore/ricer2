@@ -44,9 +44,7 @@ module Ricer::Net
     ############
     def get_message
       line = get_line
-      bot.puts_mutex.synchronize do
-        puts "#{hostname} << #{line}"
-      end
+      bot.log_puts "#{hostname} << #{line}"
       parse(line) unless line.nil?
     end
  

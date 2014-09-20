@@ -68,6 +68,10 @@ GEM
     dusen (0.4.10)
       activerecord
       edge_rider (>= 0.2.5)
+    easy_translate (0.5.0)
+      json
+      thread
+      thread_safe
     edge_rider (0.3.0)
       activerecord
     em-websocket (0.5.0)
@@ -152,6 +156,7 @@ GEM
       libv8 (~> 3.16.14.0)
       ref
     thor (0.19.1)
+    thread (0.1.4)
     thread_safe (0.3.4)
     tilt (1.4.1)
     tinder (1.10.0)
@@ -186,6 +191,7 @@ DEPENDENCIES
   bcrypt
   byebug
   dusen
+  easy_translate
   em-websocket
   exception_notification!
   foreigner

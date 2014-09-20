@@ -5,9 +5,8 @@ module Ricer::Plugins::Rice
   class Connect < Ricer::Plugin
     
     connector_is :irc
-
-    # We have to be called first!
-    def priority; 0; end 
+    has_priority 1 # We have to be called first!
+    
     def core_plugin?; true; end
 
     # We have to be called first!
@@ -53,7 +52,10 @@ module Ricer::Plugins::Rice
       # Every privmsg origins from a user
       current_message.sender = create_user(sender_nickname)
       # And maybe belongs to a channel
-      current_message.receiver = server.load_channel(current_message.args[0])
+      unless current_message.receiver = server.load_channel(current_message.args[0])
+        # XXX: THIS IS NOT VERY CLEAN?
+        current_message.args[1].ltrim!('.,!@$;')
+      end
       
       # Set the hostmask
 #      current_message.sender.hostmask = current_message.prefix

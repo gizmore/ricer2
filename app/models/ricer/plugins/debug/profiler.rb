@@ -109,8 +109,9 @@ module Ricer::Plugins::Debug
       title = profiler_paste_title(result) rescue "-profiler-pastebin-"
       rply :msg_generating
       content = profiler_paste_content(result)
-      rply :msg_uploading, title: title, size: lib.human_filesize(content.length)
-      get_plugin('Core/PasteOut').execute_upload(content, 'text', title)
+      reply :msg_profiled, title: title, content: content
+      # rply :msg_uploading, title: title, size: lib.human_filesize(content.length)
+      # get_plugin('Core/PasteOut').execute_upload(content, 'text', title)
     end
     
     def profiler_paste_title(result)

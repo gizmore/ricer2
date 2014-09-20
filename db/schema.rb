@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140307133735) do
+ActiveRecord::Schema.define(version: 20140920011609) do
 
   create_table "bots", force: true do |t|
     t.datetime "created_at"
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 20140307133735) do
     t.string   "triggers"
     t.integer  "locale_id",   default: 1,     null: false
     t.integer  "timezone_id", default: 1,     null: false
-    t.integer  "encoding_id", default: 1,     null: false
+    t.integer  "encoding_id"
     t.boolean  "colors",      default: true
     t.boolean  "decorations", default: true
     t.boolean  "online",      default: false, null: false
@@ -50,17 +50,17 @@ ActiveRecord::Schema.define(version: 20140307133735) do
   add_index "chanperms", ["user_id"], name: "chanperms_user_index", using: :btree
 
   create_table "encodings", force: true do |t|
-    t.string "iso", null: false
+    t.string "iso", limit: 32, null: false, charset: "ascii", collation: "ascii_bin"
   end
 
   create_table "locales", force: true do |t|
-    t.string "iso", null: false
+    t.string "iso", limit: 16, null: false, charset: "ascii", collation: "ascii_bin"
   end
 
   create_table "plugins", force: true do |t|
-    t.integer  "bot_id",                 null: false
-    t.string   "name",                   null: false
-    t.integer  "revision",   default: 0, null: false
+    t.integer  "bot_id",                            null: false
+    t.string   "name",       limit: 96,             null: false, charset: "ascii", collation: "ascii_bin"
+    t.integer  "revision",   limit: 3,  default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -79,10 +79,10 @@ ActiveRecord::Schema.define(version: 20140307133735) do
   add_index "server_nicks", ["server_id"], name: "server_nicks_server_id_fk", using: :btree
 
   create_table "server_urls", force: true do |t|
-    t.integer  "server_id",                   null: false
-    t.string   "ip"
-    t.string   "url",                         null: false
-    t.boolean  "peer_verify", default: false, null: false
+    t.integer  "server_id",                              null: false
+    t.string   "ip",          limit: 43,                              charset: "ascii", collation: "ascii_bin"
+    t.string   "url",                                    null: false
+    t.boolean  "peer_verify",            default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -90,23 +90,34 @@ ActiveRecord::Schema.define(version: 20140307133735) do
   add_index "server_urls", ["server_id"], name: "server_urls_server_id_fk", using: :btree
 
   create_table "servers", force: true do |t|
-    t.integer  "bot_id",                     null: false
-    t.string   "connector",  default: "irc", null: false
-    t.string   "triggers",   default: ",",   null: false
-    t.integer  "throttle",   default: 3,     null: false
-    t.float    "cooldown",   default: 0.8,   null: false
-    t.boolean  "enabled",    default: true,  null: false
-    t.boolean  "online",     default: false, null: false
+    t.integer  "bot_id",      limit: 2,                  null: false
+    t.string   "connector",   limit: 16, default: "irc", null: false, charset: "ascii", collation: "ascii_bin"
+    t.integer  "encoding_id",            default: 1,     null: false
+    t.string   "triggers",    limit: 4,  default: ",",   null: false
+    t.integer  "throttle",    limit: 8,  default: 4,     null: false
+    t.float    "cooldown",               default: 0.5,   null: false
+    t.boolean  "enabled",                default: true,  null: false
+    t.boolean  "online",                 default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "servers", ["encoding_id"], name: "server_encodings", using: :btree
+
   create_table "settings", force: true do |t|
-    t.string "value"
+    t.integer  "plugin_id",               null: false
+    t.string   "name",        limit: 32,  null: false, charset: "ascii", collation: "ascii_bin"
+    t.integer  "entity_id",               null: false
+    t.string   "entity_type", limit: 128, null: false, charset: "ascii", collation: "ascii_bin"
+    t.string   "value",                   null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
+  add_index "settings", ["plugin_id", "name", "entity_id", "entity_type"], name: "unique_settings", unique: true, using: :btree
+
   create_table "timezones", force: true do |t|
-    t.string "iso", null: false
+    t.string "iso", limit: 32, null: false, charset: "ascii", collation: "ascii_bin"
   end
 
   create_table "users", force: true do |t|
@@ -118,7 +129,7 @@ ActiveRecord::Schema.define(version: 20140307133735) do
     t.string   "message_type",    default: "n",   null: false
     t.string   "gender",          default: "m",   null: false
     t.integer  "locale_id",       default: 1,     null: false
-    t.integer  "encoding_id",     default: 1,     null: false
+    t.integer  "encoding_id"
     t.integer  "timezone_id",     default: 1,     null: false
     t.boolean  "online",          default: false, null: false
     t.boolean  "bot",             default: false, null: false
@@ -158,6 +169,10 @@ ActiveRecord::Schema.define(version: 20140307133735) do
   add_foreign_key "server_nicks", "servers", name: "server_nicks_server_id_fk", dependent: :delete
 
   add_foreign_key "server_urls", "servers", name: "server_urls_server_id_fk", dependent: :delete
+
+  add_foreign_key "servers", "encodings", name: "server_encodings"
+
+  add_foreign_key "settings", "plugins", name: "settings_for_plugins"
 
   add_foreign_key "users", "encodings", name: "users_encoding_id_fk"
   add_foreign_key "users", "locales", name: "users_locale_id_fk"

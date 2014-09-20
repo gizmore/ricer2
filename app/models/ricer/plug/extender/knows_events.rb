@@ -2,7 +2,7 @@ module Ricer::Plug::Extender::KnowsEvents
 
   def self.included(base); base.extend(self); end
   
-  def bot; Ricer::Bot.instance; end
+  # def bot; Ricer::Bot.instance; end
   
   def all_subscriptions
     Ricer::Event.class_variable_defined?(:@@sl5_event_subscriptions) ?

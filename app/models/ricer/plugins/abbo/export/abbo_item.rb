@@ -14,7 +14,7 @@ module Ricer::Plugins::Abbo
     end
     
     def self.for(abbonementable)
-      first_or_creaty_by({item: abbonementable})
+      find_or_create_by({item: abbonementable})
     end
     
   end

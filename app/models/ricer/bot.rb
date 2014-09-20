@@ -3,18 +3,16 @@ module Ricer
     
     def self.instance; instance_variable_get('@instance'); end
     
+    include Ricer::Base::Base
     include Ricer::Plug::Extender::KnowsEvents
-    
-    GLOBAL_MUTEX = Mutex.new
     
     with_global_orm_mapping; def should_cache?; true; end
     
     attr_reader :rand, :botlog
-    
     attr_accessor :needs_restart, :running
     
-    def running?; @running; end
     def servers; @servers; end
+    def running?; @running; end
     
     def name; Ricer::Application.config.ricer_name; end
     def randseed; Ricer::Application.config.rice_seeds; end
@@ -27,6 +25,7 @@ module Ricer
     def malware; Ricer::Application.config.ricer_malware rescue []; end
     def embargo; Ricer::Application.config.ricer_embargo rescue []; end
 
+    def log_puts(s); @botlog.log_puts(s); end
     def log_debug(s); @botlog.log_debug(s) if chopsticks; end
     def log_info(s); @botlog.log_info(s); end
     def log_warn(s); @botlog.log_warn(s); end
@@ -40,14 +39,15 @@ module Ricer
       @loader.add_plugin_dir("app/models/ricer/plugins/*")
       @botlog = BotLog.new
       @servers = Ricer::Irc::Server.all
+      @_utf8 ||= Ricer::Encoding.find(1)
     end
     
     def plugins
       @loader.plugins
     end
     
-    def get_plugin(name)
-      Ricer::Plugin.by_name(name)
+    def encoding
+      @_utf8
     end
     
     def init
@@ -89,39 +89,58 @@ module Ricer
     end
     
     def load_plugins(reload=false)
-      map = PluginMap.instance
+      map = plugin_map
       map.clear_cache
       I18n.load_path.clear
       @plugins = @loader.load_all
       reload ? reloaded_plugins : init_plugins
       I18n.reload!
       map.validate_plugins!
-      map.sort_plugins(@plugins)
-      map.sort_plugin_map
+      sort_plugins
+      # puts @plugins.collect{|p| "#{p.plugin_name}(#{p.subcommand_depth}): #{p.trigger}" }
+      # byebug
       @plugins
     end
     
     def sort_plugins
-      PluginMap.sort_plugins(@plugins)
+      plugin_map.sort_plugins(@plugins)
+      plugin_map.sort_plugin_map
     end
     
     def load_plugin(klass, reload=false)
       plugin = @loader.install_plugin(klass)
       @plugins.push(plugin)
-      PluginMap.instance.load_plugin(plugin)
+      plugin_map.load_plugin(plugin)
       plugin
     end
     
-    def init_plugins
+    def each_plugins(&block)
       @plugins.each do |plugin|
         begin
-          plugin.plugin_init
-          plugin.class.get_init_functions.each{|func| plugin.send(func) }
-        rescue Exception => e
+          yield(plugin)
+        rescue StandardError => e
           log_exception(e)
         end
       end
+    end
+    
+    def init_plugins
+      each_plugins do |plugin|
+        plugin.plugin_init
+        plugin.class.get_init_functions.each{|func| plugin.send(func) }
+      end
+      loaded_plugins
       export_translations
+      @plugins
+    end
+
+    def loaded_plugins
+      each_plugins{|plugin| plugin.plugin_load }
+    end
+    
+    def reloaded_plugins
+      each_plugins{|plugin| plugin.plugin_reload }
+      loaded_plugins
     end
     
     def export_translations
@@ -131,33 +150,20 @@ module Ricer
       )
     end
     
-    def plugin_by_id(id)
-      @plugins.each do |plugin|
-        return plugin if plugin.id == id
-      end
-      nil
-    end
-    
+    # def plugin_by_id(id)
+      # Ricer::Plugin.by_id(id)
+    # end
+#     
     def get_connector(symbol)
-      PluginMap.instance.get_connector(symbol)
+      plugin_map.get_connector(symbol)
     end
     
     def connector_symbols
-      PluginMap.instance.connector_symbols
+      plugin_map.connector_symbols
     end
     
     def plugins_for_event(event_name)
-      PluginMap.instance.plugins_for_event(event_name)
-    end
-    
-    def reloaded_plugins
-      @plugins.each do |plugin|
-        begin
-          plugin.plugin_reload
-        rescue Exception => e
-          log_exception(e)
-        end
-      end
+      plugin_map.plugins_for_event(event_name)
     end
     
     def run
@@ -210,14 +216,6 @@ module Ricer
       server.process_event('ricer_on_global_startup', server.fake_message)
       true
     end
-    
-    def puts_mutex
-      BotLog::PUTS_MUTEX
-    end
 
-    def global_mutex
-      GLOBAL_MUTEX
-    end
-    
   end
 end

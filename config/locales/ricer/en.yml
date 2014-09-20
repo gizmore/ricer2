@@ -6,16 +6,9 @@ en:
     
     err_user: 'This user is unknown.'
     err_exception: 'Exception: %{message} in %{location}.'
-    
-    duration:
-      short:
-      long:
-    
-    # dateformats:
-      # day: 'Tag'
-      # date: 'Tag.Monat.Jahr'
-      # long: 'Tag.Monat.Jahr HH:II'
-      
+    err_thread_limit: 'You have reached your concurrent background job limit (%{count} of %{count}). Wait until some jobs have finished.'
+    err_multicommand: 'Unknown plugin in command chain.'
+
     locale:
       en: 'English'
       de: 'German'
@@ -50,23 +43,3 @@ en:
         a: 'global'
         b: 'bot'
         s: 'server'
-        
-    plug:
-
-      setting:
-        nil: "\x03null\x03"
-        bool_0: 'off'
-        bool_1: 'on'
-        err_save: 'Invalide value for %{name}: %{value} is not %{hint}.'
-
-      settings:
-        blanked_password: "\x03$BCRYPT$\x03"
-        hint:
-          boolean: 'boolean %{on} or %{off}'
-          duration: 'duration between %{min} and %{max}'
-          enum: 'any of %{enums}'
-          integer: 'float number between %{min} and %{max}'
-          integer: 'integer between %{min} and %{max}'
-          password: 'password with at least %{min} chars'
-          permission: 'permission name'
-          string: 'text between %{min} and %{max} chars'

@@ -1,5 +1,6 @@
 # t.integer  "bot_id",                                 null: false
 # t.string   "connector",  default: "Ricer::Net::Irc", null: false
+# t.integer  "encoding_id"
 # t.string   "triggers",   default: ",",               null: false
 # t.integer  "throttle",   default: 3,                 null: false
 # t.float    "cooldown",   default: 0.8,               null: false
@@ -18,6 +19,8 @@ module Ricer::Irc
         
     has_one  :server_url
     has_many :server_nicks
+    
+    belongs_to :encoding
     
     scope :online, -> { where(:online => 1) }
     scope :enabled, -> { where(:enabled => 1) }
@@ -58,7 +61,7 @@ module Ricer::Irc
         while (bot.running?) && (@try_more)
           begin
             mainloop
-          rescue => e
+          rescue Exception => e
             bot.log_exception(e)
           end
         end
@@ -67,8 +70,6 @@ module Ricer::Irc
     
     def init
       @initial = true
-#      @nicknames = Ricer::Irc::ServerNick.where(:server_id => self.id).sorted.load.each
-#      @nicknames = server_nicks.sorted.load.each
       @nicknames = server_nicks.each
       @nickname = @nicknames.peek
       @nick_cycle = ''
@@ -145,21 +146,21 @@ module Ricer::Irc
     end
 
     def ricer_replies_to(message)
-      bot.puts_mutex.synchronize do
-        puts "#{self.hostname} >> #{message.reply_data}"
-      end
+      bot.log_puts "#{self.hostname} >> #{message.reply_data}"
       process_event('ricer_on_reply', message)
     end
     
     def process_event(event, message)
-      if message.plugin_id
-        bot.log_debug "Server.process_event(#{event}) CAUSE: #{message.plugin.plugin_name}"
-      else
-        bot.log_debug "Server.process_event(#{event}) NEW"
-      end
+      # Debug
+      if message.plugin; bot.log_debug "Server.process_event(#{event}) CAUSE: #{message.plugin.plugin_name}"
+      else; bot.log_debug "Server.process_event(#{event}) NEW"; end
       
-      is_privmsg = event == 'on_privmsg'
-      argline, triggered = nil, false
+      # Trigger prepare
+      argline, privline, triggered = nil, nil, false
+      if event == 'on_privmsg'
+        triggered = message.is_triggered?
+        privline = message.args[1].ltrim(message.trigger_chars)
+      end
       
       # all plugins that have this event registered
       # sorted by priority
@@ -172,26 +173,24 @@ module Ricer::Irc
           rescue StandardError => e
             bot.log_exception e
           end
-          
           # PRIVMSG trigger has_usage
           # Done via calling plugin.exec_plugin which
           # calls the exec_function chain of a plugin
-          if is_privmsg
-            triggered ||= message.is_triggered?
-            if triggered
-              if argline.nil?
-                argline = message.privmsg_line.ltrim(message.trigger_chars)
-                argline = multiball!(message, argline)
+          if triggered && plugin.triggered_by?(privline)
+            if argline.nil?
+              begin
+                argline = multiball(message, privline)
                 message.args[1] = argline
+              rescue Ricer::ExecutionException => e
+                return plugin.reply e.to_s
+              rescue StandardError => e
+                bot.log_exception(e)
+                return plugin.reply e.to_s
               end
-              if plugin.triggered_by?(argline)
-                plugin.exec_plugin
-              end
-            end 
+            end
+            plugin.exec_plugin
           end
-          
           return nil unless message.unprocessed? 
-
         end # .connector_supported?
       end # .plugins_for_event
       nil
@@ -200,7 +199,7 @@ module Ricer::Irc
     #################################
     ### Mu-Mu-Mu-Multiiii Balllll ### (thx Hirsch)
     #################################
-    def multiball!(message, argline)
+    def multiball(message, argline)
       argline = quoteparam_parser(message, argline)
       argline = multicommand_parser(message, argline)
       argline = pipecommand_parser(message, argline)
@@ -211,8 +210,7 @@ module Ricer::Irc
     # Quote characters are then removed 
     def quoteparam_parser(message, argline)
       back, part, quoting = "", "", false
-      argline.length.times do |i|
-        c = argline[i]
+      argline.each_char do |c|
         if c == '"'
           if quoting
             quoting = false
@@ -225,12 +223,12 @@ module Ricer::Irc
           back += c
         end
       end
+      back += '"' if quoting
       back + part
     end
 
     # Now split by space&&space and exec the commands seperately 
     def multicommand_parser(message, argline)
-#      return message unless message.index(' && ')
       firstline = nil
       argline.split(/ +&& +/).each do |newline|
         if firstline.nil?
@@ -244,7 +242,12 @@ module Ricer::Irc
 
     def add_nextcommand(message, nextline)
       next_plugin = get_multiplug(nextline)
-      message.add_chainline(next_plugin, nextline)
+      next_message = message.clone_chain
+      next_message.plugin = next_plugin
+      nextline = pipecommand_parser(next_message, nextline)
+      next_message.args[1] = nextline
+#      Ricer::Thread.current[:ricer_message] = message
+      message.add_chainline(next_message)
     end
     
     def pipecommand_parser(message, argline)
@@ -271,7 +274,7 @@ module Ricer::Irc
           return plugin
         end
       end
-      raise Ricer::ExecutionException.new(I18n.t('ricer.err_multicommand'))
+      raise Ricer::ParamException.new(I18n.t('ricer.err_multicommand'))
     end
     
     #############

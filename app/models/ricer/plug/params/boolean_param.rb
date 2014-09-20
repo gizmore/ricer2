@@ -1,8 +1,8 @@
 module Ricer::Plug::Params
   class BooleanParam < Base
-    
-    def true_label; t(:true); end
-    def false_label; t(:false); end
+
+    def true_label; t('ricer.plug.settings.boolean.bool_1'); end
+    def false_label; t('ricer.plug.settings.boolean.bool_0'); end
     
     def convert_in!(input, message)
       begin
@@ -17,7 +17,7 @@ module Ricer::Plug::Params
       case value
       when true; true_label
       when false; false_label
-      else; failed_input
+      else; failed_output
       end
     end
     

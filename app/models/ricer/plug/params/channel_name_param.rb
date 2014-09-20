@@ -2,12 +2,14 @@ module Ricer::Plug::Params
   class ChannelNameParam < Base
 
     def convert_in!(input, message)
-      failed_input unless Ricer::Irc::Lib.instance.channelname_valid?(input)
+      Ricer::Irc::Lib.instance.channelname_valid?(input) or failed_input 
       input
     end
     
     def convert_out!(value, message)
-      value
+      message ?
+        value + ":#{message.server.domain}" :
+        value
     end
     
   end

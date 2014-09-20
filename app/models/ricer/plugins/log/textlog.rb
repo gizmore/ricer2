@@ -1,6 +1,8 @@
 module Ricer::Plugins::Log
   class Textlog
     
+    extend Ricer::Base::BaseExtend
+    
     def self.irc_message(message, input)
       text = input ? "#{sign(input)} #{message.raw}" : "#{sign(input)} #{message.reply_data}"
       serverlog(message.server).unknown text
@@ -11,7 +13,6 @@ module Ricer::Plugins::Log
     private
 
     def self.sign(input); input ? '<<' : '>>'; end
-    def self.bot; Ricer::Bot.instance; end
 
     ##############
     ### Server ###

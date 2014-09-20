@@ -2,9 +2,7 @@ module Ricer::Plug::Params
   class LanguageParam < Base
 
     def convert_in!(input, message)
-      locale = Ricer::Locale.by_iso(input)
-      failed_input if locale.nil?
-      locale
+      Ricer::Locale.by_iso(input) or failed_input
     end
 
     def convert_out!(value, message)

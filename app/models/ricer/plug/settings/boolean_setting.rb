@@ -16,15 +16,15 @@ module Ricer::Plug::Settings
     def self.to_label(input)
       return true_label if input == true
       return false_label if input == false
-      throw Exception.new "Somehow boolean is nil Oo"
+      raise RuntimeError.new "Somehow boolean is nil Oo"
     end
     
     def self.true_label
-      I18n.t('ricer.plug.setting.bool_1')
+      I18n.t('ricer.plug.settings.boolean.bool_1')
     end
     
     def self.false_label
-      I18n.t('ricer.plug.setting.bool_0')
+      I18n.t('ricer.plug.settings.boolean.bool_0')
     end
     
     def self.to_hint(options={})

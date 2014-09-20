@@ -1,22 +1,28 @@
 module Ricer::Net
   class Message
     
+    include Ricer::Base::Base
+    
     attr_reader :raw, :time
+    
+    attr_reader :pipeplugs, :pipelines
 
     attr_accessor :prefix, :server
     attr_accessor :sender, :receiver, :command, :args # , :argline
     
     attr_accessor :reply_to, :reply_prefix, :reply_data  # These are set when there is a reply for this msg generated, else all are nil
     
-    attr_accessor :plugin_id, :commandline, :errorneous
+    attr_accessor :plugin, :commandline, :errorneous
     
-    def bot; self.class.bot; end
-    def plugin; bot.plugin_by_id(@plugin_id); end
-    def self.bot; Ricer::Bot.instance; end
-
     def processed?; @processed != nil; end
     def unprocessed?; @processed.nil?; end
     def processed=(bool) @processed = bool ? true : nil; end;
+    
+    def reply_encoding_iso
+      reply_to.nil? ?
+        (server.encoding || bot.encoding).to_label :
+        (reply_to.encoding || server.encoding || bot.encoding).to_label
+    end
 
     def self.fake_message(server, text=nil, reply_to=nil)
       message = new
@@ -73,9 +79,12 @@ module Ricer::Net
       receiver.nil? || (receiver.is_a?(Ricer::Irc::User))
     end
 
+    def channel
+      current_message.is_channel? ? receiver : nil
+    end
+    
     def channel_id
-      return nil if is_query?
-      return receiver.id
+      current_message.is_channel? ? receiver.id : nil
     end
     
     def scope
@@ -116,7 +125,8 @@ module Ricer::Net
     end
     
     def reply_clone
-      self.clone.setup_reply
+      #self.clone.setup_reply
+      self.setup_reply
     end
     
     def setup_reply
@@ -151,32 +161,107 @@ module Ricer::Net
     #############
     ### Pipes ###
     #############
-    def add_chainline(plugin, line)
-      @chainplugs ||= [];       @chainlines ||= []
-      @chainplugs.push(plugin); @chainlines.push(line)
+    # def debug_pipes
+      # bot.log_puts("Chainplugs: #{@chainplugs.inspect}")
+      # bot.log_puts("Chainlines: #{@chainlines.inspect}")
+      # bot.log_puts("Pipeplugs: #{@pipeplugs.inspect}")
+      # bot.log_puts("Pipelines: #{@pipelines.inspect}")
+      # bot.log_puts("")
+    # end
+    
+    def forked!
+      @forked = true
+    end
+    
+    def forked?
+      @forked
+    end
+    
+    def joined!
+      @forked = false
+    end
+    
+    def clone_chain
+      next_message = self.clone
+      next_message.args = self.args.clone
+      next_message.clean_chain
+      next_message
+    end
+    
+    def clean_chain
+      @pipeout = ''
+      @pipeplugs = []
+      @pipelines = []
+      @chainplugs = []
+    end
+
+    def add_chainline(message)
+      bot.log_debug("Message#add_chainline(#{message.args[1]})")
+      @chainplugs ||= []
+      @chainplugs.push(message)
+      self
     end
 
     def add_pipeline(plugin, line)
-      @pipeplugs ||= [];       @pipelines ||= []
+      @pipeout ||= ''
+      @pipeplugs ||= []; @pipelines ||= []
       @pipeplugs.push(plugin); @pipelines.push(line)
+      bot.log_debug("Message#add_pipeline(#{line}) to #{self.args[1]}. Chains: #{@chainplugs.length rescue 0}. Pipes: #{@pipeplugs.length}")
+      self
+    end
+    
+    # def start_capture
+      # @capture = true
+    # end
+#     
+    # def stop_capture
+      # @capture = false
+      # back = @pipeout.rtrim(lib.comma)
+      # @pipeout = ''
+      # back
+    # end
+    
+    def chain_message
+      return nil if (@errorneous) || (@chainplugs.nil?) || (@chainplugs.length == 0)
+      bot.log_debug("Polling next chained command: #{@chainplugs[0].args[1]}")
+      @chainplugs.shift
+    end
+    
+    def chained?
+      (!@errorneous) && (@chainplugs) && (@chainplugs.length > 0)
     end
     
     def chain!
-      return false if @chainlines.nil? || @chainlines.length == 0
-      plugin = @chainplugs.shift
-      line = @chainlines.shift
-      self.args[1] = line
-      plugin.exec_plugin
+      next_message = chain_message
+      # Copy data
+      self.args[1] = next_message.args[1]
+      self.plugin = next_message.plugin
+      @pipeout = ''
+      @pipelines = next_message.pipelines
+      @pipeplugs = next_message.pipeplugs
+      bot.log_debug("Next chained command: #{self.args[1]}. Pipes: #{@pipeplugs.length rescue 0}")
+      # Thread.current[:ricer_message] = self
+      self.plugin.exec_plugin
+      return true
     end
     
-    def pipe!(text)
-      return false if @errorneous || @pipelines.nil? || @pipelines.length == 0
+    def pipe?(text=nil)
+      return false if @errorneous || @pipelines.nil? || (@pipelines.length == 0)
+      @pipeout += text + "\n" if text
+      return true
+    end
+    
+    def pipe!
+      # Capture catch
+#      (@pipeout += text + comma) and (return true) if @capture
       plugin = @pipeplugs.shift
-      line = @pipelines.shift + ' ' + text
-      self.args[1] = line
+      line = @pipelines.shift + ' ' + @pipeout
+      self.args[1] = line.rtrim("\n")
+      @pipeout = ''
+      bot.log_debug("Next piped command: #{self.args[1]}. Pipes left: #{@pipeplugs.length}")
       plugin.exec_plugin
+      return true
     end
-    
 
   end
 end

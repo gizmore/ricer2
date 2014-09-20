@@ -1,13 +1,14 @@
 module Ricer::Plugins::Ai
-  class Privmsg < Ricer::Plugin
+  class Say < Ricer::Plugin
     
-    trigger_is :privmsg
-    permission_is :halfop
+    trigger_is :say
+    permission_is :owner
     
     has_usage :execute, '<user> <..message..>'
     has_usage :execute, '<channel> <..message..>'
-    def execute(target, text)
-      target.send_privmsg(text)
+    
+    def execute(target, message)
+      target.send_privmsg(message)
     end
     
   end

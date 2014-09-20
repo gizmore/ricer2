@@ -7,9 +7,8 @@ module ActiveRecord
   class Base
     def self.global_cache
       ActiveRecord::Base.instance_variable_get(:@CURRY_CACHE)[table_name]
-#      ActiveRecord::Base.instance_variable_get(:@CURRY_CACHE)[table_name]
     end
-    def self.with_global_orm_mapping
+    def self.with_global_orm_mapping()
       class_eval do |klass|
         # klass.class_variable_set('@@CACHE', {}) unless klass.class_variable_defined?('@@CACHE')
         caches = ActiveRecord::Base.instance_variable_defined?(:@CURRY_CACHE) ? 
@@ -18,7 +17,6 @@ module ActiveRecord
         caches[klass.table_name] ||= {}
         def global_cache
           self.class.global_cache
-#          ActiveRecord::Base.instance_variable_get(:@CURRY_CACHE)[self.class.table_name]
 #          self.class.class_variable_get('@@CACHE')
         end
         def global_cache_table(record)
@@ -46,7 +44,7 @@ module ActiveRecord
     
     alias :original_exec_queries :exec_queries # alias to override
     
-    # SLOOOW
+    # XXX: SLOOOW!
     def exec_queries
       begin
         new_records = []
@@ -56,7 +54,7 @@ module ActiveRecord
         end
         @records = new_records unless new_records.empty?
       rescue StandardError => e
-        puts "OOOPS: #{e.to_s}\n\n#{e.backtrace}\n"
+        puts "OOOPS: #{e.to_s}\n\n#{e.backtrace}\nSLEEPING 20 seconds for penalty!!!"
       end
       @records
     end

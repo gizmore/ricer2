@@ -2,38 +2,29 @@ module Ricer
 
   class SilentCancel < Exception; end
   class NotImplemented < StandardError; end
-  class TriggerException < StandardError; end
   class ExecutionException < StandardError; end
+  class ParamException < ExecutionException; end
+  class WorkerException < ExecutionException; end
   
   class Plugin < ActiveRecord::Base
     
-    include ActionView::Helpers::NumberHelper
-
+    include Ricer::Base::Base
+    include Ricer::Base::Translates
+    
     DEFAULT_PRIORITY = 50
     
     attr_accessor :plugin_module, :plugin_dir, :module_dir
-    
-    def lib; Ricer::Irc::Lib.instance; end
-    def bot; Ricer::Bot.instance; end
-    def self.bot; Ricer::Bot.instance; end
-    
     
     # Current message for current thread
     def message
       bot.log_exception(StandardError.new("DEPRECATED accessor plugin#message!!!"))
       current_message
     end
-    def current_message
-      Thread.current[:ricer_message]
-    end
-    # def current_message=(message)
-      # Thread.current[:ricer_message] = message
-    # end
-
+    
     def user; current_message.sender; end
     def sender; current_message.sender; end
     def server; current_message.server; end
-    def channel; current_message.receiver if current_message.is_channel?; end
+    def channel; current_message.channel; end
     def args; current_message.args; end
     def argv; current_message.privmsg_args; end
     def argc; current_message.privmsg_args.length; end
@@ -42,8 +33,8 @@ module Ricer
     def argline
 #      return @_argline unless @argline.nil?
       back = line
-      subcommand_depth.times do |n|
-        back = back.substr_from(' ').ltrim(' ') rescue back = ''
+      subcommand_depth.times do
+        back = back.substr_from(' ').ltrim(' ') rescue ''
       end
       back
 #      @_argline = back
@@ -56,8 +47,8 @@ module Ricer
     def priority; self.class.instance_variable_defined?('@priority') ? self.class.instance_variable_get('@priority') : DEFAULT_PRIORITY; end
     def scope; Ricer::Irc::Scope::EVERYWHERE; end
     
-    def self.plugin_id; instance_variable_get('@plugin_id'); end
-    def plugin_id; self.class.plugin_id; end
+    # def self.plugin_id; instance_variable_get('@plugin_id'); end
+    # def plugin_id; self.class.plugin_id; end
 
     def plugin_revision; self.class.instance_variable_define(:@plugin_revision, 1); end
     def plugin_license; self.class.instance_variable_define(:@plugin_license, :unlicensed); end
@@ -193,6 +184,13 @@ module Ricer
     ##############
     ### Static ###
     ##############
+    def self.by_id(id)
+      bot.plugins.each do |plugin|
+        return plugin if plugin.id == id
+      end
+      nil
+    end
+
     def self.by_arg(arg)
       by_trigger(arg) || by_name(arg)
     end
@@ -216,6 +214,17 @@ module Ricer
       bot.plugins.each{|plugin| return plugin if plugin.plugin_name == plugin_name } and nil
     end
 
+    def self.user_plugins(user, scope=:everywhere)
+      
+    end
+    
+    def self.each_user_plugins(user, scope=:everywhere, &block) 
+      plugins.each{|plugin|
+        
+      }
+    end
+
+
     #########################
     ### Subcommand by arg ###
     #########################    
@@ -234,9 +243,9 @@ module Ricer
       current_message.is_ricer?
     end
     
-    def get_plugin(name)
-      Ricer::Plugin.by_name(name)
-    end
+    # def get_plugin(name)
+      # Ricer::Plugin.by_name(name)
+    # end
     
     def plugins_for_line(line, check_scope=true)
       bot.plugins.select { |plugin|
@@ -253,13 +262,18 @@ module Ricer
         self.class.get_exec_functions.each do |func|
           send(func)
         end
-#      rescue ActiveRecord::NoDatabaseError => e
-#        bot.running = false
+        unless current_message.forked?
+          if current_message.pipe?
+            current_message.pipe!
+          elsif current_message.chained?
+            current_message.chain!
+          end
+        end
       rescue Exception => e
         reply_exception e
       end
     end
-    
+
     def process_event(event_name)
       server.process_event(event_name, current_message)
     end
@@ -289,34 +303,38 @@ module Ricer
     ############
     ### I18n ###
     ############
-    def i18n_key; @_18nkey ||= self.class.name.gsub('::','.').underscore; end
-    def i18n_pkey; @_18npkey ||= i18n_key.rsubstr_to('.'); end
     def description; t(:description); end
-    def tkey(key); key.is_a?(Symbol) ? "#{i18n_key}.#{key}" : key; end
-    def l(date, format=:long); I18n.l(date, :format => format) rescue date.to_s; end
-    def t(key, args={}); tt tkey(key), args; end
-    def tp(key, args={}); tt "#{i18n_pkey}.#{key}", args; end
-    def tr(key, args={}); tt "ricer.#{key}", args; end
-    def tt(key, args={}); rt i18t(key, args); end
-    def rt(response)
-      response.to_s.
-        gsub('$BOT$', server.nickname.name).
-        gsub('$COMMAND$', trigger.to_s).
-        gsub('$TRIGGER$', server.triggers[0]||'')
-      rescue response
-    end
-    def i18t(key, args={}) # Own I18n.t that rescues into key: arg.inspect
-      begin
-        I18n.t!(key, args)
-      rescue Exception => e
-        bot.log_exception(e)
-        i18ti(key, args)
-      end
-    end
-    def i18ti(key, args={}) # Inspector version
-      vars = args.length == 0 ? "" : ":#{args.to_json}"
-      "#{key.to_s.rsubstr_from('.')||key}#{vars}"
-    end
+    # def i18n_key; @_18nkey ||= self.class.name.gsub('::','.').underscore; end
+    # def i18n_pkey; @_18npkey ||= i18n_key.rsubstr_to('.'); end
+    # def tkey(key); key.is_a?(Symbol) ? "#{i18n_key}.#{key}" : key; end
+    # def l(date, format=:long); I18n.l(date, :format => format) rescue date.to_s; end
+    # def t(key, args={}); tt tkey(key), args; end
+    # def tp(key, args={}); tt "#{i18n_pkey}.#{key}", args; end
+    # def tr(key, args={}); tt "ricer.#{key}", args; end
+    # def tt(key, args={}); rt i18t(key, args); end
+    # def rt(response)
+      # begin
+        # response.to_s.
+          # gsub('$BOT$', server.nickname.name).
+          # gsub('$COMMAND$', trigger.to_s).
+          # gsub('$TRIGGER$', server.triggers[0]||'')
+      # rescue Exception => e
+        # bot.log_exception(e)
+        # response
+      # end
+    # end
+    # def i18t(key, args={}) # Own I18n.t that rescues into key: arg.inspect
+      # begin
+        # I18n.t!(key, args)
+      # rescue Exception => e
+        # bot.log_exception(e)
+        # i18ti(key, args)
+      # end
+    # end
+    # def i18ti(key, args={}) # Inspector version
+      # vars = args.length == 0 ? "" : ":#{args.to_json}"
+      # "#{key.to_s.rsubstr_from('.')||key}#{vars}"
+    # end
     
     #####################
     ### Communication ###
@@ -326,14 +344,5 @@ module Ricer
     def notice_to(target, text); target.send_notice(text); end
     def privmsg_to(target, text); target.send_privmsg(text); end
     
-    ##############
-    ### Emails ###
-    ##############
-    def send_mail(to, subject, body)
-      Ricer::Thread.execute do
-        BotMailer.generic(to, subject, body).deliver
-      end
-    end
-        
   end
 end

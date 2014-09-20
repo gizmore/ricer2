@@ -1,0 +1,17 @@
+en:
+  ricer:
+    plug:
+      settings:
+        boolean:
+          bool_1: 'on'
+          bool_0: 'off'
+        blanked_password: "\x03$BCRYPT$\x03"
+        hint:
+          boolean: 'boolean %{on} or %{off}'
+          duration: 'duration between %{min} and %{max}'
+          enum: 'any of %{enums}'
+          integer: 'float number between %{min} and %{max}'
+          integer: 'integer between %{min} and %{max}'
+          password: 'password with at least %{min} chars'
+          permission: 'permission name'
+          string: 'text between %{min} and %{max} chars'

@@ -14,6 +14,8 @@ module Ricer::Plugins::Purple
     
     def purple; @@purple ||= bot.get_plugin('Purple/Purple'); end
     
+    def after_connect; end
+    
     def connect!
       ensure_inited!
       if protocol_supported?(protocol)
@@ -21,6 +23,7 @@ module Ricer::Plugins::Purple
         purple.add_purple_server(@account, server)
         @connected = true
         server.started_up = true
+        after_connect
       end
       Thread.kill(Thread.current)
     end
@@ -122,7 +125,8 @@ module Ricer::Plugins::Purple
       begin
         return unless message.reply_to.is_a?(Ricer::Irc::User)
         @server.ricer_replies_to(message)
-        text = message.reply_data#.gsub("\n", '').gsub("\r", '')
+        text = message.reply_data
+        text = text.html_markup
         @account.send_im(message.reply_to.name, text)
  #       @frame.sent
       rescue => e
@@ -132,6 +136,12 @@ module Ricer::Plugins::Purple
         disconnect(message)
       end
       nil
+    end
+    
+    def html_markup(text)
+      text.
+        gsub(/\x02([^\x02]+)\x02/, '<b>$1</b>').
+        gsub(/\x03([^\x03]+)\x03/, '<i>$1</i>')
     end
     
     def process_event(event)

@@ -3,21 +3,22 @@ module Ricer
     
     with_global_orm_mapping
     def should_cache?; true; end
+    def cache_key; iso; end
 
     def self.valid?(iso)
       exists?(iso)
     end
 
     def self.exists?(iso)
-      where(:iso => iso).count > 0
+      !!self.by_iso(iso)
     end
     
     def self.by_iso(iso)
-      find_by(:iso => iso)
+      global_cache[iso] || find_by(:iso => iso)
     end
     
     def to_label
-      I18n.t("ricer.locale.#{self.iso}")
+      I18n.t!("ricer.locale.#{self.iso}") rescue self.iso
     end
 
   end

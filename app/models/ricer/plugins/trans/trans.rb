@@ -1,8 +1,12 @@
 module Ricer::Plugins::Trans
   class Trans < Ricer::Plugin
-    def on_privmsg
-      
     
+    trigger_is :trans
+    
+    has_usage ''
+    def execute
+      
     end
+    
   end
 end

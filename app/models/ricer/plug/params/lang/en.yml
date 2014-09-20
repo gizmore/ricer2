@@ -2,6 +2,9 @@ en:
   ricer:
     plug:
       params:
+
+        err_type: 'Wrong parameter type.'    
+
         boolean:
           label: 'bool'
           error: 'Not a boolean value.'
@@ -17,6 +20,9 @@ en:
         id:
           label: 'ID'
           error: 'Not a numeric ID'
+        joined_channel:
+          label: 'channel'
+          error: 'Not inside this channel.'
         language:
           label: 'lang'
           error: 'Unknown language iso code.'
@@ -45,6 +51,9 @@ en:
           label: 'string'
           err_too_long: 'The string may not exceed %{max} chars.'
           err_too_short: 'The string has to be at least %{min} chars long.'
+        target:
+          label: 'recipient'
+          error: 'Unknown user/channel.'
         trigger:
           label: 'plugin'
           error: 'Plugin not found.'

@@ -11,5 +11,10 @@ module Ricer::Plug::Params
       input
     end
     
+    def convert_out!(email, message)
+      byebug
+      email.to_s
+    end
+    
   end
 end

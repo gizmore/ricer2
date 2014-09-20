@@ -4,9 +4,12 @@ module Ricer::Plug::Params
     def default_options; { :online => nil, :offline => nil }; end
     
     def online_option
-      return true unless options[:online].nil?
-      return false unless options[:offine].nil?
-      return nil
+      case options[:online]
+      when '1'; true
+      when '0'; false
+      when nil; nil
+      else; raise Ricer::ParamException.new("Plugin param definition is broken -.-")
+      end
     end
     
   end

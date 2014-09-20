@@ -69,21 +69,23 @@ module Ricer::Plug::Extender::HasUsage
       #####################      
       private
       def try_handlers
-#        return false unless trigger_possible? # XXX: Ugly and unnecessary
-#        not_even_failed_one = true
-#        return false if usages.empty?
         usages = usages_in_scope
         throw_error = usages.length
-        usages.each do |pattern, usage|
+        bot.log_debug("HasUsage#try_handlers: #{self.plugin_name} with #{usages.count} usages in scope.")
+        usages.each do |usage|
+          bot.log_debug("Trying #{self.plugin_name} with pattern #{usage.pattern} for #{usage.function}")
           throw_error -= 1
           execute_args = usage.parse_args(self, current_message, (throw_error == 0))
-          bot.log_debug("tried handler #{pattern}: #{execute_args.inspect}")
           unless execute_args.nil?
-            current_message.plugin_id = plugin_id
+            bot.log_debug("tried handler #{usage.pattern} successfully: #{execute_args.inspect}")
+            current_message.plugin = self
             process_event('ricer_on_trigger') rescue nil
             begin
               before_execution
               send(usage.function, *execute_args)
+            rescue StandardError => e
+              bot.log_exception(e)
+              raise e
             ensure
               after_execution
             end
@@ -95,7 +97,7 @@ module Ricer::Plug::Extender::HasUsage
       end
       
       def usages_in_scope
-        usages.usages_in_scope(current_message)
+        usages.in_scope(current_message)
       end
       
       ################
@@ -106,9 +108,12 @@ module Ricer::Plug::Extender::HasUsage
       end
       
       def get_usage
-        I18n.t('ricer.plug.extender.has_usage.msg_usage',
-          trigger: trigger, usage: display_usage_pattern, description: description,
-          permission: scope_and_permission_text) 
+        tt('ricer.plug.extender.has_usage.msg_usage',
+          trigger: trigger,
+          description: description,
+          usage: display_usage_pattern,
+          permission: scope_and_permission_text,
+        )
       end
       
       def display_usage_pattern
@@ -120,13 +125,13 @@ module Ricer::Plug::Extender::HasUsage
           if scope.everywhere?
             ''
           else
-            ' '+I18n.t('ricer.plug.extender.has_usage.scopeinfo_scope', scopelabel: scope.to_label)
+            ' '+tt('ricer.plug.extender.has_usage.scopeinfo_scope', scopelabel: scope.to_label)
           end
         else
           if scope.everywhere?
-            ' '+I18n.t('ricer.plug.extender.has_usage.scopeinfo_perm', permission: trigger_permission.to_label)
+            ' '+tt('ricer.plug.extender.has_usage.scopeinfo_perm', permission: trigger_permission.to_label)
           else
-            ' '+I18n.t('ricer.plug.extender.has_usage.scopeinfo_both', scopelabel: scope.to_label, permission: trigger_permission.to_label)
+            ' '+tt('ricer.plug.extender.has_usage.scopeinfo_both', scopelabel: scope.to_label, permission: trigger_permission.to_label)
           end
         end
       end

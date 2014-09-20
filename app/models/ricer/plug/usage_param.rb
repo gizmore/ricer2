@@ -1,6 +1,8 @@
 module Ricer::Plug
   class UsageParam
     
+    include Ricer::Base::Base
+    
     def to_label; @parser.param_label; end
 
     def is_eater?; @eater||@parser.is_eater?; end
@@ -22,9 +24,9 @@ module Ricer::Plug
       @parser.convert_in!(input.gsub("\x01", ' '), message)
     end
     
-    # def print(value, message)
-      # @parser.convert_out!(value, options, message)
-    # end
+    def print(message=nil)
+      @parser.display(message)
+    end
     
   end
 end

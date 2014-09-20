@@ -15,7 +15,7 @@ module Ricer::Plug::Settings
     end
     
     def self.to_hint(options)
-      I18n.t('I18n.plug.settings.hint.enum', enums: options[:enums].join('|'))
+      I18n.t('ricer.plug.settings.hint.enum', enums: options[:enums].join('|'))
     end
     
     def self.is_valid?(input, options)

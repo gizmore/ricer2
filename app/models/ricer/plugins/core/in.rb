@@ -2,21 +2,15 @@ module Ricer::Plugins::Core
   class In < Ricer::Plugin
     
     trigger_is :in
-    permission_is :voice
     
-    has_usage :execute_in, '<duration> <trigger>'
-    has_usage :execute_in_with_args, '<duration> <trigger> <..command..parameters..>'
+    has_usage '<duration> <trigger>'
+    has_usage '<duration> <trigger> <..parameters..>'
     
-    def execute_in(delay, plugin)
-      execute_in_with_args(delay, plugin, nil)
-    end
- 
-    def execute_in_with_args(delay, plugin, parameters)
+    def execute(delay, plugin, parameters=nil)
       Ricer::Thread.execute do
+        sleep(delay)
         line = plugin.trigger
         line += " #{parameters}" if parameters
-        bot.log_debug("Sleeping for #{delay} and then execute #{line}")
-        sleep(delay)
         plugin.exec_argline(line)
       end
     end

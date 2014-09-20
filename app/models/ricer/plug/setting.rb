@@ -1,15 +1,16 @@
 module Ricer::Plug
   class Setting < ActiveRecord::Base
     
+    include Ricer::Base::Base
+    include Ricer::Base::Translates
+    
     attr_accessor :options
-    
-    SCOPES = [ :bot, :server, :channel, :user ]
-    
-    def self.bot; Ricer::Bot.instance; end
-    def self.lib; Ricer::Irc::Lib.instance; end
 
-    def bot; Ricer::Bot.instance; end
-    def lib; Ricer::Irc::Lib.instance; end
+    SCOPES = [ :bot, :server, :channel, :user ]
+    def self.scope_enum(scope); SCOPES.find_index(scope.to_sym); end
+
+    belongs_to :plugin, :class_name => Ricer::Plugin.name, :dependent => :destroy
+    belongs_to :entity, :polymorphic => true, :dependent => :destroy
     
     def self.validate_definition!(klass, options)
       throw Exception.new("#{klass.name} has_setting without [:name].") if options[:name].nil?
@@ -18,31 +19,24 @@ module Ricer::Plug
       setting_class.validate_definiton!(klass, options)
     end
     
-    def self.scope_enum(scope)
-      SCOPES.find_index(scope.to_sym)
-    end
-    
-    def self.setting_class(type)
-      type = "#{type}_setting"
-      Object.const_get("Ricer::Plug::Settings::#{type.classify}")
-    end
-
-    def setting_class()
+    def setting_class
       self.class.setting_class(options[:type])
     end
     
+    def self.setting_class(type)
+      type = "#{type}_setting".classify
+      Ricer::Plug::Settings.const_get(type);
+#      Object.const_get("Ricer::Plug::Settings::#{type}")
+    end
+
     def permission
-      Ricer::Irc::Permission.by_name(options[:permission])
+      @_permission ||= Ricer::Irc::Permission.by_name(options[:permission])
     end
 
     def scope
-      Ricer::Irc::Scope.by_name(options[:scope])
+      @_scope ||= Ricer::Irc::Scope.by_name(options[:scope])
     end
     
-    def equals_input?(input)
-      self.to_value == setting_class.to_value(input)
-    end
-
     def to_value
       setting_class.to_value(self.value)
     end
@@ -64,8 +58,12 @@ module Ricer::Plug
       klass.is_valid?(klass.to_value(value), options)
     end
     
+    def equals_input?(input)
+      self.to_value == setting_class.to_value(input)
+    end
+
     def save_value(value)
-      raise Exception.new(I18n.t('ricer.plug.setting.err_save', name: self.name, value: value, hint: to_hint)) unless valid_value?(value)
+      raise ExecutionExecption.new(tt('ricer.plug.setting.err_save', name: self.name, value: value, hint: to_hint)) unless valid_value?(value)
       klass = setting_class
       back = klass.to_value(value)
       self.value = klass.db_value(back)

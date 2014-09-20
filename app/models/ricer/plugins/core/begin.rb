@@ -3,7 +3,7 @@ module Ricer::Plugins::Core
     
     trigger_is :begin
     permission_is :voice
-    has_priority 3
+    has_priority 9
 
     has_usage :execute_begin, '<trigger>'
     has_usage :execute_begin, '<trigger> <..line..>]'

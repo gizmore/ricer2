@@ -7,28 +7,23 @@ module Ricer::Plug
     ### Initialize Param structures ###
     ###################################
     def initialize
-      @usages = {}
+      @usages = []
       @max_params = 0
     end
     
     def add_pattern(function, pattern, options)
-      add_usage(pattern, Usage.new(function, pattern, options))
+      add_usage(Usage.new(function, pattern, options))
     end
     
-    def add_usage(pattern, usage)
+    def add_usage(usage)
       @max_params = [@max_params, usage.max_params].max
-      @usages[pattern] = usage
+      @usages.push(usage)
     end
     
-    def usages_in_scope(message)
-      @usages.select{|pattern, usage| matches_scope_and_permission?(usage, message) }
+    def in_scope(message)
+      @usages.select{|usage| usage.matches_scope_and_permission?(message)}
     end
     
-    def matches_scope_and_permission?(usage, message)
-      return false unless usage.scope.nil? || message.scope.in_scope?(usage.scope)
-      return true
-    end
-      
     def combined_pattern_text(usages)
       pattern_string = combined_pattern_text_columns(usages).join(' ')
       pattern_string = " #{pattern_string}" unless pattern_string.empty?
@@ -72,7 +67,7 @@ module Ricer::Plug
         oA = false # optional, all
         
         # Gather the Nth column
-        usages.each do |pattern, usage|
+        usages.each do |usage|
           if param = usage.param(n) # pattern has column? (yes)
             type = param.to_label
             if false # param.is_optional?

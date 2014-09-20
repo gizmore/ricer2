@@ -12,25 +12,24 @@ module Ricer::Plugins::Channel
       rply :err_already_joined
     end
 
-    has_usage :execute, '<channel_name>'
+    has_usage '<channel_name>'
     def execute(channel_name)
       rply :msg_trying_to_join
       server.connection.send_join(current_message, channel_name)
     end
     
-    def on_join
-      save_channel_setting(channel, :autojoin, true) # Re-Enable autojoin
-    end
-    
+    # Bootup autojoins
     def on_001
-      bot.log_debug("Channel/Join.ricer_on_server_connected")
       server.channels.each do |channel|
-       bot.log_debug("Channel/Join.ricer_on_server_connected #{channel}")
         if get_channel_setting(channel, :autojoin)
-          bot.log_debug("Channel/Join.ricer_on_server_connected #{channel} is autojoin")
           server.connection.send_join(current_message, channel.name)
         end
       end
+    end
+    
+    # Re-enable autojoin
+    def on_join
+      save_channel_setting(channel, :autojoin, true)
     end
     
     # Disable autojoin on a ban

@@ -17,6 +17,7 @@ gem 'acts_as_votable'
 gem 'geocoder'
 gem 'open4'
 gem 'ruby-git'
+gem 'easy_translate'
 
 group :development do
   gem 'byebug'

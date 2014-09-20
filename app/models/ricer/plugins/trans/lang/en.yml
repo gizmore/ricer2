@@ -1,0 +1,12 @@
+en:
+  ricer:
+    plugins:
+      trans:
+
+        trans:
+          trigger: trans
+          description: ""
+
+        interpreter:
+          trigger: interpreter
+          description: ""

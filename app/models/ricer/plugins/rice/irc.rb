@@ -1,7 +1,7 @@
 module Ricer::Plugins::Rice
   class Irc < Ricer::Net::Connection    
   
-    MAXLEN = 255
+    MAXLEN = 512
     
     require 'uri'
     require 'socket'
@@ -110,9 +110,11 @@ module Ricer::Plugins::Rice
     
     def send_line(message)
       begin
+#        bot.log_debug('Irc#send_line: #{message.reply}')
         Thread.current[:ricer_message] = message
         @server.ricer_replies_to(message)
         text = message.reply_data.gsub("\n", '').gsub("\r", '')
+        text.force_encoding(message.reply_encoding_iso)
         @socket.write "#{text}\r\n"
         @frame.sent
       rescue => e
@@ -128,11 +130,9 @@ module Ricer::Plugins::Rice
     def fair_queue
       Ricer::Thread.execute do
         while @connected
-          sleep(Ricer::Net::Queue::Frame::SECONDS)
-          @semaphore.synchronize do 
-            @queue.each do |to, queue|
-              queue.reduce_penalty
-            end
+          sleep(Ricer::Net::Queue::Frame::SECONDS * 2)
+          @semaphore.synchronize do
+            @queue.each{|to, queue| queue.reduce_penalty }
           end
         end
       end
@@ -181,16 +181,12 @@ module Ricer::Plugins::Rice
       if e.nil?
         # Which could be the last thing, without any args
         message.command = raw[s..-1].downcase
-#        argstart = -1
         return message
       end
       message.command = raw[s..e-1].downcase
-      # self.argstart = e
       
       args = [];
       s = e + 1
-      
-      # match = /[^\s"']+|"([^"]*)"|'([^']*)'/.match(raw[s..-1])
       
       while !(e = raw.index(' ', s)).nil?
         if (raw[s] == ':')
@@ -204,6 +200,7 @@ module Ricer::Plugins::Rice
         end
         args.push(arg)
       end
+
       # Last arg
       if l == false
         s = s + 1 if raw[s] == ':'

@@ -4,7 +4,7 @@ module Ricer::Plugins::Ai
     trigger_is :echo
     permission_is :voice
     
-    has_usage :execute, '<..message..>'
+    has_usage '<..text..>'
     def execute(text)
       reply text
     end

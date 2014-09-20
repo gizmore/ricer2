@@ -15,6 +15,9 @@
 module Ricer::Irc
   class User < ActiveRecord::Base
     
+    include Ricer::Base::Base
+    include Ricer::Base::Translates
+    
     NOTICE = 'n'
     PRIVMSG = 'p'
     
@@ -31,8 +34,6 @@ module Ricer::Irc
     def quietname; Ricer::Irc::Lib.instance.no_highlight(self.nickname); end
     def displayname; "\x02#{quietname}\x02:#{self.server_id}" end
     def guid; "#{self.name}:#{self.server_id}"; end
-#    def server; Ricer::Bot.instance.servers.find(self.server_id); end
-#    def server; Ricer::Bot.instance.servers.find(self.server_id); end
     def is_ricer?; self.server.nickname.name.downcase == self.nickname.downcase; end
 
     # Current user for current thread

@@ -4,7 +4,7 @@ en:
       ai:
 
         action:
-          trigger: 'do'
+          trigger: 'action'
           description: 'Sends an action to a user or channel.'
 
         echo:
@@ -19,6 +19,6 @@ en:
           trigger: 'notice'
           description: 'Sends a notice to a user or channel.'
 
-        privmsg:
+        say:
           trigger: 'say'
           description: 'Sends a privmsg to a user or channel.'

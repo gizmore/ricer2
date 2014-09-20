@@ -1,11 +1,7 @@
 module Ricer::Plug::Settings
   class Base
     
-    def self.bot; Ricer::Bot.instance; end
-    def self.lib; Ricer::Irc::Lib.instance; end
-
-    def bot; Ricer::Bot.instance; end
-    def lib; Ricer::Irc::Lib.instance; end
+    include Ricer::Base::Base
 
     def self.validate_definiton!(klass, options)
       options[:default] ||= default_value(options)

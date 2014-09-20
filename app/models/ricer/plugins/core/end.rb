@@ -3,7 +3,7 @@ module Ricer::Plugins::Core
     
     trigger_is :end
     permission_is :voice
-    has_priority 2
+    has_priority 8
 
     has_usage
     def execute

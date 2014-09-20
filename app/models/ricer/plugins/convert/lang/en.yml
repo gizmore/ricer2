@@ -2,6 +2,15 @@ en:
   ricer:
     plugins:
       convert:
+        
+        base:
+          trigger: 'base'
+          description: 'Convert numbers between two bases. You an change the charsets via $Conf/Confu$.'
+          
+        maths:
+          trigger: math
+          description: 'Do mathematical calculations. Constants: %{constants}. Use $1-100 for your own vars. $0 contains the result. Functions: %{functions}'
+          err_forbidden: 'Your input did not pass the security test.'
 
         reverse:
           trigger: 'reverse'

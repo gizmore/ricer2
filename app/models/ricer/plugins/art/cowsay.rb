@@ -7,13 +7,14 @@ module Ricer::Plugins::Art
 
     bruteforce_protected timeout: 12.seconds
     
-    has_setting name: :image, type: :enum, scope: :user, permission: :halfop, enums:[:cat,:default], default: :cat
+    has_setting name: :image, type: :enum, scope: :user, permission: :halfop, enums: [:cat,:default], default: :cat
     
-    has_usage :execute, '<..message..>'
+    has_usage '<..text..>'
     def execute(text)
       Ricer::Thread.execute do
         text = Shellwords.escape(text)
-        reply `cowsay -f #{get_setting(:image)} -- #{text}`
+        response = `cowsay -f #{get_setting(:image)} -- #{text}`
+        reply response
       end
     end
     

@@ -10,7 +10,7 @@ en:
         err_server_column: 'Unknown server variable. Known database columns are: %{columns}.'
         
         msg_overview: 'Settings for %{trigger}: %{vars}.'
-        msg_show_var: 'Settings for %{trigger}/%{varname}: %{values}.'
+        msg_show_var: 'Settings for %{trigger}/%{varname}: %{values}. Domain: %{hint}.'
         msg_no_settings: 'The %{trigger} plugin has no configuration available.'
         msg_no_change: '%{configscope} settings for %{trigger}/%{varname} are still %{samevalue}.'
         msg_saved_setting: '%{configscope} settings for %{trigger}/%{varname} changed from %{oldvalue} to %{newvalue}.'

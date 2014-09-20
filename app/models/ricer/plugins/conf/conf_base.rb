@@ -51,8 +51,9 @@ module Ricer::Plugins::Conf
         b = setting.persisted? ? "\x02" : ''
         out += " #{setting.scope.to_label}=#{b}#{setting.to_label}#{b}"
       end
-      out += " = #{plugin.setting(varname, config_scope).to_label}"
-      rplyp :msg_show_var, trigger: plugin.trigger, varname: varname, values: out.ltrim
+      setting = plugin.setting(varname, config_scope)
+      out += " = #{setting.to_label}"
+      rplyp :msg_show_var, trigger: plugin.trigger, varname: varname, values: out.ltrim, hint: setting.to_hint
     end
 
     def set_var(plugin, varname, value)

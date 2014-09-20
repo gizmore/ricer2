@@ -5,5 +5,10 @@ module Ricer::Plugins::Purple
       'prpl-yahoo'
     end
 
+    def after_connect
+      @server.server_url.url = 'yahoo.com'
+      @server.save!
+    end
+
   end
 end

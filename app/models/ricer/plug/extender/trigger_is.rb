@@ -44,19 +44,16 @@ module Ricer::Plug::Extender::TriggerIs
         connection.send_privmsg(current_message.reply_clone, text)
       end
       def reply(text)
-        return if current_message.pipe!(text)
+        return if current_message.pipe?(text)
         connection.send_privmsg(current_message.reply_clone, text)
-        current_message.chain!
       end
       def areply(text)
-        return if current_message.pipe!(text)
+        return if current_message.pipe?(text)
         connection.send_action(current_message.reply_clone, text)
-        current_message.chain!
       end
       def nreply(text)
-        return if current_message.pipe!(text)
+        return if current_message.pipe?(text)
         connection.send_notice(current_message.reply_clone, text)
-        current_message.chain!
       end
       
       def erply(key, args={}); ereply t(key, args); end
@@ -83,7 +80,6 @@ module Ricer::Plug::Extender::TriggerIs
           return ereply e.to_s
         end
         bot.log_exception(e)
-        return ereply e.to_s if e.is_a?(Ricer::TriggerException)
         return ereply(exception_message(e))
       end
       
@@ -105,8 +101,7 @@ module Ricer::Plug::Extender::TriggerIs
       end
       
       def reply_backtrace(e)
-        e.backtrace.each{|line| return line if line.index('/models/ricer/plugins') }
-        e.backtrace.each{|line| return line if line.index('/models/ricer') }
+        e.backtrace.each{|line| return line if line.index('/models/ricer/') }
         e.backtrace[0]
       end
       

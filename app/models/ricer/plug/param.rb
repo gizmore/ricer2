@@ -22,6 +22,10 @@ module Ricer::Plug
       Object.const_get("Ricer::Plug::Params::#{type.camelize}Param")
     end
 
+    def self.parser_class!(type)
+      parser_class(type) or raise Ricer::RuntimeError.new("Param.parser_class! cannot find parser class: #{type}")
+    end
+
     def self.parser(type, value=nil)
       self.parser!(type, value) rescue nil
     end

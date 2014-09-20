@@ -23,7 +23,7 @@ module Ricer
       
       load_i18n_dir('config/locales/rails/')
       load_i18n_dir('config/locales/ricer/')
-      load_i18n_dir('app/models/ricer/plug')
+      load_i18n_dir('app/models/ricer/plug/')
       
       @plugins = []
       @plugdirs.each do |path|
@@ -195,19 +195,10 @@ module Ricer
     def install_plugin(classobject)
       
       plugin = classobject.new
-      db_plugin = classobject.where(:name => plugin.plugin_name, :bot_id => @bot.id).first
       
-      if db_plugin.nil?
-        db_plugin = classobject.create!({
-          bot_id: @bot.id,
-          name: plugin.plugin_name,
-        })
-      end      
-      
-      classobject.instance_variable_set('@plugin_id', db_plugin.id)
-
-      plug_version = plugin.plugin_revision
+      db_plugin = classobject.find_or_create_by({bot_id: @bot.id, name: plugin.plugin_name})
       db_version = db_plugin.revision
+      plug_version = plugin.plugin_revision
       
       errors = false
       

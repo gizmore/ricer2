@@ -81,9 +81,9 @@ module Ricer
     end
     
     def sort_plugins(plugins)
-      plugins.sort!{|a,b| a.subcommand_depth - b.subcommand_depth }
-      plugins.sort!{|a,b| b.trigger_permission.bit - a.trigger_permission.bit rescue 0 }
+      plugins.sort!{|a,b| a.trigger_permission.bit - b.trigger_permission.bit rescue 0 }
       plugins.sort!{|a,b| b.scope.bit - a.scope.bit }
+      plugins.sort!{|a,b| a.subcommand_depth - b.subcommand_depth }
       plugins.sort!{|a,b| a.priority - b.priority }
     end
     
