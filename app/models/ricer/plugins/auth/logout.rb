@@ -2,8 +2,8 @@ module Ricer::Plugins::Auth
   class Logout < Ricer::Plugin
   
     trigger_is :logout
-    permission_is :authenticated
     connector_is :irc
+    permission_is :authenticated
     
     has_usage
     def execute

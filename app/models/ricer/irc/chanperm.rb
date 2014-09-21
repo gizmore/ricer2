@@ -7,7 +7,7 @@ module Ricer::Irc
   class Chanperm < ActiveRecord::Base
     
     with_global_orm_mapping
-    def should_cache?; self.online == true; end
+    def should_cache?; true; end
     
     attr_reader :chanmode
     
@@ -27,15 +27,23 @@ module Ricer::Irc
     end
     
     def ricer_permission
-      Ricer::Irc::Permission.by_permission(self.permissions)
+      Ricer::Irc::Permission.by_permission(self.permissions, authenticated?)
+    end
+    
+    def authenticated?
+      user.authenticated?
     end
     
     def authenticated=(boolean)
       @chanmode.authenticated = boolean
     end
     
+    def permission_bits
+      self.permissions | user.permissions | @chanmode.permission.bit      
+    end
+    
     def permission
-      user_permission.merge(ricer_permission).merge(channel_permission)
+      Permission.by_permission(permission_bits, authenticated?)
     end
     
   end

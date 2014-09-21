@@ -132,7 +132,7 @@ module Ricer::Irc
     
     # Check by permission object
     def has_permission?(permission)
-      permission.has_permission?(permission)
+      self.permission.has_permission?(permission)
     end
 
     # Check by privchar (prlvhosmafixy)

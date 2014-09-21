@@ -1,6 +1,8 @@
 module Ricer::Irc
   class Permission
     
+    include Ricer::Base::Base
+    
     attr_reader :priv, :symbol, :char, :bit, :name, :modeable, :hierarchic, :authenticated
     
     def initialize(hash); hash.each { |name, value| instance_variable_set("@#{name}", value) }; end
@@ -10,8 +12,8 @@ module Ricer::Irc
     def authenticated=(bool); @authenticated = bool; end 
 
     PUBLIC =        new(priv:'p', symbol:'',  char:'',  bit:0x0000,  :name => :public,        :modeable => false, :hierarchic => true,  :authenticated => false)
-    REGISTERED =    new(priv:'r', symbol:'',  char:'',  bit:0x0001,  :name => :registered,    :modeable => false, :hierarchic => true,  :authenticated => false)
-    AUTHENTICATED = new(priv:'l', symbol:'',  char:'',  bit:0x0002,  :name => :authenticated, :modeable => false, :hierarchic => true,  :authenticated => false)
+    REGISTERED =    new(priv:'r', symbol:'',  char:'',  bit:0x0001,  :name => :registered,    :modeable => false, :hierarchic => false, :authenticated => false)
+    AUTHENTICATED = new(priv:'l', symbol:'',  char:'',  bit:0x0002,  :name => :authenticated, :modeable => false, :hierarchic => false, :authenticated => false)
     VOICE =         new(priv:'v', symbol:'+', char:'v', bit:0x0004,  :name => :voice,         :modeable => true,  :hierarchic => true,  :authenticated => false)
     HALFOP =        new(priv:'h', symbol:'%', char:'h', bit:0x0008,  :name => :halfop,        :modeable => true,  :hierarchic => true,  :authenticated => false)
     OPERATOR =      new(priv:'o', symbol:'@', char:'o', bit:0x0010,  :name => :operator,      :modeable => true,  :hierarchic => true,  :authenticated => false)
@@ -111,6 +113,7 @@ module Ricer::Irc
     end
     
     def self.by_permission(permissions, authenticated=false)
+      bot.log_debug("Permission#by_permission(#{permissions}) AUTHED: #{authenticated.inspect}")
       priv = 'p'
       symbol = ''
       char = ''
@@ -125,7 +128,7 @@ module Ricer::Irc
           name = p.name
         end
       end
-      new({priv: priv, symbol: symbol, char: char, bit:bit, name: name, modeable: false, hierarchical: false, authenticated: authenticated})
+      new({priv: priv, symbol: symbol, char: char, bit: bit, name: name, modeable: false, hierarchical: false, authenticated: authenticated})
     end
     
     def merge(permission)
@@ -148,9 +151,9 @@ module Ricer::Irc
     end
 
     def group_bits(respect_auth=REGISTERED)
-      return 0 if respect_auth && (!self.authenticated)
+      return self.bit & REGISTERED.bit if (respect_auth) && (!self.authenticated)
       sumbits = 0
-      ALL.map{|p| sumbits += p.bit if(self.bit >= p.bit)&&(!p.hierarchic)}
+      ALL.map{|p| sumbits += p.bit if ((self.bit & p.bit)==p.bit)&&(!p.hierarchic) }
       sumbits
     end
 
@@ -159,10 +162,11 @@ module Ricer::Irc
     end
     
     def has_permission?(permission, respect_auth=REGISTERED)
-      permission = PUBLIC if permission.nil?
-      hierarchic_passed = self.hierarchic_bits(respect_auth) >= permission.hierarchic_bits(nil)
-      group_bits_passed = (permission.group_bits == 0) || ((self.group_bits(respect_auth) & permission.group_bits(nil)) == permission.group_bits)
-      hierarchic_passed && group_bits_passed
+#      permission = PUBLIC if permission.nil?
+      bot.log_debug("Checking my permission #{bit} against #{permission.bit}")
+      group_bits = permission.group_bits(nil)
+      (self.hierarchic_bits(respect_auth) >= permission.hierarchic_bits(nil)) &&
+      ((group_bits == 0) || ((self.group_bits(respect_auth) & group_bits) == group_bits))
     end
 
   end 
