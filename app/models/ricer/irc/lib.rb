@@ -2,11 +2,13 @@ module Ricer::Irc
   class Lib
     
     include Singleton
+    include Ricer::Base::Base
+    
     include ActionView::Helpers::NumberHelper
     include ActionView::Helpers::SanitizeHelper
 
     ACTION = "\x01"
-    BOLD = "\x02"
+    BOLD   = "\x02"
     ITALIC = "\x03"
     
     def green(text)
@@ -75,8 +77,8 @@ module Ricer::Irc
     end
     
     def softhype(string)
-      min = string.length < 2 ? 0 : 1
-      i = Ricer::Bot.instance.rand.rand(min...string.length);
+      return string if string.length < 2
+      i = bot.rand.rand(1, string.length-1)
       string[0..i] + "\xC2\xAD" + string[i..-1]
     end
     

@@ -18,16 +18,24 @@ module Ricer::Irc
       @chanmode = Ricer::Irc::Mode::ChanMode.new(permissions)
     end
     
-    def permission
+    def user_permission
+      user.permission
+    end
+    
+    def channel_permission
       @chanmode.permission
+    end
+    
+    def ricer_permission
+      Ricer::Irc::Permission.by_permission(self.permissions)
     end
     
     def authenticated=(boolean)
       @chanmode.authenticated = boolean
     end
     
-    def merged_permission
-      permission.merge(Ricer::Irc::Permission.by_permission(self.permissions))
+    def permission
+      user_permission.merge(ricer_permission).merge(channel_permission)
     end
     
   end

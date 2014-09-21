@@ -2,6 +2,7 @@ en:
   ricer:
     plugins:
       auth:
+
         err_wrong_password: 'Your submitted password is wrong.'
         
         autologin:
@@ -10,7 +11,7 @@ en:
           
         channelmod:
           description: 'Show or set channel permissions for a user.'
-          msg_show_chan: '%{user} has %{bitstring} in %{channel} on %{server}.'
+          msg_show_chan: '%{user} has %{bitstring} in %{channel}. Detected channelmodes: %{chanmode}.'
           
         email:
           description: 'Manage or show your email address.'

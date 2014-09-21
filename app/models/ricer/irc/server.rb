@@ -156,11 +156,8 @@ module Ricer::Irc
       else; bot.log_debug "Server.process_event(#{event}) NEW"; end
       
       # Trigger prepare
-      argline, privline, triggered = nil, nil, false
-      if event == 'on_privmsg'
-        triggered = message.is_triggered?
-        privline = message.args[1].ltrim(message.trigger_chars)
-      end
+      argline, privline = nil, nil
+      privmsg = (event == 'on_privmsg')
       
       # all plugins that have this event registered
       # sorted by priority
@@ -176,21 +173,25 @@ module Ricer::Irc
           # PRIVMSG trigger has_usage
           # Done via calling plugin.exec_plugin which
           # calls the exec_function chain of a plugin
-          if triggered && plugin.triggered_by?(privline)
+          if privmsg
             if argline.nil?
-              begin
-                argline = multiball(message, privline)
-                message.args[1] = argline
-              rescue Ricer::ExecutionException => e
-                return plugin.reply e.to_s
-              rescue StandardError => e
-                bot.log_exception(e)
-                return plugin.reply e.to_s
+              privmsg = message.is_triggered?
+              argline = message.args[1].ltrim(message.trigger_chars)
+            elsif plugin.triggered_by?(argline)
+              if privline.nil?
+                begin
+                  privline = message.args[1] = multiball(message, argline)
+                rescue Ricer::ExecutionException => e
+                  return plugin.reply e.to_s
+                rescue StandardError => e
+                  bot.log_exception(e)
+                  return plugin.reply e.to_s
+                end
               end
+              plugin.exec_plugin
             end
-            plugin.exec_plugin
           end
-          return nil unless message.unprocessed? 
+          return nil if message.processed? 
         end # .connector_supported?
       end # .plugins_for_event
       nil
@@ -246,7 +247,6 @@ module Ricer::Irc
       next_message.plugin = next_plugin
       nextline = pipecommand_parser(next_message, nextline)
       next_message.args[1] = nextline
-#      Ricer::Thread.current[:ricer_message] = message
       message.add_chainline(next_message)
     end
     
@@ -270,7 +270,6 @@ module Ricer::Irc
     def get_multiplug(line)
       bot.plugins.each do |plugin|
         if plugin.triggered_by?(line)
-          #line.replace(line.substr_from(line)||'')
           return plugin
         end
       end

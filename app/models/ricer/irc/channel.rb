@@ -1,5 +1,6 @@
 # t.integer :server_id
 # t.string  :name
+# t.string  :password
 # t.string  :triggers,    :default => nil,   :null => true,  :length => 4
 # t.integer :locale_id,   :default => 1,     :null => false
 # t.integer :timezone_id, :default => 1,     :null => false

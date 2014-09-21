@@ -2,20 +2,27 @@ module Ricer::Plugins::Channel
   class Join < Ricer::Plugin
     
     trigger_is :join
-    permission_is :halfop
     has_priority 70
-    
-    has_setting name: :autojoin, type: :boolean, scope: :channel, default: true
 
-    has_usage :execute_already_there, '<joined_channel>'
+    permission_is :halfop
+    
+    has_setting name: :autojoin, type: :boolean, scope: :channel, permission: :operator, default: true
+
+    has_usage :execute_already_there, '<joined_channel>', :allow_trailing => true 
     def execute_already_there(channel)
       rply :err_already_joined
     end
+    
+    def plugin_init
+      @passwords = {}
+    end
 
     has_usage '<channel_name>'
-    def execute(channel_name)
+    has_usage '<channel_name> <password>'
+    def execute(channel_name, password=nil)
+      @passwords[channel_name.downcase] = password if password
       rply :msg_trying_to_join
-      server.connection.send_join(current_message, channel_name)
+      server.connection.send_join(current_message, channel_name, password)
     end
     
     # Bootup autojoins
@@ -29,7 +36,20 @@ module Ricer::Plugins::Channel
     
     # Re-enable autojoin
     def on_join
+      update_password(channel)
       save_channel_setting(channel, :autojoin, true)
+    end
+    
+    def update_password(channel)
+      if password = @passwords[channel.name.downcase]
+        if (password != channel.password)
+          channel.password = password
+          channel.save!
+          @passwords.delete(channel.name.downcase)
+          password = 'iseuhgs9hg'
+          bot.log_info("Password for #{channel.name} has been updated.")
+        end
+      end
     end
     
     # Disable autojoin on a ban

@@ -26,8 +26,6 @@ module Ricer
     def server; current_message.server; end
     def channel; current_message.channel; end
     def args; current_message.args; end
-    def argv; current_message.privmsg_args; end
-    def argc; current_message.privmsg_args.length; end
     def line; args[1]; end
     def privmsg_line; current_message.privmsg_line; end
     def argline

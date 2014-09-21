@@ -9,24 +9,24 @@ module Ricer::Irc
     def hierarchical?; @hierarchic; end
     def authenticated=(bool); @authenticated = bool; end 
 
-    PUBLIC =        new(priv:'p', symbol:'',  char:'',  bit:0x0000,  :name => :public,        :modeable => false, :hierarchic => true,  :authenticated => true)
-    REGISTERED =    new(priv:'r', symbol:'',  char:'',  bit:0x0001,  :name => :registered,    :modeable => false, :hierarchic => true,  :authenticated => true)
-    AUTHENTICATED = new(priv:'l', symbol:'',  char:'',  bit:0x0002,  :name => :authenticated, :modeable => false, :hierarchic => true,  :authenticated => true)
-    VOICE =         new(priv:'v', symbol:'+', char:'v', bit:0x0004,  :name => :voice,         :modeable => true,  :hierarchic => true,  :authenticated => true)
-    HALFOP =        new(priv:'h', symbol:'%', char:'h', bit:0x0008,  :name => :halfop,        :modeable => true,  :hierarchic => true,  :authenticated => true)
-    OPERATOR =      new(priv:'o', symbol:'@', char:'o', bit:0x0010,  :name => :operator,      :modeable => true,  :hierarchic => true,  :authenticated => true)
-    MODERATOR =     new(priv:'m', symbol:'',  char:'',  bit:0x0020,  :name => :moderator,     :modeable => true,  :hierarchic => false, :authenticated => true)
-    STAFF =         new(priv:'s', symbol:'',  char:'',  bit:0x0040,  :name => :staff,         :modeable => true,  :hierarchic => false, :authenticated => true)
-    ADMIN =         new(priv:'a', symbol:'',  char:'',  bit:0x0080,  :name => :admin,         :modeable => true,  :hierarchic => false, :authenticated => true)
-    FOUNDER =       new(priv:'f', symbol:'~', char:'~', bit:0x0100,  :name => :founder,       :modeable => true,  :hierarchic => true,  :authenticated => true)
-    IRCOP =         new(priv:'i', symbol:'!', char:'!', bit:0x0200,  :name => :ircop,         :modeable => true,  :hierarchic => true,  :authenticated => true)
-    OWNER  =        new(priv:'x', symbol:'',  char:'',  bit:0x0400,  :name => :owner,         :modeable => true,  :hierarchic => false, :authenticated => true)
-    RESPONSIBLE =   new(priv:'y', symbol:'',  char:'',  bit:0x0800,  :name => :responsible,   :modeable => false, :hierarchic => false, :authenticated => true)
+    PUBLIC =        new(priv:'p', symbol:'',  char:'',  bit:0x0000,  :name => :public,        :modeable => false, :hierarchic => true,  :authenticated => false)
+    REGISTERED =    new(priv:'r', symbol:'',  char:'',  bit:0x0001,  :name => :registered,    :modeable => false, :hierarchic => true,  :authenticated => false)
+    AUTHENTICATED = new(priv:'l', symbol:'',  char:'',  bit:0x0002,  :name => :authenticated, :modeable => false, :hierarchic => true,  :authenticated => false)
+    VOICE =         new(priv:'v', symbol:'+', char:'v', bit:0x0004,  :name => :voice,         :modeable => true,  :hierarchic => true,  :authenticated => false)
+    HALFOP =        new(priv:'h', symbol:'%', char:'h', bit:0x0008,  :name => :halfop,        :modeable => true,  :hierarchic => true,  :authenticated => false)
+    OPERATOR =      new(priv:'o', symbol:'@', char:'o', bit:0x0010,  :name => :operator,      :modeable => true,  :hierarchic => true,  :authenticated => false)
+    MODERATOR =     new(priv:'m', symbol:'',  char:'',  bit:0x0020,  :name => :moderator,     :modeable => true,  :hierarchic => false, :authenticated => false)
+    STAFF =         new(priv:'s', symbol:'',  char:'',  bit:0x0040,  :name => :staff,         :modeable => true,  :hierarchic => false, :authenticated => false)
+    ADMIN =         new(priv:'a', symbol:'',  char:'',  bit:0x0080,  :name => :admin,         :modeable => true,  :hierarchic => false, :authenticated => false)
+    FOUNDER =       new(priv:'f', symbol:'~', char:'~', bit:0x0100,  :name => :founder,       :modeable => true,  :hierarchic => true,  :authenticated => false)
+    IRCOP =         new(priv:'i', symbol:'!', char:'!', bit:0x0200,  :name => :ircop,         :modeable => true,  :hierarchic => true,  :authenticated => false)
+    OWNER  =        new(priv:'x', symbol:'',  char:'',  bit:0x0400,  :name => :owner,         :modeable => true,  :hierarchic => false, :authenticated => false)
+    RESPONSIBLE =   new(priv:'y', symbol:'',  char:'',  bit:0x0800,  :name => :responsible,   :modeable => false, :hierarchic => false, :authenticated => false)
     ALL = [ PUBLIC, REGISTERED, AUTHENTICATED, VOICE, HALFOP, OPERATOR, MODERATOR, STAFF, ADMIN, FOUNDER, IRCOP, OWNER, RESPONSIBLE ]
     
     def self.all_symbols
       back = ''
-      ALL.each do |p|;  back += p.symbol; end
+      ALL.each do |p|; back += p.symbol; end
       back
     end
       
@@ -38,10 +38,11 @@ module Ricer::Irc
       I18n.t("ricer.irc.permission.#{self.name}")
     end
     
-    def display
-      out = ''; bits = self.all_bits
+    def display(respect_auth=REGISTERED)
+      out = '';
+      bits = self.all_bits(respect_auth)
       ALL.each do |p|
-        if (p.bit & bits) > 0
+        if ((p.bit & bits) > 0) || (p.bit == 0)
           out += "\x02#{p.priv}\x02"
         else #elsif (p.bit & self.bit) > 0
           out += p.priv
@@ -135,38 +136,32 @@ module Ricer::Irc
       self.class.by_permission(permission.bits & self.bits, self.authenticated)
     end
 
-    # def -(permission)
-      # self.by_permission(permission.bit & self.bit)
-    # end
-    
     def bits
-      sumbits = 0
-      ALL.map do |p|
-        sumbits |= p.bit if self.bit >= p.bit
-      end
-      sumbits
+      sumbits = 0; ALL.map{|p| sumbits |= p.bit if self.bit >= p.bit }; sumbits
     end
     
     def hierarchic_bits(respect_auth=REGISTERED)
       sumbits = 0
-      ALL.map do |p|; sumbits += p.bit if (self.bit >= p.bit) && p.hierarchic; end
-      sumbits &= respect_auth.hierarchic_bits(nil) if respect_auth && (!self.authenticated)
+      ALL.map{|p| sumbits += p.bit if (self.bit >= p.bit) && p.hierarchic }
+      sumbits &= respect_auth.hierarchic_bits(nil) if (respect_auth) && (!self.authenticated)
       sumbits
     end
+
     def group_bits(respect_auth=REGISTERED)
       return 0 if respect_auth && (!self.authenticated)
       sumbits = 0
-      ALL.map do |p|; sumbits += p.bit if (self.bit >= p.bit) && (!p.hierarchic); end
+      ALL.map{|p| sumbits += p.bit if(self.bit >= p.bit)&&(!p.hierarchic)}
       sumbits
     end
-    def all_bits(respect_auth=false)
+
+    def all_bits(respect_auth=REGISTERED)
       hierarchic_bits(respect_auth) | group_bits(respect_auth)
     end
     
     def has_permission?(permission, respect_auth=REGISTERED)
       permission = PUBLIC if permission.nil?
-      hierarchic_passed = self.hierarchic_bits(respect_auth) >= permission.hierarchic_bits
-      group_bits_passed = (permission.group_bits == 0) || ((self.group_bits(respect_auth) & permission.group_bits) == permission.group_bits)
+      hierarchic_passed = self.hierarchic_bits(respect_auth) >= permission.hierarchic_bits(nil)
+      group_bits_passed = (permission.group_bits == 0) || ((self.group_bits(respect_auth) & permission.group_bits(nil)) == permission.group_bits)
       hierarchic_passed && group_bits_passed
     end
 

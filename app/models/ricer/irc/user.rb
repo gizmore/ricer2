@@ -118,12 +118,8 @@ module Ricer::Irc
     
     # Check for channel against other permission object 
     def has_channel_permission?(channel, permission)
-      chanperm_for(channel).has_permission?(permission)
-    end
-
-    # Check for channel against permission privchar (prlvhosmafixy)
-    def has_channel_permission_char?(channel, permchar)
-      has_channel_permission?(channel, Ricer::Irc::Permission.by_char(permchar))
+      perm = chanperm_for(channel)
+      perm.permission.has_permission?(permission, perm.channel_permission)
     end
     
     ##########################
@@ -152,9 +148,9 @@ module Ricer::Irc
     end
     
     def hostmask=(hostmask)
-      if @hostmask != hostmask
+      if hostmask && (@hostmask != hostmask)
         @hostmask = hostmask
-        logout!
+        logout! if @authenticated
       end
       hostmask
     end
@@ -183,7 +179,7 @@ module Ricer::Irc
     end
 
     def authenticated?; @authenticated == true; end
-    def registered?; self.hashed_password != nil; end
+    def registered?; !!self.hashed_password; end
     
     def password=(new_password)
       first_time = !self.registered?

@@ -8,8 +8,6 @@ module Ricer::Plugins::Rice
     has_priority 1 # We have to be called first!
     
     def core_plugin?; true; end
-
-    # We have to be called first!
     
     def ricer_on_server_handshake
       bot.log_debug "Ricer::Plugins::Rice::Connect.ricer_on_server_handshake()"
@@ -52,14 +50,9 @@ module Ricer::Plugins::Rice
       # Every privmsg origins from a user
       current_message.sender = create_user(sender_nickname)
       # And maybe belongs to a channel
-      unless current_message.receiver = server.load_channel(current_message.args[0])
-        # XXX: THIS IS NOT VERY CLEAN?
-        current_message.args[1].ltrim!('.,!@$;')
-      end
-      
-      # Set the hostmask
-#      current_message.sender.hostmask = current_message.prefix
-
+      current_message.receiver = server.load_channel(current_message.args[0])
+      # Set the hostmask for security reasons
+      current_message.sender.hostmask = current_message.hostmask
       # Else it belongs to bot itself
 #     current_message.receiver = bot if message.receiver.nil?
     end

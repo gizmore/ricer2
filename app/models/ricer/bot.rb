@@ -97,8 +97,7 @@ module Ricer
       I18n.reload!
       map.validate_plugins!
       sort_plugins
-      # puts @plugins.collect{|p| "#{p.plugin_name}(#{p.subcommand_depth}): #{p.trigger}" }
-      # byebug
+      #puts @plugins.collect{|p| "#{p.plugin_name}(#{p.subcommand_depth}): #{p.trigger}" }; byebug
       @plugins
     end
     
@@ -149,11 +148,7 @@ module Ricer
         Ricer::Locale.all.collect{|locale|locale.iso.to_sym}
       )
     end
-    
-    # def plugin_by_id(id)
-      # Ricer::Plugin.by_id(id)
-    # end
-#     
+
     def get_connector(symbol)
       plugin_map.get_connector(symbol)
     end

@@ -126,22 +126,23 @@ module Ricer::Plugins::Purple
         return unless message.reply_to.is_a?(Ricer::Irc::User)
         @server.ricer_replies_to(message)
         text = message.reply_data
-        text = text.html_markup
+        text = html_markup(text)
         @account.send_im(message.reply_to.name, text)
  #       @frame.sent
       rescue => e
         bot.log_info("Disconnect from #{server.hostname}: #{e.message}")
         bot.log_exception e
         @connected = false
-        disconnect(message)
+        # disconnect(message)
       end
       nil
     end
     
     def html_markup(text)
       text.
-        gsub(/\x02([^\x02]+)\x02/, '<b>$1</b>').
-        gsub(/\x03([^\x03]+)\x03/, '<i>$1</i>')
+        gsub("(?:\x02\x02|\x03\x03)", '').
+        gsub(/\x02([^\x02]+)\x02/) { "<b>#{$1}</b>" }.
+        gsub(/\x03([^\x03]+)\x03/) { "<i>#{$1}</i>" }
     end
     
     def process_event(event)

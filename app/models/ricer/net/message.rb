@@ -3,20 +3,23 @@ module Ricer::Net
     
     include Ricer::Base::Base
     
+    SCOPES_CHANNEL = [:bot, :server, :channel, :user]
+    SCOPES_PRIVATE = [:bot, :server, :user]
+    
     attr_reader :raw, :time
     
     attr_reader :pipeplugs, :pipelines
 
     attr_accessor :prefix, :server
-    attr_accessor :sender, :receiver, :command, :args # , :argline
+    attr_accessor :sender, :receiver, :command, :args
     
     attr_accessor :reply_to, :reply_prefix, :reply_data  # These are set when there is a reply for this msg generated, else all are nil
     
     attr_accessor :plugin, :commandline, :errorneous
     
-    def processed?; @processed != nil; end
-    def unprocessed?; @processed.nil?; end
-    def processed=(bool) @processed = bool ? true : nil; end;
+    def processed?; @processed; end
+    def unprocessed?; !@processed; end
+    def processed=(bool) @processed = bool ? true : false; end
     
     def reply_encoding_iso
       reply_to.nil? ?
@@ -59,6 +62,10 @@ module Ricer::Net
       message.commandline = argline
     end
     
+    def hostmask
+      prefix.rsubstr_from('@')
+    end
+    
     def is_ricer?
       is_user? && sender.is_ricer?
     end
@@ -92,14 +99,13 @@ module Ricer::Net
     end
     
     def scopes
-      return [:bot, :server, :channel, :user] if is_channel?
-      return [:bot, :server, :user]
+      is_channel? ? SCOPES_CHANNEL : SCOPES_PRIVATE
     end
     
     def is_triggered?
       return true if is_query?
-      return false unless is_channel?
-      (receiver.triggers||server.triggers).include?(privmsg_line[0])
+#      return false unless is_channel?
+      return (receiver.triggers||server.triggers).include?(privmsg_line[0])
     end
     
     def is_trigger_char?
@@ -140,18 +146,11 @@ module Ricer::Net
     end
     
     def reply_target
-      return sender if is_query?
-      return receiver
+      is_query? ? sender : receiver
     end
     
     def reply_prefix_text
-      return "#{sender.name}: " if is_channel?
-      return ''
-    end
-    
-    def privmsg_args
-      @argv ||= args[1].split(/ +/)
-      @argv
+      is_channel? ? "#{sender.name}: ": ''
     end
     
     def privmsg_line
@@ -161,14 +160,6 @@ module Ricer::Net
     #############
     ### Pipes ###
     #############
-    # def debug_pipes
-      # bot.log_puts("Chainplugs: #{@chainplugs.inspect}")
-      # bot.log_puts("Chainlines: #{@chainlines.inspect}")
-      # bot.log_puts("Pipeplugs: #{@pipeplugs.inspect}")
-      # bot.log_puts("Pipelines: #{@pipelines.inspect}")
-      # bot.log_puts("")
-    # end
-    
     def forked!
       @forked = true
     end
@@ -208,17 +199,6 @@ module Ricer::Net
       self
     end
     
-    # def start_capture
-      # @capture = true
-    # end
-#     
-    # def stop_capture
-      # @capture = false
-      # back = @pipeout.rtrim(lib.comma)
-      # @pipeout = ''
-      # back
-    # end
-    
     def chain_message
       return nil if (@errorneous) || (@chainplugs.nil?) || (@chainplugs.length == 0)
       bot.log_debug("Polling next chained command: #{@chainplugs[0].args[1]}")
@@ -250,8 +230,6 @@ module Ricer::Net
     end
     
     def pipe!
-      # Capture catch
-#      (@pipeout += text + comma) and (return true) if @capture
       plugin = @pipeplugs.shift
       line = @pipelines.shift + ' ' + @pipeout
       self.args[1] = line.rtrim("\n")

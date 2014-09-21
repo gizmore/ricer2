@@ -4,19 +4,12 @@ module Ricer::Base::Permissions
     scope.in_scope?(current_message.scope)
   end
         
-  def has_permission?(trigger_permission)
-    current_permission.has_permission?(trigger_permission, respect_permission)
-  end
-
-  def respect_permission
-    return Ricer::Irc::Permission::REGISTERED if current_message.is_query?
-    return current_message.sender.chanperm_for(current_message.channel).permission
-  end
-  
-  def current_permission
+  def has_permission?(permission)
     sender = current_message.sender
-    return sender.permission if current_message.is_query?
-    return sender.chanperm_for(current_message.channel).merged_permission
+    channel = current_message.channel
+    channel ? 
+      sender.has_channel_permission?(channel, permission) :       
+      sender.has_permission?(permission)
   end
 
 end

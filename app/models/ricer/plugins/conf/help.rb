@@ -35,7 +35,7 @@ module Ricer::Plugins::Conf
     def collect_groups()
       grouped = {}
       help_plugins.each do |plugin|
-        if plugin.in_scope? && plugin.has_permission?
+        if plugin.in_scope?(plugin.scope) && plugin.has_permission?(plugin.trigger_permission)
           m = plugin.plugin_module
           grouped[m] = [] if grouped[m].nil?
           grouped[m].push(plugin.trigger)

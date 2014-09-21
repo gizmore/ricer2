@@ -13,6 +13,34 @@
 
 ActiveRecord::Schema.define(version: 20140920011609) do
 
+  create_table "abbo_items", force: true do |t|
+    t.integer "item_id",   null: false
+    t.string  "item_type", null: false, charset: "ascii", collation: "ascii_bin"
+  end
+
+  create_table "abbo_targets", force: true do |t|
+    t.integer "target_id",   null: false
+    t.string  "target_type", null: false, charset: "ascii", collation: "ascii_bin"
+  end
+
+  create_table "abbonements", force: true do |t|
+    t.integer  "abbo_item_id",   null: false
+    t.integer  "abbo_target_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "abbonements", ["abbo_item_id"], name: "abbo_item_index", using: :btree
+  add_index "abbonements", ["abbo_target_id"], name: "abbo_target_index", using: :btree
+
+  create_table "binlogs", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "channel_id"
+    t.string   "input"
+    t.string   "output"
+    t.datetime "created_at"
+  end
+
   create_table "bots", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -21,13 +49,14 @@ ActiveRecord::Schema.define(version: 20140920011609) do
   create_table "channels", force: true do |t|
     t.integer  "server_id"
     t.string   "name"
+    t.string   "password",    limit: 64
     t.string   "triggers"
-    t.integer  "locale_id",   default: 1,     null: false
-    t.integer  "timezone_id", default: 1,     null: false
+    t.integer  "locale_id",              default: 1,     null: false
+    t.integer  "timezone_id",            default: 1,     null: false
     t.integer  "encoding_id"
-    t.boolean  "colors",      default: true
-    t.boolean  "decorations", default: true
-    t.boolean  "online",      default: false, null: false
+    t.boolean  "colors",                 default: true
+    t.boolean  "decorations",            default: true
+    t.boolean  "online",                 default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -49,12 +78,57 @@ ActiveRecord::Schema.define(version: 20140920011609) do
   add_index "chanperms", ["channel_id"], name: "chanperms_channel_id_fk", using: :btree
   add_index "chanperms", ["user_id"], name: "chanperms_user_index", using: :btree
 
+  create_table "email_confirmations", force: true do |t|
+    t.integer  "user_id", null: false
+    t.string   "email",   null: false
+    t.string   "code",    null: false
+    t.datetime "expires", null: false
+  end
+
   create_table "encodings", force: true do |t|
     t.string "iso", limit: 32, null: false, charset: "ascii", collation: "ascii_bin"
   end
 
+  create_table "feeds", force: true do |t|
+    t.integer  "user_id",                 null: false
+    t.string   "name",                    null: false
+    t.string   "url",                     null: false
+    t.string   "title"
+    t.string   "description"
+    t.integer  "updates",     default: 0, null: false
+    t.datetime "checked_at"
+    t.datetime "deleted_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "feeds", ["name"], name: "feeds_name_index", using: :btree
+  add_index "feeds", ["user_id"], name: "feeds_user_id_fk", using: :btree
+
   create_table "locales", force: true do |t|
     t.string "iso", limit: 16, null: false, charset: "ascii", collation: "ascii_bin"
+  end
+
+  create_table "note_messages", force: true do |t|
+    t.integer  "sender_id",   null: false
+    t.integer  "receiver_id"
+    t.string   "message",     null: false
+    t.datetime "read_at"
+    t.datetime "created_at",  null: false
+  end
+
+  add_index "note_messages", ["receiver_id"], name: "note_receiver_index", using: :btree
+  add_index "note_messages", ["sender_id"], name: "note_sender_index", using: :btree
+
+  create_table "pile_records", force: true do |t|
+    t.string   "url",                         null: false
+    t.string   "lang",       default: "text"
+    t.string   "title"
+    t.text     "content"
+    t.integer  "size"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "plugins", force: true do |t|
@@ -63,6 +137,53 @@ ActiveRecord::Schema.define(version: 20140920011609) do
     t.integer  "revision",   limit: 3,  default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "poll_answers", force: true do |t|
+    t.integer  "user_id",    null: false
+    t.integer  "option_id",  null: false
+    t.datetime "created_at", null: false
+  end
+
+  create_table "poll_options", force: true do |t|
+    t.integer "question_id",           null: false
+    t.string  "choice"
+    t.integer "int_value",   limit: 1
+  end
+
+  create_table "poll_questions", force: true do |t|
+    t.integer  "user_id",              null: false
+    t.integer  "poll_type",  limit: 1, null: false
+    t.string   "text",                 null: false
+    t.datetime "closed_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "profile_entries", force: true do |t|
+    t.integer  "user_id",    null: false
+    t.integer  "age"
+    t.string   "gender"
+    t.date     "birthdate"
+    t.string   "country"
+    t.string   "about"
+    t.string   "phone"
+    t.string   "mobile"
+    t.string   "icq"
+    t.string   "skype"
+    t.string   "jabber"
+    t.string   "threema"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "profile_entries", ["user_id"], name: "profile_user_index", using: :btree
+
+  create_table "quotes", force: true do |t|
+    t.integer  "user_id",    null: false
+    t.integer  "channel_id"
+    t.text     "message",    null: false
+    t.datetime "created_at"
   end
 
   create_table "server_nicks", force: true do |t|
@@ -165,6 +286,13 @@ ActiveRecord::Schema.define(version: 20140920011609) do
 
   add_foreign_key "chanperms", "channels", name: "chanperms_channel_id_fk", dependent: :delete
   add_foreign_key "chanperms", "users", name: "chanperms_user_id_fk", dependent: :delete
+
+  add_foreign_key "feeds", "users", name: "feeds_user_id_fk"
+
+  add_foreign_key "note_messages", "users", name: "note_receivers", column: "receiver_id"
+  add_foreign_key "note_messages", "users", name: "note_senders", column: "sender_id"
+
+  add_foreign_key "profile_entries", "users", name: "profile_entries_user_id_fk", dependent: :delete
 
   add_foreign_key "server_nicks", "servers", name: "server_nicks_server_id_fk", dependent: :delete
 

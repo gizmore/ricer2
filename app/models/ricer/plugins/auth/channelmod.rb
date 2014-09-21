@@ -24,13 +24,16 @@ module Ricer::Plugins::Auth
     def execute_show(channel)
        execute_show_u(channel, user)
     end
+
     def execute_show_u(channel, user)
       p = user.chanperm_for(channel)
-      rply :msg_show_chan,
+      rply(:msg_show_chan,
         user: user.displayname,
-        bitstring: user.chanperm_for(channel).display,
+        server: server.displayname,
         channel: channel.displayname,
-        server: server.displayname
+        chanmode: p.chanmode.display,
+        bitstring: p.permission.display,
+      )
     end
 
     def execute_change_u(channel, user, permission)

@@ -5,7 +5,6 @@ module Ricer::Plugins::Convert
 
     has_usage '<..text..>'
     def execute(text)
-      byebug
       reply URI::encode(text)
     end
 

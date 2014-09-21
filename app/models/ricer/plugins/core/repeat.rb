@@ -6,19 +6,18 @@ module Ricer::Plugins::Core
     
     bruteforce_protected
     
-    has_usage '<integer[min=1,max=20]> <plugin>'
-    has_usage '<integer[min=1,max=20]> <plugin> <..parameters..>'
+    has_usage '<integer[min=1,max=25]> <plugin>'
+    has_usage '<integer[min=1,max=25]> <plugin> <..parameters..>'
+
     def execute(repetitions, plugin, parameters=nil)
-      Ricer::Thread.execute do
+      Ricer::Thread.execute{
         line = plugin.trigger
         line += " #{parameters}" if parameters
         current_message.args[1] = line
-#        current_message.start_capture
         repetitions.times {
           plugin.exec_plugin
         }
-      end
+      }
     end
-    
   end
 end
