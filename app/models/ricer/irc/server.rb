@@ -180,7 +180,8 @@ module Ricer::Irc
             elsif plugin.triggered_by?(argline)
               if privline.nil?
                 begin
-                  privline = message.args[1] = multiball(message, argline)
+                  privline = true
+                  message.args[1] = multiball(message, message.args[1])
                 rescue Ricer::ExecutionException => e
                   return plugin.reply e.to_s
                 rescue StandardError => e

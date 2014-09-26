@@ -3,6 +3,10 @@ en:
     plugins:
       fun:
 
+        backtrack:
+          description: 'Print the backtrack distri motto.'
+          msg_backtrack: 'The quieter you become, the more you are able to hear.'
+
         badjoke:
           description: 'You can use this function when maddinw makes any joke.'
           badum: 'Ba dum! tssss...'
