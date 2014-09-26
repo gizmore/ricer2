@@ -14,6 +14,7 @@ module Ricer::Plugins::Art
       Ricer::Thread.execute do
         text = Shellwords.escape(text)
         response = `cowsay -f #{get_setting(:image)} -- #{text}`
+        return rply :err_no_cowsay if response.nil?
         reply response
       end
     end

@@ -111,8 +111,15 @@ module Ricer::Plugins::Rice
         unless username.empty?
           user = create_user(Ricer::Irc::Nickname.nickname_from_prefix(username))
           user.ricer_on_joined_channel(channel, Ricer::Irc::Permission.bits_from_nickname(username))
+          user.chanperm_for(channel).chanmode.set_mode(mode_symbols_from_username(username))
         end
       end
+    end
+    
+    def mode_symbols_from_username(username)
+      all_symbols = Ricer::Irc::Permission.all_symbols
+      regular_exp = Regexp.new("[^#{all_symbols}]")
+      username.gsub(regular_exp, '')
     end
     
     def on_433

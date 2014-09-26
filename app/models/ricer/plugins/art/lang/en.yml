@@ -5,6 +5,7 @@ en:
         
         cowsay:
           description: 'Use the linux cowsay command to print ascii arts with a message. Use "$TRIGGER$confu $COMMAND$ image [<value>]" to change your default ascii art picture.'
+          err_no_cowsay: 'The cowsay command seems to be missing.'
 
         fu:
           description: 'Display wonderful creative artwork by SceneCAT.M0D.'

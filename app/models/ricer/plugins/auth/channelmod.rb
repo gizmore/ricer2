@@ -32,7 +32,7 @@ module Ricer::Plugins::Auth
         server: server.displayname,
         channel: channel.displayname,
         chanmode: p.chanmode.display,
-        bitstring: p.permission.display,
+        bitstring: p.permission.display(p.channel_permission),
       )
     end
 
