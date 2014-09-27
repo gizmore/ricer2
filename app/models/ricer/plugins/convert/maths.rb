@@ -26,11 +26,11 @@ module Ricer::Plugins::Convert
     MATH_CONSTANTS = {
       'e' => Math::E,
       'pi' => Math::PI,
-      'phi' => 1+PHI,  # Golden ratio
       'phis' => 1-PHI, # phi short
       'phil' => PHI,   # phi long
       'phia' => 2.40,  # Golden arc short
       'phib' => 3.88,  # Golden arc long
+      'phi' => 1+PHI,  # Golden ratio
     } 
     
     MATH_FUNCTIONS = [
