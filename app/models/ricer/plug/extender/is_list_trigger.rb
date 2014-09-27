@@ -102,9 +102,7 @@ module Ricer::Plug::Extender::IsListTrigger
       end
       
       def visible_relation(relation)
-        byebug
         return relation.visible(user) if relation.respond_to?(:visible)
-        byebug
         relation
       end
       

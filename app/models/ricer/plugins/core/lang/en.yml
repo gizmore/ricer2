@@ -23,3 +23,6 @@ en:
           err_paste_failed: 'Uploading the paste failed: %{reason}.'
           msg_pasted_it: 'I have pasted "%{title}" to %{url} - %{count} lines / %{size} - cxg.de is hosted by byte.'
           msg_pasted_this: 'I have flushed and pasted your response queue to: %{url} - %{size} with %{count} lines - (cxg.de is hosted by byte)'
+          
+        tee:
+          description: 'Direct output to multiple targets at once. *:* for all known targets. channelmask|usermask:servermask|connectors.'
