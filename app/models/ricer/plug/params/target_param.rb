@@ -39,12 +39,12 @@ module Ricer::Plug::Params
       
       patterns.each do |pattern|
         if dc
-          channels.where('server_id IN (?)', servers).where('name LIKE ?', pattern).each do |channel|
+          channels.where('server_id IN (?) AND name LIKE ?', servers, pattern).each do |channel|
             targets.push(channel) unless targets.include?(channel)
           end
         end
         if du
-          users.where('server_id IN (?)', servers).where('nickname LIKE ?', pattern).each do |user|
+          users.where('server_id IN (?) AND nickname LIKE ?', servers, pattern).each do |user|
             targets.push(user) unless targets.include?(user)
           end
         end
