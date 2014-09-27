@@ -15,11 +15,11 @@ module Ricer::Plug::Params
       
       @server_param ||= ServerParam.new(options)
       
-      channels = Ricer::Irc::Channel
       users = Ricer::Irc::User
+      channels = Ricer::Irc::Channel
       if ((o = online_option) != nil)
-        channels = channels.where(:online => o)
         users = users.where(:online => o)
+        channels = channels.where(:online => o)
       end
       
       targets, servers, patterns = [], [], []
@@ -33,20 +33,18 @@ module Ricer::Plug::Params
         patterns.push(_pattern)
       end
       
-      byebug
-      
       server_args = message.server.id.to_s if server_args.empty? && message
 
       servers = @server_param.convert_in!(server_args.ltrim(','), message)
       
       patterns.each do |pattern|
         if dc
-          channels.where(:server => servers).where('name LIKE ?', pattern).each do |channel|
+          channels.where('server_id IN (?)', servers).where('name LIKE ?', pattern).each do |channel|
             targets.push(channel) unless targets.include?(channel)
           end
         end
         if du
-          users.where(:server => servers).where('nickname LIKE ?', pattern).each do |user|
+          users.where('server_id IN (?)', servers).where('nickname LIKE ?', pattern).each do |user|
             targets.push(user) unless targets.include?(user)
           end
         end

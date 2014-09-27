@@ -13,7 +13,6 @@ module Ricer::Plug::Params
     
     def convert_in!(input, message)
       input = input.gsub(/\s+/, '').gsub(';', ',')
-      # return self.servers if ",#{input},".index(",*,")
       servers = []
       connectors = connector_options
       input.split(',').each do |arg|
