@@ -78,7 +78,7 @@ module Ricer::Irc
     
     def softhype(string)
       return string if string.length < 2
-      i = bot.rand.rand(1, string.length-1)
+      i = bot.rand.rand(1..string.length-1)
       string[0..i] + "\xC2\xAD" + string[i..-1]
     end
     

@@ -149,6 +149,7 @@ module Ricer::Irc
     
     def hostmask=(hostmask)
       if hostmask && (@hostmask != hostmask)
+        bot.log_info("Logged you out because of your hostmask #{@hostmask} != #{hostmask}")
         @hostmask = hostmask
         logout! if @authenticated
       end

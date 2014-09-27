@@ -1,5 +1,12 @@
 namespace :ricer do
   
+  desc "Install and launch the ricer bot."
+  task(:install => :environment) do
+    Rake::Task['db:migrate'].invoke
+    Rake::Task['db:seed'].invoke
+    Rake::Task['ricer:start'].invoke
+  end
+  
   desc "Startup the ricer bot."
   task(:start => :environment) do
     
