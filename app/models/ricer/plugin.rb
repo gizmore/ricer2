@@ -56,10 +56,11 @@ module Ricer
     def plugin_name; @_plugin_name ||= self.class.name.split('::').slice(-2, 2).join('/'); end
     def plugin_shortname; @_short_name ||= self.class.name.rsubstr_from('::').undescore.to_sym; end
 
-    def plugin_init; end
-    def plugin_load; end
-    def plugin_reload; end
-    def plugin_install; end
+    def plugin_install; end # before init, depending on revision
+    def plugin_init; end # once, on initial loading/reloading
+    def plugin_load; end # once, first load 
+    def plugin_reload; end # always, on reload
+    def plugin_loaded; end  # always, after loaded
     
     def short_class_name; self.class.short_class_name; end
     def self.short_class_name; name.split('::')[-1]; end

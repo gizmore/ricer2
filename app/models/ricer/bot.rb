@@ -134,7 +134,7 @@ module Ricer
     end
 
     def loaded_plugins
-      each_plugins{|plugin| plugin.plugin_load }
+      each_plugins{|plugin| plugin.plugin_loaded }
     end
     
     def reloaded_plugins

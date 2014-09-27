@@ -33,6 +33,8 @@ module Ricer::Plug::Params
         patterns.push(_pattern)
       end
       
+      byebug
+      
       server_args = message.server.id.to_s if server_args.empty? && message
 
       servers = @server_param.convert_in!(server_args.ltrim(','), message)

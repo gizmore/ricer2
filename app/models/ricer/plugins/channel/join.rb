@@ -13,7 +13,7 @@ module Ricer::Plugins::Channel
       rply :err_already_joined
     end
     
-    def plugin_load
+    def plugin_loaded
       @passwords = {}
     end
 

@@ -281,7 +281,7 @@ module Ricer::Irc
     ### Cache ###
     #############
     def load_user(nickname)
-      unless user = Ricer::Irc::User.global_cache[nickname.downcase]
+      unless user = Ricer::Irc::User.global_cache["#{nickname.downcase}:#{self.id}"]
         user = Ricer::Irc::User.where({server_id: self.id, nickname: nickname}).first
       end
       user

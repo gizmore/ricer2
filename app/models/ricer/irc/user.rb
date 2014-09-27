@@ -28,7 +28,7 @@ module Ricer::Irc
     
     with_global_orm_mapping
     def should_cache?; self.online == true; end
-    def global_cache_key; self.nickname.downcase; end
+    def global_cache_key; "#{self.nickname.downcase}:#{self.server_id}"; end
     
     def name; self.nickname; end
     def quietname; Ricer::Irc::Lib.instance.no_highlight(self.nickname); end
@@ -153,7 +153,7 @@ module Ricer::Irc
         @hostmask = hostmask
         logout! if @authenticated
       end
-      hostmask
+      self
     end
 
     ######################
