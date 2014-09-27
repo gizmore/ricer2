@@ -73,7 +73,7 @@ module Ricer::Plugins::Convert
       # Hacker Checker after some letter replacement, some functions will slip through
       term_valid?(term) or return rply :err_forbidden
       # Exec!
-      v[0] = BigDecimal.new(eval(term)) # Probably an exception, but ricer will catch ;)
+      v[0] = BigDecimal.new(eval(term), get_setting(:precision)) # Probably an exception, but ricer will catch ;)
       # Reply the result :)
       reply v[0].to_s.rtrim('0').rtrim('.')
     end
