@@ -27,10 +27,10 @@ module Ricer::Plug::Params
           end
         end
       end
-      servers.sort do |a,b|
-        return 1 if a.id == message.server.id rescue 0
-        return 0
-      end
+      # servers.sort do |a,b|
+        # return 1 if a.id == message.server.id rescue 0
+        # return 0
+      # end
       if o = online_option
         servers.reject!{|s| s.online != o }
       end
