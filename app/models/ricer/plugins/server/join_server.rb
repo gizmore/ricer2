@@ -40,7 +40,7 @@ module Ricer::Plugins::Server
         server.online = true
         server.save!
         server.global_cache_add
-        user.localize!.send_privmsg(t('msg_connected',
+        user.localize!.send_privmsg(t(:msg_connected,
           server: server.displayname,
           nickname: server.nickname.next_nickname,
           superword:generate_superword
@@ -49,7 +49,10 @@ module Ricer::Plugins::Server
     end
     
     def ricer_on_connection_error
+      bot.log_debug("JoinServer#ricer_on_connection_error")
       server.try_more = false
+      user = server.remove_instance_variable('@just_added_by')
+      user.localize!.send_message(t(:err_connecting, server: server.displayname))
     end
     
     def generate_superword

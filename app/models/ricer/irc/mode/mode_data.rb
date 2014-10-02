@@ -118,8 +118,10 @@ module Ricer::Irc::Mode
     end 
 
     def self.detect_cargmodes(server, chanmodes)
-      chanmodes.each_char do |c|
-        detected(server).add_cargmode(c)
+      if chanmodes
+        chanmodes.each_char do |c|
+          detected(server).add_cargmode(c)
+        end
       end
     end
     

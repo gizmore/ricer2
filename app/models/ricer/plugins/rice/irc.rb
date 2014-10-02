@@ -25,6 +25,7 @@ module Ricer::Plugins::Rice
         connected
       rescue => e
         bot.log_exception(e)
+        false
       end
     end
     
@@ -46,6 +47,7 @@ module Ricer::Plugins::Rice
       @frame = Ricer::Net::Queue::Frame.new(server)
       send_queue
       fair_queue
+      true
     end
     
     def disconnect(message); disconnect!(message||fake_message) if @socket; end
