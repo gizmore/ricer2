@@ -11,5 +11,11 @@ module Ricer::Irc::Mode
       @permission.authenticated = boolean
     end
     
+    def mode_changed
+      @permission = Ricer::Irc::Permission.by_permission(permissions_from_mode)
+      bot.log_debug("ChanMode#mode_changed: #{@permission.display}")
+      self
+    end
+    
   end
 end

@@ -289,7 +289,7 @@ module Ricer::Irc
     
     def load_channel(channel_name)
       return nil unless Ricer::Irc::Lib.instance.channelname_valid?(channel_name)
-      unless channel = Ricer::Irc::Channel.global_cache[channel_name.downcase]
+      unless channel = Ricer::Irc::Channel.global_cache["#{channel_name.downcase}:#{self.id}"]
         channel = Ricer::Irc::Channel.where(:name => channel_name, :server_id => self.id).first
       end
       channel

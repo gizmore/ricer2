@@ -28,9 +28,14 @@ module Ricer::Plugins::Rice
       process_event('ricer_on_server_authenticated') unless server.nickname.can_authenticate?
       server.authenticate(current_message)
     end
-    
+
+
+    # irc.giz.org << :irc.giz.org 002 ricer :Your host is irc.giz.org, running version InspIRCd-2.0
     def on_002
-      bot.log_debug('Connect.on_002: '+current_message.raw)
+      Ricer::Irc::Mode::ModeData.detect_server(server, args[1])
+    end
+    def on_004
+      Ricer::Irc::Mode::ModeData.detect_004(server, args)
     end
     
     def on_nick
@@ -114,6 +119,44 @@ module Ricer::Plugins::Rice
           user.chanperm_for(channel).chanmode.set_mode(mode_symbols_from_username(username))
         end
       end
+    end
+    
+    def on_mode
+      if (channel = server.load_channel(args[0]))
+        on_mode_channel(channel)
+      elsif (current_message.sender = server.load_user(args[0]))
+        on_mode_user(current_message.sender)
+      end
+    end
+    
+    # DOminiOn.german-elite.net << :gizmore!~gizmore@www.wechall.net MODE #shadowlamb +o icore4711
+    def on_mode_channel(channel)
+      bot.log_debug("Connect#on_mode_channel()")
+      nextuser,i = 2,0
+      positive = true
+      maxmodes = args[1].length
+      while i < maxmodes
+        byebug
+        if args[1][i] == '+'
+          positive = true
+        elsif args[1][i] == '-'
+          positive = false
+        else
+          mode = args[1][i]
+          user = server.load_user(args[nextuser])
+          nextuser += 1
+          if (user)
+            chanmode = user.chanperm_for(channel).chanmode
+            if positive; chanmode.set_mode(mode)
+            else; chanmode.remove_mode(mode); end
+          end
+        end
+        i += 1
+      end
+    end
+
+    def on_mode_user(user)
+      
     end
     
     def mode_symbols_from_username(username)
