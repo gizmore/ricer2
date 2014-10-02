@@ -10,6 +10,7 @@ module Ricer::Plug::Extender::KnowsHooks
   
   def call_hook(hook_name, *args)
     hooks(hook_name).each do |hook|
+      byebug
       if hook.is_a?(Symbol)
         send(hook, *args)
       else

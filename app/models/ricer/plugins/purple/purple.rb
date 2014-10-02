@@ -57,7 +57,7 @@ module Ricer::Plugins::Purple
       
       PurpleRuby.watch_connection_error do |acc, type, description| 
         puts "connection_error: #{acc.username} #{type} #{description}"
-        delegate(:watch_connection_error, acc, type, description) || false
+        delegate(:watch_connection_error, acc, type, description) || true
         #'true': auto-reconnect; 'false': do nothing
       end
       
