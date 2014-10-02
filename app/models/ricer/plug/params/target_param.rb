@@ -15,8 +15,6 @@ module Ricer::Plug::Params
       
       @server_param ||= ServerParam.new(options)
       
-      byebug
-      
       users = Ricer::Irc::User
       channels = Ricer::Irc::Channel
       if ((o = online_option) != nil)
@@ -35,10 +33,8 @@ module Ricer::Plug::Params
         patterns.push(_pattern)
       end
       
-      byebug
       server_args = message.server.id.to_s if server_args.empty? && message
 
-      byebug
       servers = @server_param.convert_in!(server_args.ltrim(','), message)
       
       patterns.each do |pattern|
