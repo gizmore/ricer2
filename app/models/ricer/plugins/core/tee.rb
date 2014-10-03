@@ -4,7 +4,7 @@ module Ricer::Plugins::Core
     trigger_is :tee
     permission_is :responsible
     
-    has_usage '<target> <..text..>'
+    has_usage '<target[online=1]> <..text..>'
     def execute(targets, text)
       targets.each do |target|
         target.send_message(text)

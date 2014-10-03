@@ -80,10 +80,14 @@ module Ricer::Plugins::Netcat
 
     def send_to(user, text)
       begin
-        user.instance_variable_get(:@ricer_netcat_socket).write(text) and return true
+        if user.online
+          user.instance_variable_get(:@ricer_netcat_socket).write(text)
+          return true
+        end
       rescue StandardError => e
-        bot.log_exception(e) and return false
+        bot.log_exception(e)
       end
+      return false
     end
     
     def send_to_all(message)
