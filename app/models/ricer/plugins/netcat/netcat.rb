@@ -16,8 +16,8 @@ module Ricer::Plugins::Netcat
       unless plugin_file_exists?('ssl/private_key.pem')
         bot.log_info("Netcat plugin generates RSA keys.")
         key = OpenSSL::PKey::RSA.new 4096
-        open plugin_file_path!('ssl/private_key.pem'), 'w' do |io| io.write key.to_pem end
-        open plugin_file_path!('ssl/public_key.pem'), 'w' do |io| io.write key.public_key.to_pem end
+        open plugin_file_path('ssl/private_key.pem'), 'w' do |io| io.write key.to_pem end
+        open plugin_file_path('ssl/public_key.pem'), 'w' do |io| io.write key.public_key.to_pem end
       end
     end
     
