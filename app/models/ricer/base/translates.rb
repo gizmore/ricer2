@@ -42,7 +42,7 @@ module Ricer::Base::Translates
     begin
       response.to_s.
         gsub('$BOT$', server.nickname.name).
-        gsub('$COMMAND$', trigger.to_s).
+        gsub('$COMMAND$', (trigger.to_s rescue '')).
         gsub('$TRIGGER$', server.triggers[0]||'')
     rescue StandardError => e
       bot.log_exception(e)

@@ -9,7 +9,7 @@ module Ricer::Plug::Params
     attr_reader :input, :value, :options
     
     def initialize(options=nil, value=nil)
-      @options = options # .reverse_merge!(DEFAULT_OPTIONS)
+      @options = (options||default_options).reverse_merge!(default_options)
       @input = @value = nil
       set(value) unless value.nil?
     end

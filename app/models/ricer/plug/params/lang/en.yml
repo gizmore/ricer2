@@ -3,6 +3,7 @@ en:
     plug:
       params:
 
+        err_ambigious: "The target parameter is ambigious."
         err_type: 'Wrong parameter type.'    
 
         boolean:
