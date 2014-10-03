@@ -3,6 +3,8 @@ module Ricer::Plugins::Websocket
     def fake_message; Ricer::Net::Message.fake_message(server); end
     def connect!
       @connected = true
+      server.online = true
+      server.save!
       EM.run {
         
         EM::WebSocket.run(:host => server.hostname, :port => server.port) do |ws|
@@ -46,7 +48,8 @@ module Ricer::Plugins::Websocket
             end
           }
         end
-      }      
+      }
+      true
     end
     
     def xlin_logout(user, message)

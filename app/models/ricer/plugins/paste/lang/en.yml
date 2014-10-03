@@ -1,0 +1,18 @@
+en:
+  ricer:
+    plugins:
+      paste:
+
+        auto_paste:
+          description: 'Automatically flush large response queues to pastebin.'
+          pasteout_title: '$BOT$ response to %{user} for %{command} at %{date}'
+          msg_autopasting: "I am uploading %{count} lines of your response queue to a pastebin."
+          msg_autopasted: 'I have uploaded your response queue to: %{url} - %{size} with %{count} lines - (cxg.de is hosted by byte)'
+
+        paste:
+          trigger: paste
+          description: "Send something to cxg.de."
+          pastebin_title: '%{user}´s paste from %{date}'
+          pastebin_content: '%{lines}'
+          err_paste_failed: 'Uploading the paste failed: %{reason}.'
+          msg_pasted_it: 'I have pasted "%{title}" to %{url} - %{count} lines / %{size} - cxg.de is hosted by byte.'

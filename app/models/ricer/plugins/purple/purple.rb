@@ -30,7 +30,7 @@ module Ricer::Plugins::Purple
       begin
         connection = violet_connection(method_args[0])
         connection.send(method_name, *method_args) if connection.respond_to?(method_name)
-      rescue Exception => e
+      rescue StandardError => e
         bot.log_exception(e)
       end
     end
@@ -80,18 +80,19 @@ module Ricer::Plugins::Purple
         puts "notification: #{type}, #{title}, #{primary}, #{secondary}"
 #        delegate(:watch_notify_message, type, title, primary, secondary)
       end
+
       mainloop
     end
     #
     # The mainloop is stepping in g_main_loop
     # This way we have no problems with threading in gtk
     def mainloop
-      Ricer::Thread.execute do |t|
-        loop do
+      Ricer::Thread.execute {
+        loop {
           sleep 0.200
           PurpleRuby.main_loop_step
-        end
-      end
+        }
+      }
     end
 
   end

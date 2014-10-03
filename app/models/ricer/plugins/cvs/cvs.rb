@@ -1,7 +1,7 @@
 module Ricer::Plugins::Cvs
   class Cvs < Ricer::Plugin
     
-    def upgrade_1; Repo.upgrade_1; Permission.upgrade_1; end
+    def upgrade_1; plugin_dir_path; Repo.upgrade_1; Permission.upgrade_1; end
 
     has_subcommand :abbo
     has_subcommand :abbos
@@ -11,7 +11,7 @@ module Ricer::Plugins::Cvs
     
     def ricer_on_global_startup
       Ricer::Thread.execute do
-        while true
+        loop do
           sleep 15.seconds
           Repo.working.each do |repo|
             check_repo repo
@@ -30,7 +30,7 @@ module Ricer::Plugins::Cvs
           repo.revision = updates[-1].revision
           repo.save!
         end
-#      rescue => e
+#      rescue StandardError => e
 #        bot.log_exception e
 #      end
     end

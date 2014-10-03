@@ -8,6 +8,7 @@ module Ricer::Irc
     
     with_global_orm_mapping
     def should_cache?; true; end
+    def global_cache_key; "#{self.user.id}:#{self.channel.id}"; end
     
     attr_reader :chanmode
     

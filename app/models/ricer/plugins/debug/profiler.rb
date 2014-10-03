@@ -1,5 +1,5 @@
 # Uses RubyProf to profile and build reports.
-# Reports send via Core/PasteOut plugin.
+# Reports send via Paste plugin.
 # Profiler can be started stopped manually, or a chain command can be used.
 # ---
 # https://github.com/ruby-prof/ruby-prof
@@ -111,7 +111,7 @@ module Ricer::Plugins::Debug
       content = profiler_paste_content(result)
       #rply :msg_profiled, title: title, content: content
       rply :msg_uploading, title: title, size: lib.human_filesize(content.length)
-      get_plugin('Core/PasteOut').execute_upload(content, 'text', title)
+      get_plugin('Paste/Paste').execute_upload(content, 'text', title)
     end
     
     def profiler_paste_title(result)

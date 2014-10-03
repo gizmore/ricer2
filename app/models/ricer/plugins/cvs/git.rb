@@ -17,7 +17,7 @@ module Ricer::Plugins::Cvs
       begin
         out = `#{revision_cmd}`
         out.strip
-      rescue => e
+      rescue StandardError => e
         nil
       end
     end
@@ -69,7 +69,7 @@ module Ricer::Plugins::Cvs
             end
             
           end
-        rescue => e
+        rescue StandardError => e
           bot.log_exception(e)
           @plugin.reply_exception(e)
           result = false
@@ -106,7 +106,7 @@ module Ricer::Plugins::Cvs
               end
             end
           end
-        rescue => e
+        rescue StandardError => e
           bot.log_exception(e)
           result = false
         end
@@ -122,7 +122,7 @@ module Ricer::Plugins::Cvs
           result.unshift(repo_update)
           n = n + 1
         end
-      rescue => e
+      rescue StandardError => e
         bot.log_exception(e)
       end
       result

@@ -8,8 +8,10 @@ module Ricer::Plugins::Rice
     
     def connect!
       begin
+        @connected ||= 0
+        @attempt ||= 1
         @queue = {}
-        @semaphore ||= Mutex.new
+        @queue_lock ||= Mutex.new
         if server.ssl?
           server.bot.log_info("Connecting via TLS to #{hostname}")
           ssl_context = OpenSSL::SSL::SSLContext.new
@@ -22,37 +24,64 @@ module Ricer::Plugins::Rice
           server.bot.log_info("Connecting to #{hostname}")
           @socket = TCPSocket.new(hostname, port)
         end
-        connected
-      rescue => e
+        mainloop
+        true
+      rescue StandardError => e
         bot.log_exception(e)
+        server.process_event('ricer_on_connection_error', fake_message)
         false
       end
     end
     
-    def queue_for(user)
-      @queue[user]
-    end
-
-    def flush_queue_for(user)
-      return [] if @queue[user].nil?
-      @semaphore.synchronize do
-        messages = @queue[user].lines.clone
-        @queue[user].flush
-        return messages
+    def mainloop
+      connected
+      Ricer::Thread.execute do |t|
+        server.process_event('ricer_on_server_handshake', fake_message)
+        while connected?
+          if message = get_message
+            message.server = message.sender = server
+            server.process(message)
+          else
+            disconnect
+          end
+        end
       end
     end
     
+    def queue_with_lock(&block)
+      @queue_lock.synchronize do
+        yield(@queue)
+      end
+    end
+    
+    # def queue_for(user)
+      # @queue[user]
+    # end
+# 
+    # def flush_queue_for(user)
+      # return [] if @queue[user].nil?
+      # @queue_lock.synchronize do
+        # messages = @queue[user].lines.clone
+        # @queue[user].flush
+        # return messages
+      # end
+    # end
+    
+    def connected?
+      @connected == @attempt
+    end
+    
     def connected
-      @connected = true
+      server.bot.log_info("connected to #{hostname}")
+      @connected = @attempt
       @frame = Ricer::Net::Queue::Frame.new(server)
       send_queue
       fair_queue
-      true
     end
     
-    def disconnect(message); disconnect!(message||fake_message) if @socket; end
+    def disconnect(message); disconnect!(message||fake_message) rescue false; end
     
-    def get_line; begin; @socket.gets; rescue => e; disconnect(fake_message); end; end
+    def get_line; begin; @socket.gets; rescue StandardError => e; disconnect(fake_message); end; end
     
     def fake_message; Ricer::Net::Message.fake_message(server); end
     
@@ -60,7 +89,7 @@ module Ricer::Plugins::Rice
     def send_pong(message, ping); send_queued(message.reply_text("PONG #{ping}")); end
     def send_join(message, channelname, password=nil); send_queued(message.reply_message("JOIN #{channelname}#{password ?(' '+password):''}")); end
     def send_part(message, channelname); send_queued(message.reply_text("PART #{channelname}")); end
-    def send_quit(message, quitmessage); send_line(message.reply_text("QUIT :#{quitmessage}")) if @connected; end
+    def send_quit(message, quitmessage); send_line(message.reply_text("QUIT :#{quitmessage}")) if connected?; end
     def send_notice(message, text); send_splitted(message, "NOTICE #{message.reply_to.name} :#{message.reply_prefix}", text); end
     def send_privmsg(message, text); send_splitted(message, "PRIVMSG #{message.reply_to.name} :#{message.reply_prefix}", text); end
     def send_action(message, text); send_splitted(message, "NOTICE #{message.reply_to.name} :\x01", text, "\x01"); end
@@ -81,15 +110,16 @@ module Ricer::Plugins::Rice
     
     private
     def disconnect!(message)
-      if @connected
+      if connected?
+        @attempt += 1
         server.bot.log_info("Disconnecting from #{hostname}")
-        send_quit(message, 'disconnect!') if @connected
-        @semaphore.synchronize do
-          @connected = false
+        send_quit(message, 'disconnect!') if @socket
+        @queue_lock.synchronize do
           @socket.close
           @socket = nil
-        end 
+        end
       end
+      true
     end
     
     def send_splitted(message, prefix, text, postfix='')
@@ -103,7 +133,7 @@ module Ricer::Plugins::Rice
     
     def send_queued(message)
       to = message.sender
-      @semaphore.synchronize do 
+      @queue_lock.synchronize do 
         @queue[to] ||= Ricer::Net::Queue::Object.new(to)
         @queue[to].push(message)
       end
@@ -119,10 +149,9 @@ module Ricer::Plugins::Rice
         text.force_encoding(message.reply_encoding_iso)
         @socket.write "#{text}\r\n"
         @frame.sent
-      rescue => e
+      rescue StandardError => e
         bot.log_info("Disconnect from #{server.hostname}: #{e.message}")
         bot.log_exception e
-        @connected = false
         disconnect(message)
       end
       nil
@@ -131,11 +160,11 @@ module Ricer::Plugins::Rice
     # Thread that reduces penalty for QueueObjects
     def fair_queue
       Ricer::Thread.execute do
-        while @connected
+        while connected?
           sleep(Ricer::Net::Queue::Frame::SECONDS * 2)
-          @semaphore.synchronize do
+#          @queue_lock.synchronize do
             @queue.each{|to, queue| queue.reduce_penalty }
-          end
+#          end
         end
       end
     end
@@ -143,8 +172,8 @@ module Ricer::Plugins::Rice
     # Thread that sends QueueObject lines
     def send_queue
       Ricer::Thread.execute do
-        while @connected
-          @semaphore.synchronize do 
+        while connected?
+          @queue_lock.synchronize do 
             @queue = Hash[@queue.sort_by{|to,queue|queue.penalty}]
             @queue.each do |to, queue|
               break if queue.empty? || @frame.exceeded?

@@ -136,7 +136,6 @@ module Ricer::Plugins::Rice
       positive = true
       maxmodes = args[1].length
       while i < maxmodes
-        byebug
         if args[1][i] == '+'
           positive = true
         elsif args[1][i] == '-'

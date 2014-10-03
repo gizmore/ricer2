@@ -18,6 +18,7 @@ module Ricer::Plugins::Purple
     
     def connect!
       ensure_inited!
+      @connected = false
       if protocol_supported?(protocol)
         @account = PurpleRuby.login(protocol, username, password)
         purple.add_purple_server(@account, server)
@@ -25,7 +26,7 @@ module Ricer::Plugins::Purple
         server.started_up = true
         after_connect
       end
-      Thread.kill(Thread.current)
+      @connected
     end
     
     def ensure_inited!
@@ -129,7 +130,7 @@ module Ricer::Plugins::Purple
         text = html_markup(text)
         @account.send_im(message.reply_to.name, text)
  #       @frame.sent
-      rescue => e
+      rescue StandardError => e
         bot.log_info("Disconnect from #{server.hostname}: #{e.message}")
         bot.log_exception e
         @connected = false

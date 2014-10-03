@@ -106,7 +106,7 @@ module Ricer
             loaded.each do |loaded_plugin|
               parent_plugin.class.has_subcommand(loaded_plugin.short_class_name.to_s.downcase.to_sym)
             end
-          rescue => e
+          rescue StandardError => e
             bot.log_exception(e)
           end
           all_loaded += loaded
@@ -176,7 +176,7 @@ module Ricer
             end
           rescue SystemExit, Interrupt
             raise
-          rescue Exception => e
+          rescue StandardError => e
             @valid = false
             @bot.log_error("ERROR IN: #{path}")
             raise unless @bot.genetic_rice
@@ -206,18 +206,20 @@ module Ricer
         
         @bot.log_info "Installing #{plugin.plugin_name}"
         db_plugin.plugin_install
+        db_plugin.call_hook(:plugin_install, db_plugin)
         
         begin
           while db_version < plug_version
             dbv = db_version + 1
             if db_plugin.respond_to?("upgrade_#{dbv}")
-              ActiveRecord::Base.transaction do              
-                db_plugin.send("upgrade_#{dbv}")
-              end
+              db_plugin.call_hook("upgrade_#{dbv}")
+              ActiveRecord::Base.transaction{
+                db_plugin.send("upgrade_#{dbv}")                
+              }              
             end
             db_version = dbv
           end
-        rescue => e
+        rescue StandardError => e
           errors = true
           @valid = false
           @bot.log_exception e

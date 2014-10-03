@@ -21,7 +21,7 @@ module Ricer::Plugins::Data
               temp_max: lib.human_fraction(json["main"]["temp_max"]),
             )
           end
-        rescue => e
+        rescue StandardError => e
           bot.log_exception(e)
           return rply :err_connect, reason: e.to_s
         end

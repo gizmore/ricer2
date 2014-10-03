@@ -31,7 +31,7 @@ module Ricer::Plugins::Admin
       begin
         m = ActiverRecord::Migration.new
         m.drop_table klass.table_name
-      rescue => e
+      rescue StandardError => e
         bot.log_exception(e)
       end
     end

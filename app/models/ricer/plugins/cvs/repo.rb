@@ -14,7 +14,6 @@ module Ricer::Plugins::Cvs
     scope :working, -> { where('revision IS NOT NULL') }
     
     def self.upgrade_1
-      FileUtils.mkdir_p(root_dir)
       m = ActiveRecord::Migration.new
       m.create_table table_name do |t|
         t.string  :name,     :null => false, :length => NamedId.maxlen,   :unique => true
@@ -74,8 +73,8 @@ module Ricer::Plugins::Cvs
     #################
     ### Directory ###
     #################
-    def self.root_dir; "#{Rails.root}/repos"; end
-    def dir; "#{self.class.root_dir}/#{name}"; end
+    def root_dir; "#{Rails.root}/files/cvs/repo"; end
+    def dir; "#{root_dir}/#{name}"; end
 
     def cleardir; rmdir && mkdir; end
 

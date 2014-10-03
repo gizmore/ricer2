@@ -18,9 +18,9 @@ module Ricer::Plug::Params
       input.split(',').each do |arg|
         input_id = arg.to_i rescue 0
         connector = arg.downcase
-        self.servers.all.each do |server|
+        Ricer::Irc::Server.all.each do |server|
           if (!arg.empty?) && (connectors.nil? || connectors.include?(server.connector))
-            if ((arg == '*') || (input_id == server.id) || (URI::Generic.domain(server.url).index(input)) || (server.connector == connector))
+            if ((arg == '*') || (input_id == server.id) || (URI::Generic.domain(server.url).index(arg)))
               servers.push(server)
             end
           end

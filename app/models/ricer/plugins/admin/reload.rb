@@ -43,7 +43,7 @@ module Ricer::Plugins::Admin
           if path.end_with?('.rb')
             begin
               load path
-            rescue => e
+            rescue StandardError => e
               bot.log_exception(e)
             end
           end

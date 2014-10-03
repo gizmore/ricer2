@@ -13,6 +13,26 @@
 
 ActiveRecord::Schema.define(version: 20140921020304) do
 
+  create_table "abbo_items", force: true do |t|
+    t.integer "item_id",   null: false
+    t.string  "item_type", null: false, charset: "ascii", collation: "ascii_bin"
+  end
+
+  create_table "abbo_targets", force: true do |t|
+    t.integer "target_id",   null: false
+    t.string  "target_type", null: false, charset: "ascii", collation: "ascii_bin"
+  end
+
+  create_table "abbonements", force: true do |t|
+    t.integer  "abbo_item_id",   null: false
+    t.integer  "abbo_target_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "abbonements", ["abbo_item_id"], name: "abbo_item_index", using: :btree
+  add_index "abbonements", ["abbo_target_id"], name: "abbo_target_index", using: :btree
+
   create_table "bots", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"

@@ -50,9 +50,11 @@ module Ricer::Plugins::Server
     
     def ricer_on_connection_error
       bot.log_debug("JoinServer#ricer_on_connection_error")
-      server.try_more = false
-      user = server.remove_instance_variable('@just_added_by')
-      user.localize!.send_message(t(:err_connecting, server: server.displayname))
+      if server.instance_variable_defined?('@just_added_by')
+        server.try_more = false
+        user = server.remove_instance_variable('@just_added_by')
+        user.localize!.send_message(t(:err_connecting, server: server.displayname))
+      end
     end
     
     def generate_superword

@@ -46,8 +46,8 @@ module Ricer::Irc
     scope :offline, -> { where(:online => false) }
     scope :joined, ->(channel) { joins(:chan_perms).where('chan_perms.channel_id=?', channel) }
     
-    def get_queue; server.connection.queue_for(self); end
-    def flush_queue; server.connection.flush_queue_for(self); end
+    # def get_queue; server.connection.queue_for(self); end
+    # def flush_queue; server.connection.flush_queue_for(self); end
     
     def usermode; @user_mode; end
     
@@ -55,35 +55,33 @@ module Ricer::Irc
     ### Memory Management ###
     #########################
     def ricer_on_joined_server(server)
-      self.online = true
-      self.save!
+      @user_mode ||= Ricer::Irc::Mode::UserMode.new
+      self.online = true; self.save!
       global_cache_add
-      @user_mode = Ricer::Irc::Mode::UserMode.new
+      self
     end
 
     def ricer_on_parted_server(server)
-      self.online = false
-      self.save!
+      self.online = false; self.save!
       global_cache_remove
       all_chanperms.update_all(:online => false)
-      all_chanperms.each do |chanperm|
-        chanperm.global_cache_remove
-      end
+      all_chanperms.each{|chanperm| chanperm.global_cache_remove }
+      self
     end
     
     def ricer_on_joined_channel(channel, permissions=0)
       perm = chanperm_for(channel)
-      perm.online = true
-      perm.save!
+      perm.online = true; perm.save!
       perm.global_cache_add
       perm.ricer_on_joined_channel(self, permissions)
+      self
     end
 
     def ricer_on_parted_channel(channel)
       perm = chanperm_for(channel)
-      perm.online = false
-      perm.save!
+      perm.online = false; perm.save!
       perm.global_cache_remove
+      self
     end
     
     #############
@@ -109,8 +107,20 @@ module Ricer::Irc
       Ricer::Irc::Chanperm.where(:user_id => self.id)
     end
     
+    def all_cached_chanperms
+      Ricer::Irc::Chanperm.global_cache.select{|v| v.user_id == self.id }
+    end
+    
     # Get permission object
     def chanperm_for(channel)
+      cached_chanperm_for(channel) || load_chanperm_for(channel)
+    end
+    
+    def cached_chanperm_for(channel)
+      Ricer::Irc::Chanperm.global_cache["#{self.id}:#{channel.id}"]
+    end
+
+    def load_chanperm_for(channel)
       Ricer::Irc::Chanperm.
         create_with(:permission => self.permission).
         find_or_create_by(:user_id => self.id, :channel_id => channel.id)
@@ -149,9 +159,11 @@ module Ricer::Irc
     
     def hostmask=(hostmask)
       if hostmask && (@hostmask != hostmask)
-        bot.log_info("Logged you out because of your hostmask #{@hostmask} != #{hostmask}")
+        if @authenticated && @hostmask
+          bot.log_info("Logged #{self.displayname} out, because the hostmask '#{@hostmask}' changed to '#{hostmask}'")
+          logout!
+        end
         @hostmask = hostmask
-        logout! if @authenticated
       end
       self
     end
@@ -161,9 +173,13 @@ module Ricer::Irc
     ######################
     def authenticate!(password)
       return @authenticated = false unless registered?
-      login! if BCrypt::Password.new(self.hashed_password).is_password?(password)
+      password_matches?(password) ? login! : false 
     end
-    
+
+    def password_matches?(password)
+      BCrypt::Password.new(self.hashed_password).is_password?(password)
+    end
+
     def login!
       set_authed true
     end

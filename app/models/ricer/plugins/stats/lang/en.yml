@@ -5,7 +5,7 @@ en:
 
         perf:
           description: 'Show performance statistics of $BOT$.'
-          perf: 'Memory: %{memory} (%{max_memory} max). DB: %{queries} queries in %{uptime} (%{qps} queries per second). Threads: %{threads} (%{max_threads} max). PID: %{pid}. CPU usage: %{cpu}%'
+          perf: 'Memory: %{memory} (%{max_memory} max). DB: %{queries} queries took %{db_time} of %{uptime}, %{qps} queries per second. Threads: %{threads} (%{max_threads} max). PID: %{pid}. CPU usage: %{cpu}. DB Pool %{pool_now}/%{pool_max}(%{pool_peak} max).'
 
         plugstats:
           description: 'Show plugin usage statistics.'
@@ -20,7 +20,7 @@ en:
 
         stats:
           description: 'Show connectivity statistics for $BOT$.'
-          stats: 'Connected to %{active_servers}/%{total_servers} servers and %{channels} channels, seeing %{users} users. %{plugins} plugins and %{events} event handlers registered.'
+          stats: 'Connected to %{active_servers}/%{total_servers} servers and %{channels} channels, seeing %{users} users. %{plugins} plugins and %{events} event handlers registered. Up since %{uptime} for a total of %{runtime}.'
 
         version:
           description: 'Show version information for $BOT$.'

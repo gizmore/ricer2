@@ -6,8 +6,8 @@ module Ricer::Plugins::Core
     
     bruteforce_protected
     
-    has_usage '<integer[min=1,max=25]> <plugin>'
-    has_usage '<integer[min=1,max=25]> <plugin> <..parameters..>'
+    has_usage '<integer[min=1,max=50]> <plugin>'
+    has_usage '<integer[min=1,max=50]> <plugin> <..parameters..>'
 
     def execute(repetitions, plugin, parameters=nil)
       Ricer::Thread.execute{

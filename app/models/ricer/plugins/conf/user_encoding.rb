@@ -41,7 +41,7 @@ module Ricer::Plugins::Conf
         user.localize!
         encoding = user.encoding || server.encoding
         args[1].force_encoding(encoding.to_label)
-      rescue Exception => e
+      rescue StandardError => e
         bot.log_exception(e)
       end
     end

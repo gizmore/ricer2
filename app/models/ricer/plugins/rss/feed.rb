@@ -79,7 +79,7 @@ module Ricer::Plugins::Rss
           self.checked_at = feed_date(feed)
         end
         return (self.title != nil) && (self.checked_at != nil)
-      rescue => e
+      rescue StandardError => e
         puts e
         puts e.backtrace
         return false
@@ -97,7 +97,7 @@ module Ricer::Plugins::Rss
           end
           feed_has_news(plugin, feed, collect) unless collect.empty?
         end
-      rescue => e
+      rescue StandardError => e
         puts e
         puts e.backtrace
       end

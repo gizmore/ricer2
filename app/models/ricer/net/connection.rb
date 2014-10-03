@@ -6,7 +6,8 @@ module Ricer::Net
     def self.connector_symbol; @_sym ||= name.to_s.rsubstr_from('::').downcase.to_sym; end
     def connector_symbol; self.class.connector_symbol; end
     
-    def bot; server.bot; end
+    def bot; @server.bot; end
+    def fake_message; Ricer::Net::Message.fake_message(server); end
     
     def initialize(server); @server = server;  end
     def displayname; connector_symbol.upcase; end
@@ -45,12 +46,14 @@ module Ricer::Net
     def get_message
       line = get_line
       bot.log_puts "#{hostname} << #{line}"
-      parse(line) unless line.nil?
+      line ? 
+        parse(line) :
+        nil
     end
  
     private
     def stub(methodname)
-      throw "#{self.class.name} does not handle 'def #{methodname}'"
+      raise RuntimeError.new("#{self.class.name} does not handle 'def #{methodname}'")
     end
     
   end

@@ -55,17 +55,11 @@ module Ricer::Irc
     
     def startup
       bot.log_info "Starting server #{server_url.url}"
-      Ricer::Thread.execute do
-        @try_more = true
+#      Ricer::Thread.execute do
         init
-        while (bot.running?) && (@try_more)
-          begin
-            mainloop
-          rescue Exception => e
-            bot.log_exception(e)
-          end
-        end
-      end
+        @try_more = true
+        try_to_connect
+#      end
     end
     
     def init
@@ -74,11 +68,21 @@ module Ricer::Irc
       @nickname = @nicknames.peek
       @nick_cycle = ''
       @connection = bot.get_connector(self.connector).new(self)
-      unless @connection.connect!
-        process_event('ricer_on_connection_error', fake_message)
-      else
-        process_event('ricer_on_server_handshake', fake_message)
+    end
+    
+    def try_to_connect
+      if (bot.running?) && (@try_more)
+        begin
+          @connection.connect!
+        rescue StandardError => e
+          bot.log_exception(e)
+        end
       end
+      # if @connection.connect!
+        # process_event('ricer_on_server_handshake', fake_message) and true
+      # else
+        # process_event('ricer_on_connection_error', fake_message) and false
+      # end
     end
     
     def login(message)
@@ -93,7 +97,7 @@ module Ricer::Irc
     def next_nickname
       begin
         @nickname = @nicknames.next
-      rescue => e
+      rescue StandardError => e
         @nicknames.rewind
         @nickname = @nicknames.peek
         @nick_cycle = '_'+(SecureRandom.base64(3).gsub(/[^a-z0-9]/i, 'a'))
@@ -102,21 +106,21 @@ module Ricer::Irc
       bot.log_info "Next nickname is #{@nickname.name}"
     end
     
-    def mainloop
-      if @connection.connected?
-        message = @connection.get_message
-        if message.nil?
-          disconnect!
-          sleep 5.seconds
-        else
-          message.server = message.sender = self
-          process message
-        end
-      else
-        sleep 5.seconds
-        init
-      end
-    end
+    # def mainloop
+      # if @connection.connected?
+        # message = @connection.get_message
+        # if message.nil?
+          # disconnect!
+          # sleep 5.seconds
+        # else
+          # message.server = message.sender = self
+          # process message
+        # end
+      # else
+        # sleep 5.seconds
+        # try_to_connect
+      # end
+    # end
     
     def fake_message
       @connection.fake_message

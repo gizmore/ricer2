@@ -16,8 +16,15 @@ module Ricer
     # Set to true if plugin_loader shall ignore errors
     config.genetic_rice = true
 
-    #    
+    # Rails autoload directories
     config.autoload_paths += %W["#{config.root}/app/validators/"]
+    
+    # Cache and stuff
+    #config.action_controller.perform_caching = true
+    config.active_record.partial_writes = true
+    config.active_record.attribute_types_cached_by_default = [] # :date, :time, :datetime, :timestamp
+    config.cache_classes = true
+#    config.allow_concurrency = true
     
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -34,8 +41,8 @@ module Ricer
     
     config.ricer_name = 'Ricer'
     config.ricer_owner = 'gizmore'
-    config.ricer_version = '0.96a'
-    config.ricer_version_date = Time.new(2014, 8, 15, 16, 23, 42)
+    config.ricer_version = '0.98a'
+    config.ricer_version_date = Time.new(2014, 10, 3, 11, 17, 23)
 
   end
 end

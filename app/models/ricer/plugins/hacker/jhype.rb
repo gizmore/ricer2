@@ -15,7 +15,7 @@ module Ricer::Plugins::Hacker
           begin
             check_for_new_pictures
             sleep(6.hours)
-          rescue => e
+          rescue StandardError => e
             bot.log_exception(e)
           end
         }

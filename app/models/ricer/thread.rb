@@ -24,7 +24,6 @@ module Ricer
     def self.display_proc(proc)
       (file, line = *proc.source_location) or raise RuntimeError.new("No sourcecode line for proc.")
       "#{file} #{line}"
-#      "#{sl[0]} #{sl[1]}"
     end
 
     def self.execute(&proc)
@@ -54,10 +53,10 @@ module Ricer
           bot.log_debug "[#{guid}] Started thread at #{display_proc(proc)}"
           yield proc
           bot.log_debug "[#{guid}] Stopped thread at #{display_proc(proc)}"
-        rescue Exception => e
+        rescue StandardError => e
           bot.log_exception(e)
           bot.log_debug "[#{guid}] Killed thread at #{display_proc(proc)}"
-        # rescue Exception => e
+        # rescue StandardError => e
           # bot.log_debug "[#{guid}] Killed thread at #{display_proc(proc)}"
         ensure
           if sender; record_user_thread_limits(sender, -1); end

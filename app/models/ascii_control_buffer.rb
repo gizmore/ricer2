@@ -20,7 +20,7 @@ class AsciiControlBuffer
   def read
     begin
       @data += @io.read_nonblock(@bufsize)
-    rescue => e
+    rescue StandardError => e
     end
     !empty?
   end

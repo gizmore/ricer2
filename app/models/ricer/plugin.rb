@@ -9,6 +9,7 @@ module Ricer
   class Plugin < ActiveRecord::Base
     
     include Ricer::Base::Base
+    include Ricer::Base::Hook
     include Ricer::Base::Translates
     
     DEFAULT_PRIORITY = 50
@@ -16,11 +17,13 @@ module Ricer
     attr_accessor :plugin_module, :plugin_dir, :module_dir
     
     # Current message for current thread
-    def message
-      bot.log_exception(StandardError.new("DEPRECATED accessor plugin#message!!!"))
-      current_message
-    end
+    # def message
+      # bot.log_exception(StandardError.new("DEPRECATED accessor plugin#message!!!"))
+      # current_message
+    # end
     
+    def servers; bot.servers; end
+
     def user; current_message.sender; end
     def sender; current_message.sender; end
     def server; current_message.server; end
@@ -118,10 +121,11 @@ module Ricer
     ### Subcommands ###
     ###################
     attr_accessor :parent_command
-    # def subcommand_depth; 1; end
+
     def subcommand_depth
       @subcommand_depth ||= (trigger.to_s.count(' ')+1)
     end
+
     def subcommand_depth=(depth)
       @subcommand_depth = depth
     end
@@ -143,7 +147,7 @@ module Ricer
     def i18n_trigger
       begin
         I18n.t!("#{i18n_key}.trigger")
-      rescue Exception => e
+      rescue StandardError => e
         default_trigger
       end
     end
@@ -184,12 +188,8 @@ module Ricer
     ### Static ###
     ##############
     def self.by_id(id)
-      bot.plugins.each do |plugin|
-        return plugin if plugin.id == id
-      end
-      nil
+      bot.plugins.each{|plugin| return plugin if plugin.id == id } and return nil
     end
-
     def self.by_arg(arg)
       by_trigger(arg) || by_name(arg)
     end
@@ -200,10 +200,7 @@ module Ricer
       _by_trigger(trigger, bot.plugins)
     end
     def self._by_trigger(trigger, plugins)
-      plugins.each{|plugin|
-        return plugin if plugin.trigger.to_s == trigger.to_s
-      }
-      nil
+      plugins.each{|plugin| return plugin if plugin.trigger.to_s == trigger.to_s } and return nil
     end
     def self.by_name(plugin_name)
       _by_name(plugin_name, bot.plugins)
@@ -213,15 +210,15 @@ module Ricer
       bot.plugins.each{|plugin| return plugin if plugin.plugin_name == plugin_name } and nil
     end
 
-    def self.user_plugins(user, scope=:everywhere)
-      
-    end
-    
-    def self.each_user_plugins(user, scope=:everywhere, &block) 
-      plugins.each{|plugin|
-        
-      }
-    end
+    # def self.user_plugins(user, scope=:everywhere)
+#       
+    # end
+#     
+    # def self.each_user_plugins(user, scope=:everywhere, &block) 
+      # plugins.each{|plugin|
+#         
+      # }
+    # end
 
 
     #########################
@@ -241,10 +238,6 @@ module Ricer
     def ricer_itself?
       current_message.is_ricer?
     end
-    
-    # def get_plugin(name)
-      # Ricer::Plugin.by_name(name)
-    # end
     
     def plugins_for_line(line, check_scope=true)
       bot.plugins.select { |plugin|
@@ -268,7 +261,7 @@ module Ricer
             current_message.chain!
           end
         end
-      rescue Exception => e
+      rescue StandardError => e
         reply_exception e
       end
     end

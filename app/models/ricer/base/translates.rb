@@ -21,13 +21,13 @@ module Ricer::Base::Translates
   def t(key, args={}); tt tkey(key), args; end
   def tp(key, args={}); tt "#{i18n_pkey}.#{key}", args; end
   def tr(key, args={}); tt "ricer.#{key}", args; end
-  def tt(key, args={}); i18t(key, args); end
-#  def tt(key, args={}); rt i18t(key, args); end
+  #def tt(key, args={}); i18t(key, args); end
+  def tt(key, args={}); rt i18t(key, args); end
   
   def i18t(key, args={}) # Own I18n.t that rescues into key: arg.inspect
     begin
       I18n.t!(key, args)
-    rescue Exception => e
+    rescue StandardError => e
       bot.log_exception(e)
       i18ti(key, args)
     end
@@ -38,16 +38,16 @@ module Ricer::Base::Translates
     "#{key.to_s.rsubstr_from('.')||key}#{vars}"
   end
 
-  # def rt(response) # Default replace
-    # begin
-      # response.to_s.
-        # gsub('$BOT$', server.nickname.name).
-        # gsub('$COMMAND$', trigger.to_s).
-        # gsub('$TRIGGER$', server.triggers[0]||'')
-    # rescue Exception => e
-      # bot.log_exception(e)
-      # response
-    # end
-  # end
+  def rt(response) # Default replace
+    begin
+      response.to_s.
+        gsub('$BOT$', server.nickname.name).
+        gsub('$COMMAND$', trigger.to_s).
+        gsub('$TRIGGER$', server.triggers[0]||'')
+    rescue StandardError => e
+      bot.log_exception(e)
+      response
+    end
+  end
   
 end

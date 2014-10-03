@@ -41,7 +41,7 @@ module Ricer::Plugins::Cvs
           repo.revision = system.revision
           repo.save!
           rply :msg_repo_added, name:repo.name, url:repo.url, type:repo.system
-        rescue => e
+        rescue StandardError => e
           reply_exception e
         end
         finished_service

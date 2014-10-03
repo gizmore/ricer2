@@ -8,7 +8,7 @@ module Ricer::Plug::Params
       begin
         return true  if (input == '1') || (input.downcase == true_label.downcase)
         return false if (input == '0') || (input.downcase == false_label.downcase)
-      rescue Exception => e
+      rescue StandardError => e
       end
       failed_input
     end

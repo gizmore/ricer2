@@ -10,7 +10,7 @@ module Ricer::Plugins::Rss
         while true
           begin
             check_feeds(plugin)
-          rescue => e
+          rescue StandardError => e
             bot.log_exception e
           end
           sleep(120)
@@ -23,7 +23,7 @@ module Ricer::Plugins::Rss
         begin
           feed.check_feed(plugin)
           sleep(3)
-        rescue => e
+        rescue StandardError => e
           bot.log_exception e
         end
       end

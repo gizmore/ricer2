@@ -1,18 +1,19 @@
 module Ricer
   class Bot < ActiveRecord::Base
     
-    def self.instance; instance_variable_get('@instance'); end
+    def self.instance; @instance; end
+
+    with_global_orm_mapping
+    def should_cache?; true; end
     
     include Ricer::Base::Base
     include Ricer::Plug::Extender::KnowsEvents
     
-    with_global_orm_mapping; def should_cache?; true; end
-    
-    attr_reader :rand, :botlog
+    attr_reader   :rand, :botlog, :servers
     attr_accessor :needs_restart, :running
     
-    def servers; @servers; end
     def running?; @running; end
+    def uptime; Time.now - @start_at; end
     
     def name; Ricer::Application.config.ricer_name; end
     def randseed; Ricer::Application.config.rice_seeds; end
@@ -40,6 +41,7 @@ module Ricer
       @botlog = BotLog.new
       @servers = Ricer::Irc::Server.all
       @_utf8 ||= Ricer::Encoding.find(1)
+      @start_at = Time.now
     end
     
     def plugins
@@ -57,7 +59,6 @@ module Ricer
       @needs_restart = false
       load_extenders
       save_all_offline
-      # Ricer::Net::Message.new
     end
     
     ### Seed the random generator with seed from config
@@ -82,6 +83,7 @@ module Ricer
     ### but this way we get ActiveRecord syntax and maybe later
     ### there is a nice fast solution.
     def save_all_offline
+      bot.log_debug("Bot#save_all_offline")
       Ricer::Irc::User.update_all(:online => false) &&
       Ricer::Irc::Server.update_all(:online => false) &&
       Ricer::Irc::Channel.update_all(:online => false) &&
@@ -89,6 +91,7 @@ module Ricer
     end
     
     def load_plugins(reload=false)
+      bot.log_debug("Bot#load_plugins(#{reload})")
       map = plugin_map
       map.clear_cache
       I18n.load_path.clear
@@ -168,7 +171,7 @@ module Ricer
         begin
           server.startup
           sleep 0.5
-        rescue => e
+        rescue StandardError => e
           log_exception e
         end
       end
@@ -192,23 +195,27 @@ module Ricer
             server.send_quit('Caught SystemExit exception.')
           end
           @running = false
-        rescue Exception => e
+        rescue StandardError => e
           @running = false
         end
       end
-      publish('ricer/on/exit', self)
-      sleep 1
+      # Exit event
+      message = servers.first.fake_message
+      servers.each{|server| server.process_event('ricer_on_exit', message) }
+      servers.first.process_event('ricer_on_global_exit', message)
+      sleep 1.second
+      nil
     end
     
     def check_started_up
-      servers.each do |server|
-        return false unless server.started_up? 
+      # Give all them servers some max time<3 minutes max.
+      if uptime.to_i < 90.seconds
+        servers.each{|server| return false unless server.started_up? }
       end
-      servers.each do |server|
-        server.process_event('ricer_on_startup', server.fake_message)
-      end
-      server = servers.first
-      server.process_event('ricer_on_global_startup', server.fake_message)
+      # Started up!
+      message = servers.first.fake_message
+      servers.each{|server| server.process_event('ricer_on_startup', message) }
+      servers.first.process_event('ricer_on_global_startup', message)
       true
     end
 

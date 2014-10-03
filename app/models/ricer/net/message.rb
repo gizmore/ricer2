@@ -28,7 +28,11 @@ module Ricer::Net
     end
 
     def self.fake_message(server, text=nil, reply_to=nil)
-      message = new
+      bot.log_debug("Net/Message::fake_message(#{server.displayname})")
+      # Create a message, but don´t remember in thread
+      old_message = Thread.current[:ricer_message] # old remembered
+      message = new(nil) # the new fake
+      Thread.current[:ricer_message] = old_message if old_message # restore
       message.server = server
       message.sender = bot
       message.receiver = bot
@@ -37,6 +41,7 @@ module Ricer::Net
     end
     
     def initialize(rawmessage=nil)
+      bot.log_debug("Net/Message#new(#{rawmessage}) NEW!")
       Thread.current[:ricer_message] = self
       @time = Time.new
       @raw = rawmessage
@@ -122,9 +127,7 @@ module Ricer::Net
     end
     
     def reply_text(text)
-      self.reply_data = text
-      @time = Time.new
-      self
+      (self.reply_data, @time = text, Time.now) and return self
     end
     
     def reply_message(text)
