@@ -134,7 +134,7 @@ module Ricer::Plugins::Rice
       if connected?
         @attempt += 1
         server.bot.log_info("Disconnecting from #{hostname}")
-        send_quit(message, 'disconnect!') if @socket
+        send_quit(message) if @socket
         @queue_lock.synchronize do
           @socket.close
           @socket = nil
