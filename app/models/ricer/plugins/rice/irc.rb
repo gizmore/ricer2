@@ -20,7 +20,7 @@ module Ricer::Plugins::Rice
     end
     
     def connect_ssl!
-      server.bot.log_info("Connecting via TLS to #{hostname}")
+      bot.log_info("Connecting via TLS to #{hostname}")
       ssl_context = OpenSSL::SSL::SSLContext.new
       ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE unless server.peer_verify
       sock = TCPSocket.new(hostname, port)
@@ -30,7 +30,7 @@ module Ricer::Plugins::Rice
     end
     
     def connect_plain!
-      server.bot.log_info("Connecting to #{hostname}")
+      bot.log_info("Connecting to #{hostname}")
       @socket = TCPSocket.new(hostname, port)
     end
     
@@ -46,12 +46,17 @@ module Ricer::Plugins::Rice
       rescue StandardError => e
         bot.log_exception(e)
         server.process_event('ricer_on_connection_error', fake_message)
+        sleep 5
         false
       end
     end
     
     def mainloop
       Ricer::Thread.execute {
+        # XXX: This way we have the current_message in this thread patched for this network.
+        # XXX: This is needed for the join_server plugin.
+        Thread.current[:ricer_message] = fake_message
+        # The IRC mainloop
         while bot.running? && server.try_more
           if connected?
             if message = get_message
@@ -59,6 +64,7 @@ module Ricer::Plugins::Rice
               server.process(message)
             else
               disconnect
+              sleep 5
             end
           else
             connect_irc!

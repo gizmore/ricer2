@@ -29,7 +29,6 @@ module Ricer::Plugins::Rice
       server.authenticate(current_message)
     end
 
-
     # irc.giz.org << :irc.giz.org 002 ricer :Your host is irc.giz.org, running version InspIRCd-2.0
     def on_002
       Ricer::Irc::Mode::ModeData.detect_server(server, args[1])
