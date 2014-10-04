@@ -9,9 +9,10 @@ module Ricer::Plug::Params
     attr_reader :input, :value, :options
     
     def initialize(options=nil, value=nil)
-      @options = (options||default_options).reverse_merge!(default_options)
       @input = @value = nil
-      set(value) unless value.nil?
+      @options = (options||default_options).reverse_merge!(default_options)
+      set(value) if value
+      bot.log_debug("Params::Base#initialize value '#{@input}' with options: #{@options.inspect}")
     end
     
     ###############
@@ -58,8 +59,8 @@ module Ricer::Plug::Params
     ######################    
     ### Failsafe calls ###
     ######################
-    def set(value, message=nil); set(value, message) rescue false; end
-    def set!(value, message=nil); @value = convert_in!(value, message) and @input = value and true; end
+    def set(value, message=nil); set!(value, message) rescue false; end
+    def set!(value, message=nil); @value = convert_in!(value, message); @input = value; true; end
     def convert_in(input, message); convert_in!(input, message) rescue default_value; end
     def convert_out(value, message); convert_out!(value, message) rescue default_value; end
     def convert_hint(value, message); convert_hint!(value, message) rescue default_value; end

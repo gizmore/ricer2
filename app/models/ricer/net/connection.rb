@@ -46,7 +46,7 @@ module Ricer::Net
     def get_message
       line = get_line
       bot.log_puts "#{hostname} << #{line}"
-      line ? 
+      line.is_a?(String) ? 
         parse(line) :
         nil
     end

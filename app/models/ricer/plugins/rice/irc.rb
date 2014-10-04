@@ -10,21 +10,38 @@ module Ricer::Plugins::Rice
       begin
         @connected ||= 0
         @attempt ||= 1
-        @queue = {}
         @queue_lock ||= Mutex.new
-        if server.ssl?
-          server.bot.log_info("Connecting via TLS to #{hostname}")
-          ssl_context = OpenSSL::SSL::SSLContext.new
-          ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE unless server.peer_verify
-          sock = TCPSocket.new(hostname, port)
-          @socket = OpenSSL::SSL::SSLSocket.new(sock, ssl_context)
-          @socket.sync = true
-          @socket.connect
-        else
-          server.bot.log_info("Connecting to #{hostname}")
-          @socket = TCPSocket.new(hostname, port)
-        end
         mainloop
+        true
+      rescue StandardError => e
+        bot.log_exception(e)
+        false
+      end
+    end
+    
+    def connect_ssl!
+      server.bot.log_info("Connecting via TLS to #{hostname}")
+      ssl_context = OpenSSL::SSL::SSLContext.new
+      ssl_context.verify_mode = OpenSSL::SSL::VERIFY_NONE unless server.peer_verify
+      sock = TCPSocket.new(hostname, port)
+      @socket = OpenSSL::SSL::SSLSocket.new(sock, ssl_context)
+      @socket.sync = true
+      @socket.connect
+    end
+    
+    def connect_plain!
+      server.bot.log_info("Connecting to #{hostname}")
+      @socket = TCPSocket.new(hostname, port)
+    end
+    
+    def connect_irc!
+      begin
+        if server.ssl?
+          connect_ssl!
+        else
+          connect_plain!
+        end
+        connected
         true
       rescue StandardError => e
         bot.log_exception(e)
@@ -34,18 +51,20 @@ module Ricer::Plugins::Rice
     end
     
     def mainloop
-      connected
-      Ricer::Thread.execute do |t|
-        server.process_event('ricer_on_server_handshake', fake_message)
-        while connected?
-          if message = get_message
-            message.server = message.sender = server
-            server.process(message)
+      Ricer::Thread.execute {
+        while bot.running? && server.try_more
+          if connected?
+            if message = get_message
+              message.server = message.sender = server
+              server.process(message)
+            else
+              disconnect
+            end
           else
-            disconnect
+            connect_irc!
           end
         end
-      end
+      }
     end
     
     def queue_with_lock(&block)
@@ -74,7 +93,9 @@ module Ricer::Plugins::Rice
     def connected
       server.bot.log_info("connected to #{hostname}")
       @connected = @attempt
+      @queue = {}
       @frame = Ricer::Net::Queue::Frame.new(server)
+      server.process_event('ricer_on_server_handshake', fake_message)
       send_queue
       fair_queue
     end
