@@ -8,15 +8,12 @@ module Ricer::Plug::Extender::HasFiles
     class_eval do |klass|
       
       klass.add_hook('plugin_install') do |plugin|
-        puts 123
-        byebug
-        # Create files directory
+        # Create /files/#{plug}/ directory
         plugin.plugin_dir_path 
-        byebug
-        puts 123
       end
 
       def plugin_file_base
+        # files/module/plugin
         "#{Rails.root}/files/#{plugin_name}"
       end
       
