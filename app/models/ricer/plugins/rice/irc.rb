@@ -100,7 +100,7 @@ module Ricer::Plugins::Rice
       fair_queue
     end
     
-    def disconnect(message); disconnect!(message||fake_message) rescue false; end
+    def disconnect(message=nil); disconnect!(message||fake_message) rescue false; end
     
     def get_line; begin; @socket.gets; rescue StandardError => e; disconnect(fake_message); end; end
     
