@@ -54,12 +54,13 @@ module Ricer::Irc
     def started_up?; @started_up != nil; end
     
     def startup
+      raise StandardError.new("Server #{self.id} has no URL in server_urls.") if server_url.nil?
+      raise StandardError.new("Server #{self.id} has no row in server_nicks.") if server_nicks.length == 0
+      # Launch
       bot.log_info "Starting server #{server_url.url}"
-#      Ricer::Thread.execute do
-        init
-        @try_more = true
-        try_to_connect
-#      end
+      init
+      @try_more = true
+      try_to_connect
     end
     
     def init
