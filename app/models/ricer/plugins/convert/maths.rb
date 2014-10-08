@@ -3,6 +3,8 @@ module Ricer::Plugins::Convert
 
     trigger_is :math
     
+    denial_of_service_protected
+    
     # Not too quick please
 #    bruteforce_protected timeout: 1.5
     
@@ -64,18 +66,24 @@ module Ricer::Plugins::Convert
     
     has_usage '<..term..>'
     def execute(term)
-      # Beautify
-      term = term.gsub(/\s+/, ' ').downcase
-      # Replace math constants
-      MATH_CONSTANTS.each{|k, v| term = term.gsub(k, v.to_s) }
-      # Replace user variables
-      term = term.gsub(/\$(\d{1,2})/) { v[$1.to_i] ||= 0; 'v['+$1+']' }
-      # Hacker Checker after some letter replacement, some functions will slip through
-      term_valid?(term) or return rply :err_forbidden
-      # Exec!
-      v[0] = BigDecimal.new(eval(term), get_setting(:precision)) # Probably an exception, but ricer will catch ;)
-      # Reply the result :)
-      reply v[0].to_s.rtrim('0').rtrim('.')
+      service_thread {
+        begin
+          # Beautify
+          term = term.gsub(/\s+/, ' ').downcase
+          # Replace math constants
+          MATH_CONSTANTS.each{|k, v| term = term.gsub(k, v.to_s) }
+          # Replace user variables
+          term = term.gsub(/\$(\d{1,2})/) { v[$1.to_i] ||= 0; 'v['+$1+']' }
+          # Hacker Checker after some letter replacement, some functions will slip through
+          term_valid?(term) or return rply :err_forbidden
+          # Exec!
+          v[0] = BigDecimal.new(eval(term), get_setting(:precision)) # Probably an exception, but ricer will catch ;)
+          # Reply the result :)
+          reply v[0].to_s.rtrim('0').rtrim('.')
+        rescue Exception => e
+          reply e.to_s
+        end          
+      }
     end
     
     private

@@ -12,6 +12,9 @@ en:
         forces_authentication:
           err_authenticate: 'You have to authenticate in order to use this functionality.'
 
+        denial_of_service_protected:
+          err_already_running: "A similiar thread is already running for you. Please wait until it finished."
+
         has_usage:
           msg_usage: 'Usage: %{trigger}%{usage}. %{description}%{permission}'
           scopeinfo_scope: 'This works only in %{scopelabel}.'

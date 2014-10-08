@@ -43,6 +43,18 @@ module Ricer::Plug::Extender::DenialOfServiceProtected
         denial_of_service_cache.delete(service_issuer)
       end
       
+      # Call this conviniently for a protected thread 
+      def service_thread(&block)
+        start_service
+        Ricer::Thread.execute {
+          begin
+            yield
+          ensure
+            stopped_service
+          end
+        }
+      end
+      
       protected
       
       def service_issuer
