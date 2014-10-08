@@ -38,11 +38,13 @@ module Ricer::Plugins::Paste
         # bot.log_debug("AutoPaste#flush_server(#{server.displayname})")
         connection.queue_with_lock do |queues| # lock and check queue
           queues.each do |user,queue| # for each user
-            if queue.length >= limit # should flush?
-              begin
-                send_queue_as_pastebin(user, queue) # do it!
-              rescue StandardError => e
-                bot.log_exception(e)
+            if user.is_a?(Ricer::Irc::User)
+              if queue.length >= limit # should flush?
+                begin
+                  send_queue_as_pastebin(user, queue) # do it!
+                rescue StandardError => e
+                  bot.log_exception(e)
+                end
               end
             end
           end
