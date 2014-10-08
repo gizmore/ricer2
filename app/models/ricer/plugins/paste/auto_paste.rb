@@ -3,6 +3,8 @@ module Ricer::Plugins::Paste
     
     connector_is :irc
     
+    has_priority 100
+    
     has_setting name: :limit, type: :integer, scope: :server, permission: :ircop, default: 12, min: 3
 
     def limit
@@ -32,6 +34,16 @@ module Ricer::Plugins::Paste
       }
     end
     
+    ### After a privmsg, check if we should flush instantly (thx dloser) 
+    def ricer_after_execution
+      server.connection.queue_with_lock do |queues|
+        queue = queues[sender]
+        if queue.length >= limit
+          flush_user(sender, queue)
+        end
+      end
+    end
+    
     ### Call this for each server
     def flush_server(server, connection, limit)
       if connection.respond_to?(:queue_with_lock) # has queues?
@@ -40,15 +52,20 @@ module Ricer::Plugins::Paste
           queues.each do |user,queue| # for each user
             if user.is_a?(Ricer::Irc::User)
               if queue.length >= limit # should flush?
-                begin
-                  send_queue_as_pastebin(user, queue) # do it!
-                rescue StandardError => e
-                  bot.log_exception(e)
-                end
+                flush_user(user, queue)
               end
             end
           end
         end
+      end
+    end
+    
+    ### do it!
+    def flush_user(user, queue)
+      begin
+        send_queue_as_pastebin(user, queue)
+      rescue StandardError => e
+        bot.log_exception(e)
       end
     end
     

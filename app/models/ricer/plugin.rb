@@ -255,10 +255,16 @@ module Ricer
           send(func)
         end
         unless current_message.forked?
+          bot.log_debug("Plugin#exec_plugin is NOT FORKED")
           if current_message.pipe?
+            bot.log_debug("Plugin#exec_plugin is PIPING!")
             current_message.pipe!
           elsif current_message.chained?
+            bot.log_debug("Plugin#exec_plugin is CHAINING!")
             current_message.chain!
+          else
+            bot.log_debug("Plugin#exec_plugin is DONE!")
+            process_event('ricer_after_execution')
           end
         end
       rescue StandardError => e

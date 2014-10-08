@@ -33,7 +33,7 @@ module Ricer
       sender = old_message.sender if old_message && old_message.sender.is_a?(Ricer::Irc::User)
 #     sender = old_message.sender if old_message && old_message.plugin && old_message.sender.is_a?(Ricer::Irc::User)
       check_thread_limits!(sender) if sender
-      old_message.forked! if old_message
+      old_message.forked! if old_message && old_message.plugin
       # Start thread
       new do |t|
         # copy the network message
@@ -60,10 +60,21 @@ module Ricer
           # bot.log_debug "[#{guid}] Killed thread at #{display_proc(proc)}"
         ensure
           if sender; record_user_thread_limits(sender, -1); end
-          if old_message
+          if old_message && old_message.plugin
             old_message.joined!
-            if old_message.pipe?; old_message.pipe!
-            elsif old_message.chained?; old_message.chain!; end
+            bot.log_debug("JOINED THREAD!")
+            if old_message.forked?
+              bot.log_debug("STILL SOMETHING TODO!")
+            elsif old_message.pipe?
+              bot.log_debug("PIPING OUTPUT!")
+              old_message.pipe!
+            elsif old_message.chained?
+              bot.log_debug("CHAINING!")
+              old_message.chain!
+            else
+              bot.log_debug("EXECUTION DONE!")
+              old_message.plugin.process_event('ricer_after_execution')
+            end
           end
         end
       end

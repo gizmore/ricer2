@@ -5,8 +5,8 @@ module Ricer::Plug::Params
 
     def convert_in!(input, message)
       min, max = min_length, max_length
-      fail(:err_too_short, min, max) if min != nil && input.length < min
-      fail(:err_too_long,  min, max) if max != nil && input.length > max
+      fail(:err_too_short, min: min, max: max) if min != nil && input.length < min
+      fail(:err_too_long,  min: min, max: max) if max != nil && input.length > max
       input.to_s
     end
     

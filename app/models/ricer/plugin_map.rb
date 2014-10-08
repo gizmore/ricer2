@@ -30,7 +30,6 @@ module Ricer
     def register_connector(symbol, klass)
       @connectors[symbol] = klass
       @connector_count += 1
-      
     end
     
     def load_connector(connector)
@@ -59,7 +58,7 @@ module Ricer
     def load_plugin(plugin)
       plugin.class.instance_methods.each do |method_name|
         m = method_name.to_s
-        if m.starts_with?('on_') || m.start_with?('ricer_on_')
+        if m.starts_with?('on_') || m.start_with?('ricer_on_') || m.start_with?('ricer_before_') || m.start_with?('ricer_after_')
           register_event(method_name, plugin)
         end
       end

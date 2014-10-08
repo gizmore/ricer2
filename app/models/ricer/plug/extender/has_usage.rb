@@ -81,13 +81,15 @@ module Ricer::Plug::Extender::HasUsage
             current_message.plugin = self
             process_event('ricer_on_trigger') rescue nil
             begin
-              before_execution
+              # before_execution
+              # process_event('ricer_before_execution') rescue nil
               send(usage.function, *execute_args)
             rescue StandardError => e
               bot.log_exception(e)
               raise e
             ensure
-              after_execution
+              # after_execution
+              # process_event('ricer_after_execution') rescue nil
             end
             return true
           end

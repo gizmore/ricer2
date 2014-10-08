@@ -165,15 +165,23 @@ module Ricer::Net
     ### Pipes ###
     #############
     def forked!
-      @forked = true
-    end
-    
-    def forked?
+      @forked ||= 0
+      @forked += 1
+      bot.log_debug("FORKED IS NOW: #{@forked}")
       @forked
     end
     
+    def forked?
+      @forked ||= 0
+      bot.log_debug("Check if forked: #{@forked}")
+      @forked > 0
+    end
+    
     def joined!
-      @forked = false
+      @forked ||= 0
+      @forked -= 1
+      bot.log_debug("FORKED JOINED TO: #{@forked}")
+      @forked
     end
     
     def clone_chain

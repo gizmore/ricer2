@@ -100,7 +100,7 @@ module Ricer
       I18n.reload!
       map.validate_plugins!
       sort_plugins
-      #puts @plugins.collect{|p| "#{p.plugin_name}(#{p.subcommand_depth}): #{p.trigger}" }; byebug
+      # puts @plugins.collect{|p| "#{p.priority}: #{p.plugin_name}(#{p.subcommand_depth}): #{p.trigger}" }; byebug
       @plugins
     end
     
