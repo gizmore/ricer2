@@ -119,7 +119,7 @@ module Ricer::Plugins::Rice
     def send_quit(message, quitmessage); send_line(message.reply_text("QUIT :#{quitmessage}")) if connected?; end
     def send_notice(message, text); send_splitted(message, "NOTICE #{message.reply_to.name} :#{message.reply_prefix}", text); end
     def send_privmsg(message, text); send_splitted(message, "PRIVMSG #{message.reply_to.name} :#{message.reply_prefix}", text); end
-    def send_action(message, text); send_splitted(message, "NOTICE #{message.reply_to.name} :\x01", text, "\x01"); end
+    def send_action(message, text); send_splitted(message, "NOTICE #{message.reply_to.name} :\x01ACTION ", text, "\x01"); end
     def login(message, nickname)
       server.bot.log_info("Logging in as #{nickname.next_nickname}")
       send_line(message.reply_text("USER #{nickname.username} #{nickname.hostname} #{hostname} :#{nickname.realname}"))

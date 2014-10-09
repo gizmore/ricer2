@@ -65,6 +65,13 @@ module Ricer::Plugins::Rice
       server.connection.send_pong(current_message, args[0])
     end
     
+    def on_ctcp
+      #CLIENTINFO,FINGER,PING,TIME,VERSION,ACTION
+      puts "#CLIENTINFO,FINGER,PING,TIME,VERSION,ACTION"
+      byebug
+      puts "#CLIENTINFO,FINGER,PING,TIME,VERSION,ACTION"
+    end
+    
     def on_error
       server.disconnect!(current_message)
     end

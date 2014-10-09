@@ -16,10 +16,6 @@ module Ricer::Plugins::Core
         current_message.args[1] = line
         repetitions.times {
           plugin.exec_plugin
-          # XXX: Sleep for fork wait -.- (HACK)
-          # while current_message.forked?
-            # sleep 0.1
-          # end
         }
       }
     end

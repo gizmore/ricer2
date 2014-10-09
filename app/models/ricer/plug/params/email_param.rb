@@ -5,10 +5,10 @@ module Ricer::Plug::Params
       begin
         email = Mail::Address.new(input)
         failed_input unless (email.domain) && (email.address == input) && (email.__send__(:tree).domain.dot_atom_text.elements.length > 1)
+        email
       rescue StandardError => e
-        failed_input
       end
-      input
+      failed_input
     end
     
     def convert_out!(email, message)
