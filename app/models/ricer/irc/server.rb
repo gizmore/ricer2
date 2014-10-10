@@ -213,38 +213,46 @@ module Ricer::Irc
       argline
     end
     # Parse into ricer2 quote style
-    # Params in quotes become a single string by changing space to \x01
-    # Quote characters are then removed 
+    # Params in quotes become a single string by changing space to \x00
+    # Quote characters are removed. 
+    # '&&' becomes \x00\x00\x00 and '|' becomes \x00\x00
+    def quoteparam_part(part); part.gsub('&&', "\x00\x00\x00").gsub("|", "\x00\x00"); end
     def quoteparam_parser(message, argline)
-      back, part, quoting = "", "", false
-      argline.each_char do |c|
-        if c == '"'
-          if quoting
-            quoting = false
-            back += part.gsub(' ', "\x01")
-            part = ""
-          else
-            quoting = true
+      back = ""
+      while argline.length > 0
+        # byebug
+        part = argline.substr_to('"')
+        if part.nil? # no more quotes
+          back += quoteparam_part(argline)
+          break
+        else # append until quote start, append quote without part parser.
+          argline.substr_from!('"') # Nibble the part away
+          back += quoteparam_part(part) # append until quote start
+          part = argline.substr_to('"') # the quoted part
+          if part.nil? # Quote mismatch
+            back += '"'
+            back += quoteparam_part(argline)
+            break
+          else # Append quoted string
+            back += part.gsub(" ", "\x00")
+            argline.substr_from!('"') # Nibble the part away
           end
-        else
-          back += c
         end
       end
-      back += '"' if quoting
-      back + part
+      back
     end
 
-    # Now split by space&&space and exec the commands seperately 
+    # Now split by && and exec the commands seperately 
     def multicommand_parser(message, argline)
       firstline = nil
-      argline.split(/ +&& +/).each do |newline|
+      argline.split(/ +\x00\x00\x00 +/).each do |newline|
         if firstline.nil?
           firstline = newline
         else
           add_nextcommand(message, newline)
         end
       end
-      return firstline
+      firstline
     end
 
     def add_nextcommand(message, nextline)
@@ -258,7 +266,7 @@ module Ricer::Irc
     
     def pipecommand_parser(message, argline)
       firstcommand = nil
-      argline.split(/ +\| +/).each do |pipeline|
+      argline.split(/ +\x00\x00 +/).each do |pipeline|
         if firstcommand.nil?
           firstcommand = pipeline
         else
