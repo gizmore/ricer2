@@ -5,12 +5,12 @@ module Ricer::Plugins::Conf
     
     has_usage :execute_server, '<plugin>', :scope => :user, :permission => :owner
     def execute_server(plugin)
-      exec("confs #{plugin} trigger_enabled 0")
+      get_plugin('Conf/ConfServer').set_var(plugin, :trigger_enabled, false)
     end
 
     has_usage :execute_channel, '<plugin>', :scope => :channel, :permission => :operator
     def execute_channel(plugin)
-      exec("confc #{plugin} trigger_enabled 0")
+      get_plugin('Conf/ConfChannel').set_var(plugin, :trigger_enabled, false)
     end
 
   end

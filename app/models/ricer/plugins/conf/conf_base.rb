@@ -3,8 +3,6 @@ module Ricer::Plugins::Conf
   
     def description; tt("ricer.plugins.conf.conf.description"); end
   
-    private
-    
     def config_settings(plugin)
       back = {}
       plugin.memory_settings.each do |options|
