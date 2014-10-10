@@ -21,7 +21,7 @@ module Ricer::Plug
     end
     
     def parse(input, message)
-      @parser.convert_in!(input.gsub("\x01", ' '), message)
+      @parser.convert_in!(input.gsub("\x00", ' '), message)
     end
     
     def print(message=nil)

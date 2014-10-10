@@ -70,14 +70,17 @@ module Ricer::Plug::Extender::HasUsage
       private
       def try_handlers
         usages = usages_in_scope
+        if usages.length == 0
+          raise Ricer::ExecutionException.new(tt('ricer.plug.extender.has_usage.err_no_usages_in_scope'))
+        end
         throw_error = usages.length
-        bot.log_debug("HasUsage#try_handlers: #{self.plugin_name} with #{usages.count} usages in scope.")
+        #bot.log_debug("HasUsage#try_handlers: #{self.plugin_name} with #{usages.count} usages in scope.")
         usages.each do |usage|
-          bot.log_debug("Trying #{self.plugin_name} with pattern #{usage.pattern} for #{usage.function}")
+          #bot.log_debug("Trying #{self.plugin_name} with pattern #{usage.pattern} for #{usage.function}")
           throw_error -= 1
           execute_args = usage.parse_args(self, current_message, (throw_error == 0))
           unless execute_args.nil?
-            bot.log_debug("tried handler #{usage.pattern} successfully: #{execute_args.inspect}")
+            #bot.log_debug("tried handler #{usage.pattern} successfully: #{execute_args.inspect}")
             current_message.plugin = self
             process_event('ricer_on_trigger') rescue nil
             begin

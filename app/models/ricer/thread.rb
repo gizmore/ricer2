@@ -62,17 +62,17 @@ module Ricer
           if sender; record_user_thread_limits(sender, -1); end
           if old_message && old_message.plugin
             old_message.joined!
-            bot.log_debug("JOINED THREAD!")
+            #bot.log_debug("JOINED THREAD!")
             if old_message.forked?
-              bot.log_debug("STILL SOMETHING TODO!")
+              #bot.log_debug("STILL SOMETHING TODO!")
             elsif old_message.pipe?
-              bot.log_debug("PIPING OUTPUT!")
+              #bot.log_debug("PIPING OUTPUT!")
               old_message.pipe!
             elsif old_message.chained?
-              bot.log_debug("CHAINING!")
+              #bot.log_debug("CHAINING!")
               old_message.chain!
             else
-              bot.log_debug("EXECUTION DONE!")
+              #bot.log_debug("EXECUTION DONE!")
               old_message.plugin.process_event('ricer_after_execution')
             end
           end

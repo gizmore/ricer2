@@ -17,6 +17,7 @@ en:
 
         has_usage:
           msg_usage: 'Usage: %{trigger}%{usage}. %{description}%{permission}'
+          err_no_usages_in_scope: "This plugin does not work here, or you don´t have the right permission."
           scopeinfo_scope: 'This works only in %{scopelabel}.'
           scopeinfo_perm: 'This requires %{permission} permissions.'
           scopeinfo_both: 'This works in %{scopelabel} and requires %{permission} permissions.'

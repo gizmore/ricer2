@@ -28,7 +28,7 @@ module Ricer::Net
     end
 
     def self.fake_message(server, text=nil, reply_to=nil)
-      bot.log_debug("Net/Message::fake_message(#{server.displayname})")
+      #bot.log_debug("Net/Message::fake_message(#{server.displayname})")
       # Create a message, but don´t remember in thread
       old_message = Thread.current[:ricer_message] # old remembered
       message = new(nil) # the new fake
@@ -41,7 +41,7 @@ module Ricer::Net
     end
     
     def initialize(rawmessage=nil)
-      bot.log_debug("Net/Message#new(#{rawmessage}) NEW!")
+      #bot.log_debug("Net/Message#new(#{rawmessage}) NEW!")
       Thread.current[:ricer_message] = self
       @time = Time.new
       @raw = rawmessage
@@ -167,20 +167,17 @@ module Ricer::Net
     def forked!
       @forked ||= 0
       @forked += 1
-      bot.log_debug("FORKED IS NOW: #{@forked}")
       @forked
     end
     
     def forked?
       @forked ||= 0
-      bot.log_debug("Check if forked: #{@forked}")
       @forked > 0
     end
     
     def joined!
       @forked ||= 0
       @forked -= 1
-      bot.log_debug("FORKED JOINED TO: #{@forked}")
       @forked
     end
     
@@ -197,7 +194,7 @@ module Ricer::Net
     end
 
     def add_chainline(message)
-      bot.log_debug("Message#add_chainline(#{message.args[1]})")
+      #bot.log_debug("Message#add_chainline(#{message.args[1]})")
       @chainplugs ||= []
       @chainplugs.push(message)
       self
@@ -207,13 +204,13 @@ module Ricer::Net
       @pipeout ||= ''
       @pipeplugs ||= []; @pipelines ||= []
       @pipeplugs.push(plugin); @pipelines.push(line)
-      bot.log_debug("Message#add_pipeline(#{line}) to #{self.args[1]}. Chains: #{@chainplugs.length rescue 0}. Pipes: #{@pipeplugs.length}")
+      #bot.log_debug("Message#add_pipeline(#{line}) to #{self.args[1]}. Chains: #{@chainplugs.length rescue 0}. Pipes: #{@pipeplugs.length}")
       self
     end
     
     def chain_message
       return nil if (@errorneous) || (@chainplugs.nil?) || (@chainplugs.length == 0)
-      bot.log_debug("Polling next chained command: #{@chainplugs[0].args[1]}")
+      #bot.log_debug("Polling next chained command: #{@chainplugs[0].args[1]}")
       @chainplugs.shift
     end
     
@@ -229,8 +226,7 @@ module Ricer::Net
       @pipeout = ''
       @pipelines = next_message.pipelines
       @pipeplugs = next_message.pipeplugs
-      bot.log_debug("Next chained command: #{self.args[1]}. Pipes: #{@pipeplugs.length rescue 0}")
-      # Thread.current[:ricer_message] = self
+      #bot.log_debug("Next chained command: #{self.args[1]}. Pipes: #{@pipeplugs.length rescue 0}")
       self.plugin.exec_plugin
       return true
     end
@@ -246,7 +242,7 @@ module Ricer::Net
       line = @pipelines.shift + ' ' + @pipeout
       self.args[1] = line.rtrim("\n")
       @pipeout = ''
-      bot.log_debug("Next piped command: #{self.args[1]}. Pipes left: #{@pipeplugs.length}")
+      #bot.log_debug("Next piped command: #{self.args[1]}. Pipes left: #{@pipeplugs.length}")
       plugin.exec_plugin
       return true
     end

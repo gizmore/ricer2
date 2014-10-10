@@ -191,20 +191,16 @@ module Ricer
             @started_up = check_started_up
           end
         rescue SystemExit, Interrupt => e
-          servers.each do |server|
-            server.send_quit('Caught SystemExit exception.')
-          end
+          servers.each{|server| server.send_quit('Caught SystemExit exception.') }
           @running = false
-        rescue StandardError => e
+        rescue Exception => e
           @running = false
         end
       end
       # Exit event
-      message = servers.first.fake_message
-      servers.each{|server| server.process_event('ricer_on_exit', message) }
-      servers.first.process_event('ricer_on_global_exit', message)
+      servers.each{|server| server.process_event('ricer_on_exit', server.fake_message) }
+      servers.first.process_event('ricer_on_global_exit', servers.first.fake_message)
       sleep 1.second
-      nil
     end
     
     def check_started_up
@@ -212,10 +208,9 @@ module Ricer
       if uptime.to_i < 90.seconds
         servers.each{|server| return false unless server.started_up? }
       end
-      # Started up!
-      message = servers.first.fake_message
-      servers.each{|server| server.process_event('ricer_on_startup', message) }
-      servers.first.process_event('ricer_on_global_startup', message)
+      # Startup event.
+      servers.each{|server| server.process_event('ricer_on_startup', server.fake_message) }
+      servers.first.process_event('ricer_on_global_startup', servers.first.fake_message)
       true
     end
 

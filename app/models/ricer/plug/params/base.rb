@@ -12,7 +12,7 @@ module Ricer::Plug::Params
       @input = @value = nil
       @options = (options||default_options).reverse_merge!(default_options)
       set(value) if value
-      bot.log_debug("Params::Base#initialize value '#{@input}' with options: #{@options.inspect}")
+      #bot.log_debug("Params::Base#initialize value '#{@input}' with options: #{@options.inspect}")
     end
     
     ###############
