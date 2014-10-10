@@ -3,14 +3,16 @@ module Ricer::Plugins::Convert
 
     trigger_is :math
     
+    # Not too fast, cowboy
+    #bruteforce_protected timeout: 5.0
+
+    # Max 1 thread per user
     denial_of_service_protected
-    
-    # Not too quick please
-#    bruteforce_protected timeout: 1.5
     
     # Users can choose their own precision
     has_setting name: :precision, scope: :user, permission: :public, type: :integer, default: 4, min: 1, max: 12
-    
+
+    # Own description function for function description    
     def description
       t(:description,
         constants: lib.join(MATH_CONSTANTS.keys.collect{|c|c.upcase}),
@@ -36,8 +38,6 @@ module Ricer::Plugins::Convert
     } 
     
     MATH_FUNCTIONS = [
-    # User variables
-    'v',
     # math.rb from kernel mappings
     'acos', 'acosh',
     'asin', 'asinh',
@@ -60,26 +60,24 @@ module Ricer::Plugins::Convert
     'deg', 'pow',
     ]
     
-    MATH_SYMBOLS = '-+=*\\/%\\^&\\|\\.,;_0-9\\[\\]\\(\\)\\{\\} '
-
-    REGEXP = Regexp.new("^(?:(?:[#{MATH_SYMBOLS}]+)|(?:[^.0-9a-z]?(?:#{MATH_FUNCTIONS.join('|')})[^.0-9a-z]?))+$")
+    MATH_SYMBOLS = ['+', '-', '*', '/', '%', '^', '&', '(', ')', '|', '=', '$', ';']
     
     has_usage '<..term..>'
     def execute(term)
       service_thread {
         begin
-          # Beautify
-          term = term.gsub(/\s+/, ' ').downcase
-          # Replace math constants
-          MATH_CONSTANTS.each{|k, v| term = term.gsub(k, v.to_s) }
-          # Replace user variables
-          term = term.gsub(/\$(\d{1,2})/) { v[$1.to_i] ||= 0; 'v['+$1+']' }
+          transform_term(term)
           # Hacker Checker after some letter replacement, some functions will slip through
-          term_valid?(term) or return rply :err_forbidden
-          # Exec!
-          v[0] = BigDecimal.new(eval(term), get_setting(:precision)) # Probably an exception, but ricer will catch ;)
-          # Reply the result :)
-          reply v[0].to_s.rtrim('0').rtrim('.')
+          if term_valid?(term)
+            # Replace user variables
+            term.gsub!(/\$([1-9]?[0-9])/) { v[$1.to_i] ||= 0; 'v['+$1+']' }
+            # Exec!
+            v[0] = BigDecimal.new(eval(term), get_setting(:precision)) # Probably an exception, but ricer will catch ;)
+            # Reply the result :)
+            reply v[0].to_s.rtrim('0').rtrim('.')
+          end
+        rescue SystemExit, Interrupt => e
+          raise e
         rescue Exception => e
           reply e.to_s
         end          
@@ -88,9 +86,47 @@ module Ricer::Plugins::Convert
     
     private
     
-    def term_valid?(term)
-      !!REGEXP.match(term)
+    def transform_term(term)
+      bot.log_debug("Maths#transform_term() from: #{term}")
+      term.replace(" #{term} ")
+      term.downcase!
+      term.gsub!(',', '.')
+      MATH_CONSTANTS.each{|k, v| term.gsub!(Regexp.new("([^a-z])#{k}([^a-z])")) { "#{$1} #{v} #{$2}" } }
+      term.gsub!(/\s+/, ' ')
+      term.gsub!(/(\d) (\d)/) { "#{$1}*#{$2}" }
+      term.strip!
+      bot.log_debug("Maths#transform_term() done: #{term}")
     end
+    
+    ########################
+    ### Hacker Validator ###
+    ########################
+    def term_valid?(term)
+      valid_symbols?(term)
+      valid_variables?(term)
+      valid_functions?(term)
+    end
+
+    def valid_symbols?(term)
+      symbols = Regexp.escape(MATH_SYMBOLS.join)
+      if !(/^[#{symbols}0-9\\.a-z ]+$/.match(term))
+        raise Ricer::ExecutionException.new(t(:err_invalid_symbols))
+      end
+    end
+
+    def valid_variables?(term)
+      if /\$0\d/.match(term) || /\$\d{3,}/.match(term)
+        raise Ricer::ExecutionException.new(t(:err_invalid_variable))
+      end
+    end
+
+    def valid_functions?(term)
+      term.split(/[^a-z]+/).each do |func|
+        unless MATH_FUNCTIONS.include?(func) || func.empty?
+          raise Ricer::ExecutionException.new(t(:err_invalid_function))
+        end
+      end
+    end    
 
     #################
     ### Functions ###

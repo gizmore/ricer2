@@ -9,8 +9,10 @@ en:
           
         maths:
           trigger: math
-          description: 'Do mathematical calculations. Constants: %{constants}. Use $1-100 for your own vars. $0 contains the result. Functions: %{functions}'
-          err_forbidden: 'Your input did not pass the security test.'
+          description: 'Do mathematical calculations. Constants: %{constants}. Use $1-99 for your own vars. $0 contains the result of your last calculation. Math functions: %{functions}.'
+          err_invalid_symbols: "Your input contains invalid characters."
+          err_invalid_variable: "Your input contains an invalid custom variable. Only $0 - $99 is allowed."
+          err_invalid_function: "You are trying to call a forbidden function. Nice try!"
 
         reverse:
           trigger: 'reverse'
