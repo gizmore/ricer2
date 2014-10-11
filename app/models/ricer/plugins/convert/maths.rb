@@ -110,7 +110,7 @@ module Ricer::Plugins::Convert
 
     def valid_symbols?(term)
       symbols = Regexp.escape(MATH_SYMBOLS.join)
-      if !(/^[#{symbols}0-9\\.a-z ]+$/.match(term))
+      if !(/^[#{symbols}0-9\\.,a-z ]+$/.match(term))
         raise Ricer::ExecutionException.new(t(:err_invalid_symbols))
       end
     end
