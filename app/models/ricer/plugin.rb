@@ -10,6 +10,7 @@ module Ricer
     
     include Ricer::Base::Base
     include Ricer::Base::Hook
+    include Ricer::Base::Events
     include Ricer::Base::Translates
     
     DEFAULT_PRIORITY = 50

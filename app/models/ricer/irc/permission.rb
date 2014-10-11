@@ -70,7 +70,7 @@ module Ricer::Irc
     end
 
     def self.by_name!(name)
-      by_name(name) or raise "Unknown permission: #{name}"
+      by_name(name) or raise RuntimeError.new("Unknown permission: #{name}")
     end
     
     def self.by_label(label)
@@ -113,7 +113,7 @@ module Ricer::Irc
     end
     
     def self.by_permission(permissions, authenticated=false)
-      bot.log_debug("Permission#by_permission(#{permissions}) AUTHED: #{authenticated.inspect}")
+      #bot.log_debug("Permission#by_permission(#{permissions}) AUTHED: #{authenticated.inspect}")
       priv = 'p'
       symbol = ''
       char = ''
@@ -163,7 +163,7 @@ module Ricer::Irc
     
     def has_permission?(permission, respect_auth=REGISTERED)
 #      permission = PUBLIC if permission.nil?
-      bot.log_debug("Checking my permission #{bit} against #{permission.bit}")
+      #bot.log_debug("Checking my permission #{bit} against #{permission.bit}")
       group_bits = permission.group_bits(nil)
       (self.hierarchic_bits(respect_auth) >= permission.hierarchic_bits(nil)) &&
       ((group_bits == 0) || ((self.group_bits(respect_auth) & group_bits) == group_bits))

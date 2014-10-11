@@ -36,7 +36,7 @@ module Ricer::Irc
     
     def _displayname
       b = self.online ? "\x02" : ''
-      @_displayname = "#{b}#{self.id}#{b}-#{self.name}:#{self.server.domain}"
+      @_displayname = "#{b}#{self.name}#{b}:#{self.server.name}"
     end
     
     #########################

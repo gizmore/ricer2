@@ -2,7 +2,7 @@ module Ricer
   class PluginMap
     
     include Singleton
-    include Ricer::Plug::Extender::KnowsEvents
+    include Ricer::Base::Events
     
     attr_reader :event_count, :trigger_count
     

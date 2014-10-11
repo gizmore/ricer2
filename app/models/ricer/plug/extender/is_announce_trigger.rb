@@ -1,3 +1,11 @@
+###
+### Make the plugin toggle and provide a subscriber list
+### No automatic actions are taken, it just offers some helper functions
+###
+### To work with subscribers, use:
+###
+### announce_targets{|target| ... }
+###
 module Ricer::Plug::Extender::IsAnnounceTrigger
   DEFAULT_OPTIONS = {
     user: :public,
@@ -15,11 +23,18 @@ module Ricer::Plug::Extender::IsAnnounceTrigger
       has_setting name: :announce, type: :boolean, scope: :user,    permission: options[:user],    default: options[:user_default]    if options[:user]
       has_setting name: :announce, type: :boolean, scope: :channel, permission: options[:channel], default: options[:channel_default] if options[:channel]
   
-      has_usage :execute_toggle_announce, '<boolean>'
-      def execute_toggle_announce(boolean)
-        boolean = boolean ? '1' : '0'
-        methodn = current_message.is_query? ? 'Confu' : 'Confc'
-        exec_newline("#{methodn} #{trigger} announce #{boolean}")
+      if options[:user]
+        has_usage :execute_toggle_announce_user, '<boolean>', :scope => :user, :permission => options[:user]
+        def execute_toggle_announce_user(boolean)
+          get_plugin('Conf/ConfUser').set_var(self, :announce, boolean)
+        end
+      end
+
+      if options[:channel]
+        has_usage :execute_toggle_announce_channel, '<boolean>', :scope => :channel, :permission => options[:channel]
+        def execute_toggle_announce_channel(boolean)
+          get_plugin('Conf/ConfChannel').set_var(self, :announce, boolean)
+        end
       end
       
       def announce_channels(&block)
@@ -28,6 +43,7 @@ module Ricer::Plug::Extender::IsAnnounceTrigger
             yield(channel)
           end
         end
+        nil
       end
 
       def announce_users(&block)
@@ -36,6 +52,7 @@ module Ricer::Plug::Extender::IsAnnounceTrigger
             yield(user)
           end
         end
+        nil
       end
       
       def announce_targets(&block)
@@ -44,6 +61,5 @@ module Ricer::Plug::Extender::IsAnnounceTrigger
       end
       
     end
-    
   end
 end

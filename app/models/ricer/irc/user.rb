@@ -31,8 +31,8 @@ module Ricer::Irc
     def global_cache_key; "#{self.nickname.downcase}:#{self.server_id}"; end
     
     def name; self.nickname; end
-    def quietname; Ricer::Irc::Lib.instance.no_highlight(self.nickname); end
-    def displayname; "\x02#{quietname}\x02:#{self.server_id}" end
+    def quietname; lib.no_highlight(self.nickname); end
+    def displayname; "\x02#{quietname}\x02:#{self.server.name}" end
     def guid; "#{self.name}:#{self.server_id}"; end
     def is_ricer?; self.server.nickname.name.downcase == self.nickname.downcase; end
 

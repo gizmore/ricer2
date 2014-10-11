@@ -18,10 +18,10 @@ gem 'geocoder'
 gem 'open4'
 gem 'ruby-git'
 gem 'easy_translate'
+gem 'ruby-prof'
 
 group :development do
   gem 'byebug'
-  gem 'ruby-prof'
 end
 
 group :production do

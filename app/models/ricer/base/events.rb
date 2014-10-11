@@ -1,8 +1,6 @@
-module Ricer::Plug::Extender::KnowsEvents
+module Ricer::Base::Events
 
   def self.included(base); base.extend(self); end
-  
-  # def bot; Ricer::Bot.instance; end
   
   def all_subscriptions
     Ricer::Event.class_variable_defined?(:@@sl5_event_subscriptions) ?
@@ -22,7 +20,11 @@ module Ricer::Plug::Extender::KnowsEvents
   def publish(event, *event_args)
     event_subscriptions(event).each do |subscription|
       bot.log_debug(display_publish_consumed(event, subscription))
-      subscription.call(*event_args)
+      begin
+        subscription.call(*event_args)
+      rescue StandardError => e
+        bot.log_exception(e)
+      end
     end
   end
 

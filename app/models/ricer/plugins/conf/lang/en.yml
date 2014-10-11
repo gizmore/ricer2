@@ -42,6 +42,7 @@ en:
 
         help:
           description: 'Print available commands in scope or show help for a trigger. Note that the overview result differs between channels and queried requests.'
+          err_no_help: "There is no help for this plugin available."
           msg_triggers: 'Available: %{triggers}.'
           msg_event_info: '%{name}: %{info}'
 

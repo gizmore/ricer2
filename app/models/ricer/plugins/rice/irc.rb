@@ -1,7 +1,7 @@
 module Ricer::Plugins::Rice
   class Irc < Ricer::Net::Connection    
   
-    MAXLEN = 512
+    MAXLEN = 510
     
     require 'uri'
     require 'socket'
@@ -150,8 +150,7 @@ module Ricer::Plugins::Rice
     end
     
     def send_splitted(message, prefix, text, postfix='')
-      length = MAXLEN - prefix.length
-#      text.scan(Regexp.new(".{1,#{length}}(?:\s|$)|.{1,#{length}}")).map(&:strip).each do |line|
+      length = MAXLEN - prefix.bytesize - postfix.bytesize - 32
       text.scan(Regexp.new(".{1,#{length}}(?:\s|$)|.{1,#{length}}")).each do |line|
         send_queued(message.reply_message(prefix+line+postfix))
       end

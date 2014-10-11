@@ -2,6 +2,7 @@ module Ricer::Plugins::Conf
   class Enable < Ricer::Plugin
     
     trigger_is :enable
+    always_enabled
     
     has_usage :execute_server, '<trigger>', :scope => :user, :permission => :owner
     def execute_server(plugin)

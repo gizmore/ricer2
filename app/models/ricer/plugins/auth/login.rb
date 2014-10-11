@@ -6,6 +6,7 @@ module Ricer::Plugins::Auth
     permission_is :registered
     scope_is :user
 
+    always_enabled
     bruteforce_protected
     
     has_usage '<password>'

@@ -26,7 +26,7 @@ module Ricer::Irc
     end
 
     def self.by_name!(name)
-      by_name(name) or raise "Invalid scope: #{name}"
+      by_name(name) or raise RuntimeError.new("Invalid scope: #{name}")
     end
 
     def self.by_label(name)
@@ -34,7 +34,7 @@ module Ricer::Irc
       @@all.each do |sc|
         return sc if sc.to_label.downcase == name
       end
-      return nil
+      nil
     end
     
     def in_scope?(scope); (scope.bit & self.bit) > 0; end
@@ -55,7 +55,7 @@ module Ricer::Irc
           end
         end
       end
-      return false
+      false
     end
     
   end

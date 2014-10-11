@@ -1,8 +1,8 @@
 ##
-## trigger_is, :symbol
-##
 ## Enriches plugins with some default settings and core extenders.
-## [+] Reply functions and exception beautifier
+## Adds reply functions and exception beautifier
+##
+## @example trigger_is :ping
 ##
 module Ricer::Plug::Extender::TriggerIs
   def trigger_is(trigger)
@@ -19,7 +19,7 @@ module Ricer::Plug::Extender::TriggerIs
         default_enabled true
         flooding_protected true
         
-        def_enabled = klass.instance_variable_get('@default_enabled')        
+        def_enabled = klass.instance_variable_get(:@default_enabled)        
         has_setting name: :trigger_enabled,    type: :boolean,    scope: :channel, permission: :operator,    default: def_enabled
         has_setting name: :trigger_enabled,    type: :boolean,    scope: :server,  permission: :ircop,       default: def_enabled
         has_setting name: :trigger_enabled,    type: :boolean,    scope: :bot,     permission: :responsible, default: def_enabled

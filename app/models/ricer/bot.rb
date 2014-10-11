@@ -7,7 +7,7 @@ module Ricer
     def should_cache?; true; end
     
     include Ricer::Base::Base
-    include Ricer::Plug::Extender::KnowsEvents
+    include Ricer::Base::Events
     
     attr_reader   :rand, :botlog, :servers
     attr_accessor :needs_restart, :running

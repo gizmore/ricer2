@@ -31,7 +31,6 @@ module Ricer
       old_message = Thread.current[:ricer_message]
       # Sender to count threads
       sender = old_message.sender if old_message && old_message.sender.is_a?(Ricer::Irc::User)
-#     sender = old_message.sender if old_message && old_message.plugin && old_message.sender.is_a?(Ricer::Irc::User)
       check_thread_limits!(sender) if sender
       old_message.forked! if old_message && old_message.plugin
       # Start thread
@@ -53,18 +52,18 @@ module Ricer
           bot.log_debug "[#{guid}] Started thread at #{display_proc(proc)}"
           yield proc
           bot.log_debug "[#{guid}] Stopped thread at #{display_proc(proc)}"
+        rescue Ricer::ExecutionException => e
+          bot.log_debug "[#{guid}] Killed thread at #{display_proc(proc)}"
         rescue StandardError => e
           bot.log_exception(e)
           bot.log_debug "[#{guid}] Killed thread at #{display_proc(proc)}"
-        # rescue StandardError => e
-          # bot.log_debug "[#{guid}] Killed thread at #{display_proc(proc)}"
         ensure
           if sender; record_user_thread_limits(sender, -1); end
           if old_message && old_message.plugin
             old_message.joined!
             #bot.log_debug("JOINED THREAD!")
             if old_message.forked?
-              #bot.log_debug("STILL SOMETHING TODO!")
+              #bot.log_debug("STILL SOMETHING LEFT TO DO!")
             elsif old_message.pipe?
               #bot.log_debug("PIPING OUTPUT!")
               old_message.pipe!

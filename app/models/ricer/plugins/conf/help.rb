@@ -5,21 +5,20 @@ module Ricer::Plugins::Conf
     
     bruteforce_protected :always => false
     
-    has_usage :execute_help, '<trigger>'
     has_usage :execute_list, ''
-    
-    def execute_help(trigger)
-      reply trigger.get_help
-    end
-        
     def execute_list
-      return if bruteforcing?
+      return if bruteforcing? # Manual bruteforce protection
       grouped = collect_groups
       grouped = Hash[grouped.sort]
       grouped.each do |k,v|; grouped[k] = v.sort; end
       sender.send_message t(:msg_triggers, :triggers => grouped_output(grouped))
     end
-
+    
+    has_usage :execute_help, '<trigger>'
+    def execute_help(trigger)
+      reply trigger.get_help rescue rply :err_no_help
+    end
+        
     protected
     
     def help_plugins

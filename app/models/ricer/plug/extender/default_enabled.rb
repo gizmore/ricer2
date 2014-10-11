@@ -4,7 +4,7 @@ module Ricer::Plug::Extender::DefaultEnabled
       
       throw "#{klass.name} excepts extender default_enabled to pass a boolean." unless !!bool == bool
       
-      klass.register_class_variable('@default_enabled')
+      klass.register_class_variable(:@default_enabled)
       if klass.instance_variable_defined?('@mem_settings')
         settings = klass.instance_variable_get('@mem_settings')
         settings.each do |setting|
@@ -14,8 +14,8 @@ module Ricer::Plug::Extender::DefaultEnabled
         end
       end
       
-      unless klass.instance_variable_defined?('@default_enabled')
-        klass.instance_variable_set('@default_enabled', bool)
+      unless klass.instance_variable_defined?(:@default_enabled)
+        klass.instance_variable_set(:@default_enabled, bool)
         klass.register_exec_function(:exec_enabled_check!)
         def exec_enabled_check!
           raise_disabled_exception unless get_setting(:trigger_enabled)

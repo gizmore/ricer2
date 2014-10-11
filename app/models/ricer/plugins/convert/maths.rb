@@ -30,12 +30,15 @@ module Ricer::Plugins::Convert
     MATH_CONSTANTS = {
       'e' => Math::E,
       'pi' => Math::PI,
+      'tau' => 2*Math::PI,
       'phis' => 1-PHI, # phi short
       'phil' => PHI,   # phi long
       'phia' => 2.40,  # Golden arc short
       'phib' => 3.88,  # Golden arc long
       'phi' => 1+PHI,  # Golden ratio
     } 
+    
+    MATH_SYMBOLS = ['+', '-', '*', '/', '%', '^', '&', '(', ')', '|', '=', '$', ';']
     
     MATH_FUNCTIONS = [
     # math.rb from kernel mappings
@@ -57,10 +60,8 @@ module Ricer::Plugins::Convert
     'tan', 'tanh',
     # Other/Own helpers
     'round', 'floor', 'ceil',
-    'deg', 'pow',
+    'deg', 'pow', 'root',
     ]
-    
-    MATH_SYMBOLS = ['+', '-', '*', '/', '%', '^', '&', '(', ')', '|', '=', '$', ';']
     
     has_usage '<..term..>'
     def execute(term)
@@ -87,15 +88,15 @@ module Ricer::Plugins::Convert
     private
     
     def transform_term(term)
-      bot.log_debug("Maths#transform_term() from: #{term}")
+      #bot.log_debug("Maths#transform_term() from: #{term}")
       term.replace(" #{term} ")
       term.downcase!
       term.gsub!(',', '.')
       MATH_CONSTANTS.each{|k, v| term.gsub!(Regexp.new("([^a-z])#{k}([^a-z])")) { "#{$1} #{v} #{$2}" } }
       term.gsub!(/\s+/, ' ')
-      term.gsub!(/(\d) (\d)/) { "#{$1}*#{$2}" }
+      #term.gsub!(/(\d) (\d)/) { "#{$1}*#{$2}" }
       term.strip!
-      bot.log_debug("Maths#transform_term() done: #{term}")
+      #bot.log_debug("Maths#transform_term() done: #{term}")
     end
     
     ########################
