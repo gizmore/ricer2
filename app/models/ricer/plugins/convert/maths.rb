@@ -91,7 +91,7 @@ module Ricer::Plugins::Convert
       #bot.log_debug("Maths#transform_term() from: #{term}")
       term.replace(" #{term} ")
       term.downcase!
-      term.gsub!(',', '.')
+#      term.gsub!(',', '.')
       MATH_CONSTANTS.each{|k, v| term.gsub!(Regexp.new("([^a-z])#{k}([^a-z])")) { "#{$1} #{v} #{$2}" } }
       term.gsub!(/\s+/, ' ')
       #term.gsub!(/(\d) (\d)/) { "#{$1}*#{$2}" }
