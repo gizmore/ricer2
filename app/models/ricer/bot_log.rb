@@ -32,7 +32,7 @@ module Ricer
     ###############
     def log_debug(msg); log(:debug, msg); end
     def log_info(msg); log(:info, msg); end
-    def log_warning(msg); log(:warning, msg); end
+    def log_warn(msg); log(:warning, msg); end
     def log_error(msg); loge(:error, msg); end
     def log_fatal(msg); loge(:fatal, msg); end
 

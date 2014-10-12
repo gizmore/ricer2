@@ -14,7 +14,8 @@ module Ricer::Plug::Extender::RequiresConfirmation
       klass.class_variable_set(:@@REQUIRES_RANDOM_WORD, !!options[:random])
       
       def execute_confirmation
-        unless @@CONFIRM[user].nil?
+        privmsg_line = self.privmsg_line
+        if @@CONFIRM[user]
           waitingfor = @@CONFIRM[user] + " #{confirmationword}"
           if waitingfor == privmsg_line
             current_message.args[1].substr_to!(" #{confirmationword}")
@@ -22,8 +23,11 @@ module Ricer::Plug::Extender::RequiresConfirmation
             return
           end
         end
-        @@CONFIRM[user] = privmsg_line
-        raise Ricer::ExecutionException.new(tt('ricer.plug.extender.requires_confirmation.msg_confirm', command: @@CONFIRM[user], word: confirmationword))
+        @@CONFIRM[user] = privmsg_line.substr_to(" #{confirmationword}")||privmsg_line
+        raise Ricer::ExecutionException.new(tt('ricer.plug.extender.requires_confirmation.msg_confirm',
+          command: @@CONFIRM[user],
+          word: confirmationword,
+        ))
       end
       
       @@CONFIRM = {}

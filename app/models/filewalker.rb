@@ -64,5 +64,22 @@ class Filewalker
       end
     end
     
+    ###
+    ### Same for classes :)
+    ###
+    def self.classes_do(module_const, recursive=true, &block)
+      # Yield all classes
+      module_const.constants.
+        select{|c| Class === module_const.const_get(c) }.
+        each{|c| yield(module_const.const_get(c)) }
+      # Call myself recursively for all modules
+      if recursive
+        module_const.constants.
+          select{|m| m = module_const.const_get(m); m === Module and m.name.start_with?(module_const.name) }.
+          each{|m| classes_do(module_const.const_get(m), recursive, &block) }
+      end
+      nil
+    end
+    
   end
 end

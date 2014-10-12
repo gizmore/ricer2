@@ -3,7 +3,7 @@ module Ricer::Plugins::Art
     trigger_is :fu
     has_usage :execute
     def execute
-      reply '┌∩┐(◣_◢)┌∩┐'
+      reply '┌∩┐(◣_◢)┌∩┐' #'︻╦╤─'
     end
   end
 end

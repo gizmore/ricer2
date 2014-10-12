@@ -7,7 +7,7 @@ module Ricer::Net
     def connector_symbol; self.class.connector_symbol; end
     
     def bot; @server.bot; end
-    def fake_message; Ricer::Net::Message.fake_message(server); end
+    def fake_message; @server.fake_message; end
     
     def initialize(server); @server = server;  end
     def displayname; connector_symbol.upcase; end

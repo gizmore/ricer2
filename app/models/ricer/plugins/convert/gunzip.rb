@@ -3,15 +3,15 @@ module Ricer::Plugins::Convert
 
     trigger_is :gunzip
 
-    has_usage '<..data..>'
-    def execute(data)
+    has_usage '<..text..>'
+    def execute(text)
       begin
-        data.force_encoding('binary')
-        zstream = Zlib::Deflate.new
-        reply zstream.deflate(data)
+        text.force_encoding('binary')
+        z = Zlib::Inflate.new
+        reply = zstream.inflate(text)
       ensure
-        zstream.finish
-        zstream.close
+        z.finish
+        z.close
       end
     end
 

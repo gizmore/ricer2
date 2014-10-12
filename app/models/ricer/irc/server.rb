@@ -124,7 +124,7 @@ module Ricer::Irc
     # end
     
     def fake_message
-      @connection.fake_message
+      @_fake_message ||= Ricer::Net::Message.fake_message(self)
     end
     
     def send_quit(text)

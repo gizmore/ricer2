@@ -38,6 +38,8 @@ module Ricer::Plugins::Rice
     end
     
     def on_nick
+      ### TODO: NICK needs to copy joined channels and stuff
+      ### XXX: here is the first time we need user aliasing
       old_user = create_user(sender_nickname)
       new_user = create_user(args[0])
       current_message.sender = new_user

@@ -15,6 +15,10 @@ module Ricer
       @plugdirs.push(path)
     end
     
+    def add_plugin(plugin)
+      @plugins.push(plugin)
+    end
+    
     def load_all
       
       @bot.log_debug "PluginLoader.load_all"
@@ -27,7 +31,7 @@ module Ricer
       
       @plugins = []
       @plugdirs.each do |path|
-        @plugins += load_path(path)
+        load_path(path)
       end
       
       @plugins.each do |plugin|
@@ -51,11 +55,10 @@ module Ricer
     
     def load_path(path)
       plugins = []
+      with_plugdirs{|dir|load_i18n_dirs dir} # Langfiles even earlier
       with_plugdirs{|dir|load_export_dir dir} # Exports first (Cross plugin)
       with_plugdirs{|dir|load_model_dir dir} # Then models (Cross plugin)
       with_plugdirs do |dir|
-        # Langfiles
-        load_i18n_dirs(dir)
         # Plugins
         modulename = dir.rsubstr_from('/').camelize
         plugins += load_plugin_dir(dir, modulename)
@@ -194,9 +197,12 @@ module Ricer
     
     def install_plugin(classobject)
       
-      plugin = classobject.new
+      # The singleton for this plugin
+      plugin = classobject.new;
       
       db_plugin = classobject.find_or_create_by({bot_id: @bot.id, name: plugin.plugin_name})
+      @plugins.push(db_plugin)
+            
       db_version = db_plugin.revision
       plug_version = plugin.plugin_revision
       
@@ -209,16 +215,7 @@ module Ricer
         db_plugin.call_hook(:plugin_install, db_plugin)
         
         begin
-          while db_version < plug_version
-            dbv = db_version + 1
-            if db_plugin.respond_to?("upgrade_#{dbv}")
-              db_plugin.call_hook("upgrade_#{dbv}")
-              ActiveRecord::Base.transaction{
-                db_plugin.send("upgrade_#{dbv}")                
-              }              
-            end
-            db_version = dbv
-          end
+          upgrade_plugin(db_plugin, plug_version)
         rescue StandardError => e
           errors = true
           @valid = false
@@ -228,13 +225,45 @@ module Ricer
       end
 
       unless errors
-        db_plugin.revision = db_version
-        db_plugin.save!
         db_plugin
       else
+        @plugins.delete(plugin)
         nil
       end
 
+    end
+    
+    def upgrade_plugin(plugin, to_version)
+      while plugin.revision < to_version
+        change_plugin_version(plugin, plugin.revision + 1, :up)
+        plugin.revision += 1
+        plugin.save!
+      end
+      true
+    end
+    
+    def downgrade_plugin(plugin, to_version)
+      while plugin.revision > to_version
+        change_plugin_version(plugin, plugin.revision, :down)
+        plugin.revision -= 1
+        plugin.save!
+      end
+    end
+    
+    def change_plugin_version(plugin, version, direction)
+      # if plugin.respond_to?(method)
+        if direction == :down
+          ActiveRecord::Migration.revert { execute_change_plugin_version(plugin, version) }
+        elsif direction == :up
+          execute_change_plugin_version(plugin, version)
+        end
+      # end
+    end
+    
+    def execute_change_plugin_version(plugin, version)
+      method = "upgrade_#{version}"
+      plugin.call_hook(method)
+      plugin.send(method) if plugin.respond_to?(method)
     end
 
   end

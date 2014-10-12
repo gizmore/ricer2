@@ -22,7 +22,7 @@ module Ricer::Plug::Extender::HasFiles
       end
       
       def plugin_file_exists?(path)
-        File.exists?(plugin_file_path!(path)) && File.file?
+        File.exists?(plugin_file_path!(path)) && File.file?(plugin_file_path!(path))
       end
       
       def plugin_dir_path!(path='')

@@ -111,7 +111,6 @@ module Ricer
     
     def load_plugin(klass, reload=false)
       plugin = @loader.install_plugin(klass)
-      @plugins.push(plugin)
       plugin_map.load_plugin(plugin)
       plugin
     end
