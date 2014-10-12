@@ -42,6 +42,7 @@ config/secrets.yml
 
 # --- gizmore --- #
 .project
+/db/schema.rb
 /vendor
 /files
 /log
