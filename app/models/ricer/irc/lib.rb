@@ -132,6 +132,21 @@ module Ricer::Irc
       # TODO: Implement parsing of 3min2sec to 182
       human
     end
+    
+    def gdo_date(time)
+      time.strftime('%Y%m%d%H%M%S')
+    end
+    
+    def ruby_date(gdo_date)
+      DateTime.new(
+        gdo_date[0..3].to_i,
+        gdo_date[4..5].to_i,
+        gdo_date[6..7].to_i,
+        gdo_date[8..9].to_i,
+        gdo_date[10..11].to_i,
+        gdo_date[12..13].to_i,
+      )
+    end
 
     ############
     ### Join ###

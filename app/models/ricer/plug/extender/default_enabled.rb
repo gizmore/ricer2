@@ -17,6 +17,9 @@ module Ricer::Plug::Extender::DefaultEnabled
       unless klass.instance_variable_defined?(:@default_enabled)
         klass.instance_variable_set(:@default_enabled, bool)
         klass.register_exec_function(:exec_enabled_check!)
+        def plugin_enabled?
+          get_setting(:trigger_enabled)
+        end
         def exec_enabled_check!
           raise_disabled_exception unless get_setting(:trigger_enabled)
         end

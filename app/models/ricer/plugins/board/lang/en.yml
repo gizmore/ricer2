@@ -3,4 +3,11 @@ en:
     plugins:
       board:
         
+        entry: "%{url} - %{title} - by %{user}"
+
+        add:
+          err_test: "Board has not been added: %{reason}."
+          msg_added: "Board #%{id} has been added as %{name}. %{entry}."
+        
         board:
+          msg_announce: "[%{name}] New post: %{entry}."

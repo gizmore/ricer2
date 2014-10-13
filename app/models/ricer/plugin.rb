@@ -65,6 +65,7 @@ module Ricer
     def plugin_load; end # once, first load 
     def plugin_reload; end # always, on reload
     def plugin_loaded; end  # always, after loaded
+    def plugin_enabled?; true; end
     
     def short_class_name; self.class.short_class_name; end
     def self.short_class_name; name.split('::')[-1]; end

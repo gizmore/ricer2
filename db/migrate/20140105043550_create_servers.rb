@@ -13,9 +13,9 @@ class CreateServers < ActiveRecord::Migration
     
     create_table :server_urls do |t|
       t.integer :server_id, :null => false
-      t.string  :ip,  :limit => 43, :charset => :ascii, :collation => :ascii_bin
-      t.string  :url, :null => false
-      t.boolean :peer_verify, :default => false, :null => false
+      t.string  :ip,  :null => true,  :limit => 43,   :charset => :ascii, :collation => :ascii_bin
+      t.string  :url, :null => false, :unique => true
+      t.boolean :peer_verify, :null => false, :default => false
       t.timestamps
     end
     

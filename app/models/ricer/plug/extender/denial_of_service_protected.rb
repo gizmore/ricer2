@@ -10,7 +10,8 @@
 module Ricer::Plug::Extender::DenialOfServiceProtected
   
   OPTIONS = {
-    scope: :user
+    scope: :user,
+    max: 1,
   }
   
   def denial_of_service_protected(options={})
@@ -21,10 +22,17 @@ module Ricer::Plug::Extender::DenialOfServiceProtected
       if Ricer::Irc::Scope.by_name(options[:scope]).nil?
         throw "#{klass.name} denial_of_service_protected scope is invalid: #{options[:scope]}"
       end
+      unless options[:max].integer? && options[:max].between?(1, 100)
+        throw "#{klass.name} denial_of_service_protected max is invalid: #{options[:max]}"
+      end
     
-      # Set option scope      
+      # Set option scope
       klass.register_class_variable(:@dos_protection_scope)
       klass.instance_variable_set(:@dos_protection_scope, options[:scope])
+
+      # Set option max
+      klass.register_class_variable(:@dos_protection_max)
+      klass.instance_variable_set(:@dos_protection_max, options[:max])
 
       # Set exec cache
       klass.register_class_variable(:@dos_protection_cache)
@@ -32,15 +40,16 @@ module Ricer::Plug::Extender::DenialOfServiceProtected
 
       # Call this when the thread is started!      
       def start_service
+        denial_of_service_cache[service_issuer] ||= 0
         if service_running?
           raise Ricer::ExecutionException.new(tt('ricer.plug.extender.denial_of_service_protected.err_already_running'))  
         end
-        denial_of_service_cache[service_issuer] = 1
+        denial_of_service_cache[service_issuer] += 1
       end
       
       # Call this when the thread is done!      
       def stopped_service
-        denial_of_service_cache.delete(service_issuer)
+        denial_of_service_cache[service_issuer] -= 1
       end
       
       # Call this conviniently for a protected thread 
@@ -70,12 +79,16 @@ module Ricer::Plug::Extender::DenialOfServiceProtected
         self.class.instance_variable_get(:@dos_protection_scope)
       end
 
+      def denial_of_service_max
+        self.class.instance_variable_get(:@dos_protection_max)
+      end
+
       def denial_of_service_cache
         self.class.instance_variable_get(:@dos_protection_cache)
       end
       
       def service_running?
-        denial_of_service_cache[service_issuer] != nil
+        denial_of_service_cache[service_issuer] >= denial_of_service_max
       end
       
     end

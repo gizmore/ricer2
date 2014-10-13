@@ -14,17 +14,20 @@ module Ricer::Plugins::Purple
     
     def purple; @@purple ||= bot.get_plugin('Purple/Purple'); end
     
-    def after_connect; end
+    def default_url
+      "http://#{protocol.substr_from('prpl-')}.com"
+    end
     
     def connect!
       ensure_inited!
       @connected = false
+      server.server_url.url = default_url
+      server.save!
       if protocol_supported?(protocol)
         @account = PurpleRuby.login(protocol, username, password)
         purple.add_purple_server(@account, server)
         @connected = true
         server.started_up = true
-        after_connect
       end
       @connected
     end

@@ -5,10 +5,5 @@ module Ricer::Plugins::Purple
       'prpl-icq'
     end
 
-    def after_connect
-      @server.server_url.url = 'icq.com'
-      @server.save!
-    end
-
   end
 end

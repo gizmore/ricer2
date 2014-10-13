@@ -11,6 +11,8 @@ module Ricer::Irc
     
     scope :sorted, -> { order('server_nicks.updated_at DESC') }
     
+    belongs_to :server, :class_name => Server.name
+    
     def name
       next_nickname
     end

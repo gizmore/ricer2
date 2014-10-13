@@ -24,8 +24,9 @@ module Ricer::Irc
     
     scope :online, -> { where(:online => 1) }
     scope :enabled, -> { where(:enabled => 1) }
-    scope :in_domain, lambda { |url| joins(:server_url).where('url LIKE ?', "%.#{URI::Generic.domain(url)}:%") }
+    scope :in_domain, lambda { |url| joins(:server_url).where('CONCAT(url, ":") LIKE ?', "%#{URI::Generic.domain(url)}:%") }
     scope :with_url_like, lambda { |url| joins(:server_url).where('url LIKE ?', "%#{url}%") }
+
     validates_numericality_of :cooldown, :larger_than => 0.0, :max => 2.0
     validates_numericality_of :throttle, :min => 1.0, :max => 800, :float => false
     validates_format_of :triggers, :with => /[-.,*!\"\''§$%&]/
@@ -77,6 +78,7 @@ module Ricer::Irc
           @connection.connect!
         rescue StandardError => e
           bot.log_exception(e)
+          false
         end
       end
       # if @connection.connect!

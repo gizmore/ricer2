@@ -5,7 +5,7 @@ class UriColumn
   DEFAULT_SHEMES = @schemes = [:http, :https]
   DEFAULT_PING = @ping = false
   DEFAULT_EXIST = @exist = false
-  DEFAULT_CONNECT = @connect = false
+  DEFAULT_CONNECT = @connect = true
   
   def self.maxlen; @maxlen; end
   def self.schemes(); @schemes; end

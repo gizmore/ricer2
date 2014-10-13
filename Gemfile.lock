@@ -22,9 +22,9 @@ GIT
 
 GIT
   remote: https://github.com/opennorth/tf-idf-similarity
-  revision: 3388484ad9c383e90bf97491be4595aa04ca96ef
+  revision: 74c660327fa4a488b5a36b2f0a452d58919063c9
   specs:
-    tf-idf-similarity (0.1.3)
+    tf-idf-similarity (0.1.4)
 
 GEM
   remote: https://rubygems.org/

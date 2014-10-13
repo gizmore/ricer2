@@ -9,12 +9,14 @@ module Ricer::Irc
     
     belongs_to :server
     
+    validates :url, uri: { schemes: [:irc, :ircs, :http, :https] }
+    
     def uri
       URI(url)
     end
     
     def ssl?
-      uri.scheme == 'ircs'
+      uri.scheme.end_with?('s')
     end
     
     def hostname

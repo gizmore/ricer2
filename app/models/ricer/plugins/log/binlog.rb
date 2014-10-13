@@ -22,5 +22,8 @@ module Ricer::Plugins::Log
       })
     end
 
+    def self.channel_log(channel)
+    end
+
   end
 end

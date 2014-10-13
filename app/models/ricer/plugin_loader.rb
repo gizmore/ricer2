@@ -22,6 +22,8 @@ module Ricer
     def load_all
       
       @bot.log_debug "PluginLoader.load_all"
+      
+      init
 
       @valid = true
       
@@ -53,11 +55,15 @@ module Ricer
       end
     end
     
-    def load_path(path)
-      plugins = []
+    def init
+      bot.log_debug("PluginLoader#init()")
       with_plugdirs{|dir|load_i18n_dirs dir} # Langfiles even earlier
       with_plugdirs{|dir|load_export_dir dir} # Exports first (Cross plugin)
       with_plugdirs{|dir|load_model_dir dir} # Then models (Cross plugin)
+    end
+    
+    def load_path(path)
+      plugins = []
       with_plugdirs do |dir|
         # Plugins
         modulename = dir.rsubstr_from('/').camelize
@@ -128,10 +134,18 @@ module Ricer
     
     def load_files(dir)
       return unless File.directory?(dir)
+      # length = dir.index('/plugins/') + 9;
       Filewalker.traverse_files(dir, '*.rb') do |path|
         begin
           @bot.log_info("Loading model or export class #{path}")
           load path
+          # klass_const = path.substr_from('models/').treetop_camelize
+          # if klass = Object.const_get(klass_const) rescue nil
+            # if klass < Ricer::Net::Connection
+              # @bot.log_info("Loaded connector: #{klass.name}")
+              # PluginMap.instance.load_connector(klass)
+            # end
+          # end
         rescue StandardError => e
           @valid = false
           @bot.log_error("ERROR IN: #{path}")
@@ -175,6 +189,7 @@ module Ricer
               PluginMap.instance.load_plugin(plugin)
               plugins.push(plugin)
             elsif classobject < Ricer::Net::Connection
+              @bot.log_info("Loaded connector: #{classobject.name}")
               PluginMap.instance.load_connector(classobject)
             end
           rescue SystemExit, Interrupt

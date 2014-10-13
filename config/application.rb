@@ -9,6 +9,10 @@ Bundler.require(*Rails.groups)
 module Ricer
   class Application < Rails::Application
     
+    # BotID in database. Usually only 1 (yes, multiple ricer instances possible)
+    config.rice_ean = 1
+    # Supported languages
+    config.rice_origin = ['en', 'de', 'fam', 'bot', 'ibdes']
     # Initial seed for random generator (non crypto)
     config.rice_seeds = 12345
     # Set to true for more debug output

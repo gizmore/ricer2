@@ -15,7 +15,9 @@ module Ricer
     def running?; @running; end
     def uptime; Time.now - @start_at; end
     
+    def ean; Ricer::Application.config.ricer_ean; end
     def name; Ricer::Application.config.ricer_name; end
+    def origins; Ricer::Application.config.rice_origin; end
     def randseed; Ricer::Application.config.rice_seeds; end
     def genetic_rice; Ricer::Application.config.genetic_rice; end
     def paddy_queries; Ricer::Application.config.paddy_queries; end
@@ -33,9 +35,9 @@ module Ricer
     def log_error(s); @botlog.log_error(s); end
     def log_exception(e); @botlog.log_exception(e); end
     
-    after_initialize :after_init
+    # after_initialize :after_init
     def after_init
-      self.class.instance_variable_set('@instance', self)
+      self.class.instance_variable_define('@instance', self)
       @loader = PluginLoader.new(self)
       @loader.add_plugin_dir("app/models/ricer/plugins/*")
       @botlog = BotLog.new
@@ -54,11 +56,11 @@ module Ricer
     
     def init
       ActiveRecord::Base.logger = paddy_queries ? Logger.new(STDOUT) : nil
+      after_init
       init_random
       @running = false
       @needs_restart = false
-      load_extenders
-      save_all_offline
+      # @loader.init 
     end
     
     ### Seed the random generator with seed from config
@@ -67,6 +69,7 @@ module Ricer
       seed = randseed
       @rand = Random.new(seed)
       log_info "Seeded random generator with #{seed}"
+      after_init
     end
     
     ### Extend Plugin with all extender/
@@ -75,7 +78,7 @@ module Ricer
         load file
         classname = file.rsubstr_from('/').substr_to('.rb').camelize
         Ricer::Plugin.extend Object.const_get("Ricer").const_get('Plug').const_get('Extender').const_get(classname)
-        log_info("Loaded plugin extender: #{classname}")
+        log_debug("Loaded plugin extender: #{classname}")
       end
     end
     
@@ -84,14 +87,15 @@ module Ricer
     ### there is a nice fast solution.
     def save_all_offline
       bot.log_debug("Bot#save_all_offline")
-      Ricer::Irc::User.update_all(:online => false) &&
-      Ricer::Irc::Server.update_all(:online => false) &&
-      Ricer::Irc::Channel.update_all(:online => false) &&
+      Ricer::Irc::User.update_all(:online => false)
+      Ricer::Irc::Server.update_all(:online => false)
+      Ricer::Irc::Channel.update_all(:online => false)
       Ricer::Irc::Chanperm.update_all(:online => false)
     end
     
     def load_plugins(reload=false)
       bot.log_debug("Bot#load_plugins(#{reload})")
+      load_extenders unless reload
       map = plugin_map
       map.clear_cache
       I18n.load_path.clear
@@ -164,18 +168,27 @@ module Ricer
     end
     
     def run
-      log_info "Starting servers."
+      return if @running
       @running = true
-      servers.each do |server|
+      log_info "Starting #{servers.length} servers."
+      save_all_offline
+      trying = false
+      servers.enabled.all.each do |server|
         begin
-          server.startup
+          trying ||= true if server.startup
           sleep 0.5
         rescue StandardError => e
           log_exception e
         end
       end
-      cleanup_loop
-      log_info "Ricer has quit."
+      if trying
+        cleanup_loop
+        log_info "Ricer has quit."
+      else
+        bot.log_info("You need to add a working server.")
+        bot.log_info("e.g.: bundle exec rake ricer:irc[ircs://irc.gizmore.org:6666,ricer]")
+        bot.log_info("e.g.: bundle exec rake ricer:irc # for default config")
+      end
     end
     
     def cleanup_loop
