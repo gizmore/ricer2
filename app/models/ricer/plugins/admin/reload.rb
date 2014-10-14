@@ -31,25 +31,34 @@ module Ricer::Plugins::Admin
     end
     
     def reload_core
+      reload_files 'app/models/'
+      reload_files 'app/models/ricer'
+      reload_dir 'app/models/pile'
+      reload_dir 'app/models/translator'
+      reload_dir 'app/models/ricer/base'
       reload_dir 'app/models/ricer/net'
       reload_dir 'app/models/ricer/irc'
       reload_dir 'app/models/ricer/plug'
       bot.load_extenders
     end
-
+    
     def reload_dir(dirname)
-      Dir["#{dirname}/*"].each do |path|
-        if File.file?(path)
-          if path.end_with?('.rb')
-            begin
-              load path
-            rescue StandardError => e
-              bot.log_exception(e)
-            end
-          end
-        else
-          reload_dir(path)
-        end
+      Filewalker.traverse_files(dirname, '*.rb') do |path|
+        reload_file(path)
+      end
+    end
+
+    def reload_files(dirname)
+      Filewalker.proc_files(dirname, '*.rb') do |path|
+        reload_file(path)
+      end
+    end
+    
+    def reload_file(path)
+      begin
+        load path
+      rescue StandardError => e
+        bot.log_exception(e)
       end
     end
     
