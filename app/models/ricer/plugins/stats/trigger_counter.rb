@@ -19,7 +19,7 @@ module Ricer::Plugins::Stats
     
     scope :summed, -> { select("SUM(#{table_name}.calls) AS sum") }
     scope :for_user, lambda { |user| where(:user => user) }
-    scope :for_plugin, lambda { |plugin| where(:plugin_id => plugin.plugin_id) }
+    scope :for_plugin, lambda { |plugin| where(:plugin_id => plugin.id) }
     
     def self.count(plugin_id, user_id)
       counter = where(:plugin_id => plugin_id, :user_id => user_id).first
