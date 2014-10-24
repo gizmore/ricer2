@@ -1,0 +1,9 @@
+en:
+  ricer:
+    plugins:
+      seen:
+        
+        seen:
+          trigger: seen
+          description: ""
+          
