@@ -1,6 +1,8 @@
 module Ricer::Plugins::Cvs
   class Cvs < Ricer::Plugin
     
+    has_files
+    
     def upgrade_1; plugin_dir_path; Repo.upgrade_1; Permission.upgrade_1; end
 
     has_subcommand :abbo
