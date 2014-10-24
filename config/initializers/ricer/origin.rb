@@ -18,6 +18,12 @@ class URI::Generic
     take.join('.')
   end
   
+  def self.is_port?(s)
+    return false unless s.is_a?(String) || s.is_a?(Integer)
+    s.to_i.between?(1, 65535) rescue false
+  end
+  
+  def self.is_ip?(hostname); is_ip4?(hostname) || is_ip6?(hostname); end
   def self.ip6domain(hostname); hostname; end
   def self.is_ip6?(hostname); !!/^[\da-f:]{3,36}$/i.match(hostname); end
   def self.ip4domain(hostname); hostname; end
