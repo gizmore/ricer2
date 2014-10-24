@@ -41,7 +41,7 @@ module Ricer::Plugins::Quote::Model
       end
       search_by :after do |scope, phrases|
         columns = ['quotes.updated_at']
-        scope.where('quotes.updated at >= ?', phrases)
+        scope.where('quotes.updated_at >= ?', phrases)
       end
       
     end
