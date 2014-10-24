@@ -39,6 +39,7 @@ gem 'tf-idf-similarity', git: 'https://github.com/opennorth/tf-idf-similarity'
 
 # Connector plugins
 # TODO: Make more gems for the ricer project :)
-gem 'em-websocket'
 gem 'purple_ruby', github: 'gizmore/purple_ruby' 
 gem 'hpricot'
+
+gem 'em-websocket'
