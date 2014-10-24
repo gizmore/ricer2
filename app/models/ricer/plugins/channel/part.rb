@@ -9,7 +9,7 @@ module Ricer::Plugins::Channel
     def execute(channel=nil)
       channel ||= self.channel
       disable_autojoin(channel)
-      server.connection.send_part(message, channel.name) if channel.online
+      server.connection.send_part(current_message, channel.name) if channel.online
     end
     
     def disable_autojoin(channel)
