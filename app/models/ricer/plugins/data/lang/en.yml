@@ -2,11 +2,9 @@ en:
   ricer:
     plugins:
       data:
-        google:
-          description: 'Displays a google search link.'
-        ytsearch:
-          description: 'Displays a youtube search link.'
-          link: 'http://ytsearch.net/%{message}'
-#         weather:
-#         	description: 'Get the temperature of a city.'
-#         	# reply_msg: 'The temperature is around %{temp} celsius in %{city} and the minimum temperature is %{min} while the max temperature is %{max}'
+        imgur:
+          description: 'Displays a random image from imgur.'
+        botip:
+          description: 'Displays the bot ip.'
+        weather:
+          description: 'Displays the weather of the given city or country'
