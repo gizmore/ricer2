@@ -2,6 +2,10 @@ en:
   ricer:
     plugins:
       data:
+        
+        imgur:
+          trigger: imgur
+          description: "Show a random image from imgur.com. Nice!"
 
 #       google:
 #         description: 'Displays a google search link.'
