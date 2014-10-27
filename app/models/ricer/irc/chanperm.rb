@@ -10,8 +10,6 @@ module Ricer::Irc
     def should_cache?; true; end
     def global_cache_key; "#{self.user.id}:#{self.channel.id}"; end
     
-    attr_reader :chanmode
-    
     belongs_to :user, :class_name => 'Ricer::Irc::User'
     belongs_to :channel, :class_name => 'Ricer::Irc::Channel'
     
@@ -19,12 +17,16 @@ module Ricer::Irc
       @chanmode = Ricer::Irc::Mode::ChanMode.new(permissions)
     end
     
+    def chanmode
+      @chanmode ||= Ricer::Irc::Mode::ChanMode.new(0)
+    end
+    
     def user_permission
       user.permission
     end
     
     def channel_permission
-      @chanmode.permission
+      chanmode.permission
     end
     
     def ricer_permission
@@ -36,11 +38,11 @@ module Ricer::Irc
     end
     
     def authenticated=(boolean)
-      @chanmode.authenticated = boolean
+      chanmode.authenticated = boolean
     end
     
     def permission_bits
-      self.permissions | user.permissions | @chanmode.permission.bit      
+      self.permissions | user.permissions | chanmode.permission.bit      
     end
     
     def permission
