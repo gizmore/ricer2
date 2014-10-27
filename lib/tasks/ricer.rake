@@ -170,7 +170,10 @@ def ricer_rake_new_server(botid, connector, url=nil, nick=nil, user=nil, pass=ni
 end
 
 def ricer_rake_save_server(server)
-  bot = server.bot;
+  bot = server.bot
+  server.server_url.save!
+  server.server_nicks[0].save!
+  server.save!
   bot.log_info "I have saved: #{server.id}-#{server.name} with #{server.server_url.url}"
   bot.log_debug "Server: #{server.to_json}"
   bot.log_debug "SRVURL: #{server.server_url.to_json}"
