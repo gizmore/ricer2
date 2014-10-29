@@ -146,9 +146,11 @@ module Ricer::Plugins::Rss
     def announce_news(plugin, items)
       items.reverse!
       abbonements.each do |abbonement|
-        abbonement.target.localize!
-        items.each do |item|
-          abbonement.target.send_privmsg(feedmessage(plugin, item))
+        if abbonement.online
+          abbonement.target.localize!
+          items.each do |item|
+            abbonement.target.send_privmsg(feedmessage(plugin, item))
+          end
         end
       end
     end
