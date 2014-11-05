@@ -59,6 +59,7 @@ module Ricer::Plugins::Purple
       message.prefix = "#{sender}!#{protocol}@libpurple"
       message.command = 'PRIVMSG'
       message.args = [sender, text]
+      bot.log_puts "#{self.server.hostname} << #{text}"
       server.process_event("on_privmsg", message)
       server.process_event("ricer_on_receive", message)
     end
