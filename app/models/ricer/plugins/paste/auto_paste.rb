@@ -38,7 +38,7 @@ module Ricer::Plugins::Paste
     def ricer_after_execution
       server.connection.queue_with_lock do |queues|
         queue = queues[sender]
-        if queue.length >= limit
+        if queue && (queue.length >= limit)
           flush_user(sender, queue)
         end
       end
