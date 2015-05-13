@@ -212,17 +212,6 @@ module Ricer
       bot.plugins.each{|plugin| return plugin if plugin.plugin_name == plugin_name } and nil
     end
 
-    # def self.user_plugins(user, scope=:everywhere)
-#       
-    # end
-#     
-    # def self.each_user_plugins(user, scope=:everywhere, &block) 
-      # plugins.each{|plugin|
-#         
-      # }
-    # end
-
-
     #########################
     ### Subcommand by arg ###
     #########################    

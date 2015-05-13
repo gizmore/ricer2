@@ -93,7 +93,7 @@ module Ricer::Irc
     #####################
     ### Communication ###
     #####################
-    def localize!; I18n.locale = self.locale; Time.zone = self.timezone.iso; self; end
+    def localize!; I18n.locale = self.locale.iso; Time.zone = self.timezone.iso; self; end
     def send_action(text); server.action_to(self, text); end
     def send_message(text); wants_notice? ? send_notice(text) : send_privmsg(text); end
     def send_notice(text); server.notice_to(self, text); end

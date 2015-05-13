@@ -20,6 +20,6 @@ module Ricer
     def to_label
       I18n.t!("ricer.locale.#{self.iso}") rescue self.iso
     end
-
+    
   end
 end

@@ -7,6 +7,7 @@
 ### has_setting name: :bugs_per_file, type: :integer, scope: :server, permission: :admin, min: -2, max: 100, default: 5 
 ###
 module Ricer::Plug::Extender::HasSetting
+  
   def has_setting(options)
     class_eval do |klass|
       
@@ -145,51 +146,49 @@ module Ricer::Plug::Extender::HasSetting
         user_setting(user, name).save_value(value)
       end
       
-      # ######################################
-      # ### Objects with a special setting ###
-      # ######################################
-      # # TODO: I want all bot,user,channel,server with a special setting
-      # # We have to respect the default value of @db_settings
-      # SCOPE_TABLES = { bot:Ricer::Bot, channel:Ricer::Irc::Channel, server:Ricer::Irc::Server, user:Ricer::Irc::User }
-      # def objects_with_setting(name, with_value, scopes=nil)
-        # objects = []
-        # all_scopes = memory_setting_scopes(name)
-        # all_scopes &= scopes if scopes
-        # all_scopes.each do |scope|
-          # mem_setting = memory_setting_for_scope(name, scope)
-          # db_setting = db_setting_for(name, scope, false)
-          # default = db_setting.setting_class.db_value(mem_setting[:default])
-          # wanted = db_setting.setting_class.db_value(with_value)
-          # if default == wanted
-            # # We need the not matching objects
-          # else
-            # # We need the matching objects
-          # end
-# 
-        # end
-        # Ricer::Plug::Setting.select('substr()').where('id LIKE ?', build_like_key(name,scope))
-        # objects
-      # end
-#       
-      # def bots_with_setting(name, with_value)
-        # objects_with_setting(name, with_value, scopes=:bot)
-      # end
-# 
-      # def channels_with_setting(name, with_value)
-        # objects_with_setting(name, with_value, scopes=:channel)
-      # end
-# 
-      # def servers_with_setting(name, with_value)
-        # objects_with_setting(name, with_value, scopes=:server)
-      # end
-# 
-      # def users_with_setting(name, with_value)
-        # objects_with_setting(name, with_value, scopes=:user)
-      # end
-#       
-      # def build_like_key(name, scope)
-        # "#{self.id}:#{setting_scope_id(scope)}:%:#{name}"
-      # end
+      ############################
+      ### Objects with setting ###
+      ############################
+      def objects_with_setting(name, with_value, scope)
+        default = memory_setting_for_scope(name, scope)[:default]
+        matches = query_objects_with_setting(name, with_value, scope)
+        if (default != with_value)
+          all = get_all_objects_for_scope(scope)
+          matches = all - matches
+        end
+        matches
+      end
+      def get_all_objects_for_scope(scope)
+        Object.const_get(entity_type_for_scope(scope)).online.all
+      end
+      def query_objects_with_setting(name, with_value, scope)
+        objects = []
+        entities = Ricer::Plug::Setting.where(:plugin_id => self.id, :entity_type => entity_type_for_scope(scope), :value => with_value)
+        entities.each do |e|
+          objects.push e.entity
+        end
+        objects
+      end
+      def entity_type_for_scope(scope)
+        case scope
+        when :bot; "Ricer::Bot";
+        when :server; "Ricer::Irc::Server";
+        when :channel; "Ricer::Irc::Channel";
+        when :user; "Ricer::Irc::User";
+        end
+      end
+      def bots_with_setting(name, with_value)
+        objects_with_setting(name, with_value, :bot)
+      end
+      def channels_with_setting(name, with_value)
+        objects_with_setting(name, with_value, :channel)
+      end
+      def servers_with_setting(name, with_value)
+        objects_with_setting(name, with_value, :server)
+      end
+      def users_with_setting(name, with_value)
+        objects_with_setting(name, with_value, :user)
+      end
       
       #######################
       ### Cache and magic ###
@@ -206,6 +205,7 @@ module Ricer::Plug::Extender::HasSetting
         memory_settings.each do |options|
           return options if (options[:scope] == scope) && (options[:name] == name)
         end
+        throw Exception.new("Unknown setting: #{name} for scope #{scope}.")
         nil
       end
       
@@ -224,6 +224,7 @@ module Ricer::Plug::Extender::HasSetting
       # end
       
       def db_setting_for(name, scopes=[:user, :channel, :server, :bot], create=true)
+        byebug if scopes.nil?
         # cached = db_setting_cache_for(name, Array(scopes).first)
         # return cached if cached && cached.persisted?
         first, cached = nil, nil

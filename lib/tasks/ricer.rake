@@ -92,22 +92,22 @@ namespace :ricer do
     throw "Unknown violet purple connector: #{args.connector}" unless con
     pos = args.pos.to_i rescue -1
     throw "2nd parameter 'pos' not between 0 and 100: #{args.pos}" unless pos.between?(0,100)
-    servers = Ricer::Irc::Server.with_connector(:connector)
+    servers = Ricer::Irc::Server.with_connector(con)
     
     server = servers.with_login(args.nick).first
     server = servers.offset(pos).first unless server
-    if (pos == 0) && server.nil?
+    if server.nil?
       server = ricer_rake_new_server(bot.id, args.connector, nil, args.nick, args.login, args.pass, 0.5, 100)
     end
-    url = server.server_url
     nick = server.server_nicks.first
     nick.username = args.login
     nick.password = args.pass
     nick.nickname = args.nick
-    url.url = con.new(server).default_url
-    url.save!
-    nick.save!
+    url = server.server_url
+    server.server_url.url = con.new(server).default_url
     server.save!
+    nick.save!
+    server.server_url.save!
     bot.log_info("Purple connector violet-#{args.connector} saved for Ricer##{bot.id}. Server: #{server.id}: #{server.name} URL: #{url.id}-#{url.domain}. Nick: ##{nick.id}-#{nick.username}")
   end
   ### END PURPLE

@@ -6,7 +6,7 @@ module Ricer::Plug::Extender::AbboTriggers
   
       klass.register_class_variable('@abbo_for_class')
       klass.instance_variable_set('@abbo_for_class', options[:for])
-  
+      
       def abbo_class; self.class.instance_variable_get('@abbo_for_class'); end
       def abbo_search(relation, term)
         if term.integer?
@@ -50,7 +50,7 @@ module Ricer::Plug::Extender::AbboTriggers
   def is_add_abbo_trigger(options={})
     class_eval do |klass|
       is_abbo_trigger(options)
-      trigger_is :abbo
+      trigger_is options[:trigger] || :abbo
 #      def description; I18n.t('ricer.plugins.abbos.add_abbo.description'); end
       has_usage :execute, '<id>'
       has_usage :execute, '<search_term>'
@@ -68,7 +68,7 @@ module Ricer::Plug::Extender::AbboTriggers
   def is_remove_abbo_trigger(options={})
     class_eval do |klass|
       is_abbo_trigger(options)
-      trigger_is :unabbo
+      trigger_is options[:trigger] || :unabbo
 #      def description; I18n.t('ricer.plugins.abbos.remove_abbo.description'); end
       has_usage :execute, '<id>'
       has_usage :execute, '<search_term>'
@@ -86,7 +86,8 @@ module Ricer::Plug::Extender::AbboTriggers
   def is_abbo_list_trigger(options={})
     class_eval do |klass|
       is_abbo_trigger(options)
-      is_list_trigger options[:trigger]||:abbos, options
+      trigger = options.delete(:trigger)
+      is_list_trigger trigger||:abbos, options
       def visible_relation(relation)
         return Ricer::Plugins::Abbo::Abbonement.for_target(abbo_target)
         #(:abbo_target => ) #relation.abbonemented_by(current_message.reply_target)

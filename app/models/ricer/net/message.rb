@@ -36,7 +36,7 @@ module Ricer::Net
       message.server = server
       message.sender = bot
       message.receiver = bot
-      message.reply_to = reply_to||bot
+      message.reply_to = reply_to||server
       message.reply_text(text||'Somethings wrong!')
     end
     
@@ -147,6 +147,10 @@ module Ricer::Net
     def setup_target(target)
       self.reply_to = target
       self
+    end
+    
+    def target
+      self.reply_to
     end
     
     def reply_target

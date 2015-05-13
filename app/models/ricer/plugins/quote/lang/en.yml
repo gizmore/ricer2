@@ -7,15 +7,21 @@ en:
         display_show_item: 'Quote#%{id}: "%{message}" - added by %{by} on %{date} - Liked %{likes} times.'
 
         add:
-          trigger: add
+          trigger: "+quote"
           description: 'Add a quote to the database.'
           msg_added: 'A new quote has been added to the database with ID: %{quote_id}.'
           
+        daily:
+          trigger: "dailyquote"
+          description: "Display a quote each hour."
+          announcement: "\x02Dailyquote……………\x02 %{quote}"
+          
         search:
-          trigger: 'search'
+          trigger: 'quotes'
           description: 'Search the quote database.'
 
         stats:
+          trigger: "quote stats"
           description: 'Show statistics about the quote database.'
           msg_stats:
             zero: 'There are no quotes in the database yet.'
@@ -23,6 +29,6 @@ en:
             other: 'There are %{count} quotes in the database which have been voted %{votes} times. The last quote with ID %{last_id} has been added by %{last_by} on %{last_date}.'
 
         subscribe:
-          trigger: subscribe
+          trigger: "quotes subscribe"
           description: "Get informed when a new quote has been added by subscribing with this function."
           msg_announce: "Quote#%{id} has been added in %{channel}: \"%{message}\" - %{user}"

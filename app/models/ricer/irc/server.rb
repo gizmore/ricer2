@@ -17,7 +17,7 @@ module Ricer::Irc
     attr_reader   :connection, :nickname
     attr_accessor :started_up, :try_more
         
-    has_one  :server_url
+    has_one  :server_url#, :class_name => "Ricer::Irc::ServerUrl"
     has_many :server_nicks
     
     belongs_to :encoding
@@ -26,6 +26,8 @@ module Ricer::Irc
     scope :enabled, -> { where(:enabled => 1) }
     scope :in_domain, lambda { |url| joins(:server_url).where('CONCAT(url, ":") LIKE ?', "%#{URI::Generic.domain(url)}:%") }
     scope :with_url_like, lambda { |url| joins(:server_url).where('url LIKE ?', "%#{url}%") }
+    scope :with_connector, ->(con) { where(:connector => con) }
+    scope :with_login, ->(username) { joins(:server_nicks).where("server_nicks.username=?", username) }
 
     validates_numericality_of :cooldown, :larger_than => 0.0, :max => 2.0
     validates_numericality_of :throttle, :min => 1.0, :max => 800, :float => false
@@ -323,6 +325,10 @@ module Ricer::Irc
     def message_to(target, text); ((target.class < Ricer::Irc::User) && (target.wants_notice?)) ? notice_to(target, text) : privmsg_to(target, text); end
     def notice_to(target, text); @connection.send_notice(Ricer::Net::Message.fake_message(self, text, target), text); end
     def privmsg_to(target, text); @connection.send_privmsg(Ricer::Net::Message.fake_message(self, text, target), text); end
+    def notice_all(target, text); @connection.send_notice(Ricer::Net::Message.fake_message(self, text, target), text); end
+    def message_all(target, text); @connection.send_privmsg(Ricer::Net::Message.fake_message(self, text, target), text); end
+#    def notice_all_users(text); @connection.send_notice(Ricer::Net::Message.fake_message(self, text, self.target), text); end
+#    def message_all_users(text); @connection.send_privmsg(Ricer::Net::Message.fake_message(self, text, self.target), text); end
     
   end
 end

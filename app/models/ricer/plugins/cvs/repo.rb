@@ -16,8 +16,8 @@ module Ricer::Plugins::Cvs
     def self.upgrade_1
       m = ActiveRecord::Migration.new
       m.create_table table_name do |t|
-        t.string  :name,     :null => false, :length => NamedId.maxlen,   :unique => true
-        t.string  :url,      :null => false, :length => UriColumn.maxlen, :unique => true
+        t.string  :name,     :null => false, :length => NamedId.maxlen
+        t.string  :url,      :null => false, :length => UriColumn.maxlen
         t.string  :system,   :null => true,  :length => 16
         t.integer :user_id,  :null => false
         t.boolean :public,   :null => false
@@ -28,6 +28,8 @@ module Ricer::Plugins::Cvs
         t.string  :revision, :null => true
         t.timestamps
       end
+      m.add_index table_name, :url,  unique: true
+      m.add_index table_name, :name, unique: true
     end
     
     def self.visible(user); self.enabled; end

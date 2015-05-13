@@ -1,0 +1,6 @@
+en:
+  ricer:
+    plugins:
+      links:
+        test: "test"
+        

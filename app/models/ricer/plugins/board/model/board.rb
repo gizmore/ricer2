@@ -17,13 +17,15 @@ module Ricer::Plugins::Board
     def self.upgrade_1
       m = ActiveRecord::Migration.new
       m.create_table table_name do |t|
-        t.string    :name,         :null => false, :length => NamedId.maxlen,   :unique => true, :charset => :ascii, :collation => :ascii_bin
-        t.string    :url,          :null => false, :unique => true
+        t.string    :name,         :null => false, :length => NamedId.maxlen, :charset => :ascii, :collation => :ascii_bin
+        t.string    :url,          :null => false
         t.integer   :last_thread,  :null => false, :default => 0
         t.timestamp :checked_at,   :null => true,  :default => nil
         t.timestamp :deleted_at,   :null => true,  :default => nil
         t.timestamps
       end
+      m.add_index table_name, :url,   unique: true
+      m.add_index table_name, :name,  unique: true
     end
     
     def url_has_limit_and_date

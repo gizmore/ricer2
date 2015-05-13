@@ -1,0 +1,21 @@
+en:
+  ricer:
+    plugins:
+      twitter:
+
+        show_item: 'Tweed#%{id}: %{name} added by %{user} on %{date}.'
+        list_item: 'Tweed#%{id}: %{name}'
+
+        tweed_add:
+          trigger: 'tweed add'
+          description: 'Add a twitter account to get watched by $BOT$.'
+          err_unpopular_tag: "This tag has no tweets, and thus has not been added."
+          err_unknown_user: "This user does not exist, or has no tweets yet."
+          msg_added_tag: "Added %{hashtag} to the tweed. The last tweet for this tag was '%{tweet}' by %{author} on %{date}. Use $T$twitter abbo %{hashtag} to subscribe."
+          msg_added_tweeted: "Added %{tweeted} to the tweed module. The last tweet {tweeted} was '%{tweet}' by %{author} on %{date}. Use $T$twitter abbo %{tweeted} to subscribe."
+          msg_added_tweeter: "Added the user %{tweeter} to the tweed module. Their last tweet was '%{tweet}' on %{date}. Use $T$twitter abbo %{hashtag} to subscribe."
+          
+        twitter:
+          msg_new_tweetag: "[Tweet] New tweet about %{hashtag}: '%{tweet}' - by %{author} on %{date}."
+          msg_new_tweeted: "[Tweet] New tweet %{hashtag}: '%{tweet}' - by %{author} on %{date}."
+          msg_new_tweeter: "[Tweet] New tweet by %{hashtag}: '%{tweet}' - on %{date}."

@@ -43,7 +43,6 @@ module Ricer::Plugins::Quote::Model
         columns = ['quotes.updated_at']
         scope.where('quotes.updated_at >= ?', phrases)
       end
-      
     end
     
     ################
@@ -66,7 +65,7 @@ module Ricer::Plugins::Quote::Model
       )
     end
     
-    def display_show_item(number)
+    def display_show_item(number=1)
       I18n.t('ricer.plugins.quote.display_show_item',
         id: self.id,
         message: self.message,

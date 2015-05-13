@@ -1,7 +1,7 @@
 module Ricer::Plugins::Cvs
   class Add < Ricer::Plugin
     
-    trigger_is :add
+    trigger_is "cvs add"
     permission_is :voice
     
     denial_of_service_protected scope: :bot

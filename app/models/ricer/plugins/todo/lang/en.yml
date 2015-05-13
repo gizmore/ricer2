@@ -1,0 +1,33 @@
+en:
+  ricer:
+    plugins:
+      todo:
+        
+        list_item: "TODO#%{id}-%{text}"
+        show_item: "A new todo entry %{n} from %{creator} has been added: '%{text}'."
+        taken_item: "Todo entry %{n} by %{creator} got assigned to %{worker}. Time taken: %{time}."
+        solved_item: "Todo entry %{n} by %{creator} got accomplished by %{worker}. Time taken: %{time}."
+        display_item: "Todo entry %{n} by %{creator}: '%{text}' – priority %{priority} – Added: %{date}."
+        
+        add:
+          trigger: 'todo add'
+          description: 'Add a todo entry.'
+          msg_added: "A new todo entry from %{creator} has been added: '%{text}'."
+          announce_added: ""
+          
+        take:
+          trigger: 'todo take'
+          description: "Take over the work of a todo entry."
+          msg_taken: "%{user} is working on task %{id}: '%{text}'."
+          announce_taken: "%{user} is working on task %{id}: '%{text}'. – give him some time."
+          
+        show:
+          trigger: 'todo show'
+          description: "Show a todo entry or search the database."
+
+        done:
+          trigger: 'todo done'
+          description: "Mark a todo entry as done."
+          msg_done: "Todo entry %{id} by %{creator} has been taken care of – %{text}"
+          announce_done: "Todo entry %{id} by %{creator} has been taken care of by %{worker} – %{text}"
+         
