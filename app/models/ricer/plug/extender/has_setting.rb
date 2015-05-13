@@ -152,7 +152,7 @@ module Ricer::Plug::Extender::HasSetting
       def objects_with_setting(name, with_value, scope)
         default = memory_setting_for_scope(name, scope)[:default]
         matches = query_objects_with_setting(name, with_value, scope)
-        if (default != with_value)
+        if (default == with_value)
           all = get_all_objects_for_scope(scope)
           matches = all - matches
         end
