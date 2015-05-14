@@ -16,6 +16,11 @@ en:
           description: "Display a quote each hour."
           announcement: "\x02Dailyquote……………\x02 %{quote}"
           
+        delete:
+          trigger: "-quote"
+          description: "remove a quote from the database."
+          msg_deleted: "Quote #%{id} has been deleted from the database."
+          
         search:
           trigger: 'quotes'
           description: 'Search the quote database.'

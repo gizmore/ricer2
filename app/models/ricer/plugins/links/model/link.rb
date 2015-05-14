@@ -3,9 +3,8 @@ module Ricer::Plugins::Links
     
     acts_as_votable
     
-    belongs_to :user,      :class_name => 'Ricer::Irc::User'
-    belongs_to :channel,   :class_name => 'Ricer::Irc::Channel'
-    belongs_to :mime_type, :class_name => 'Mime::Type'
+    belongs_to :user, :class_name => 'Ricer::Irc::User'
+    belongs_to :channel, :class_name => 'Ricer::Irc::Channel'
     
     ###############
     ### Install ###
@@ -16,13 +15,29 @@ module Ricer::Plugins::Links
         t.string    :url,          :null => false
         t.integer   :user_id,      :null => false
         t.integer   :channel_id,   :null => true
-        t.integer   :mime_type_id, :null => true
+        t.string    :mime_type,    :null => false, :length => 128, :charset => :ascii
         t.integer   :added,        :null => false, :default => 0
-        t.timestamp :created_at
+        t.timestamps
       end
     end
     
-    
+    #################
+    ### Directory ###
+    #################
+    def root_dir; "#{Rails.root}/files/links"; end
 
+    def cleardir; rmdir && mkdir; end
+
+    def mkdir
+      dir = self.root_dir
+      FileUtils.mkdir_p(dir) unless File.directory?(dir)
+    end
+    
+    def rmdir
+      dir = self.root_dir
+      FileUtils.remove_dir(dir) if File.directory?(dir)
+    end
+ 
+ 
   end
 end
