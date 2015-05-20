@@ -46,6 +46,7 @@ module Ricer::Plugins::Paste
     
     ### Call this for each server
     def flush_server(server, connection, limit)
+      return unless server.connected?
       if connection.respond_to?(:queue_with_lock) # has queues?
         # bot.log_debug("AutoPaste#flush_server(#{server.displayname})")
         connection.queue_with_lock do |queues| # lock and check queue
