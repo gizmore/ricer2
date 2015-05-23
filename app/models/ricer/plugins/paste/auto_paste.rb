@@ -50,10 +50,12 @@ module Ricer::Plugins::Paste
       if connection.respond_to?(:queue_with_lock) # has queues?
         # bot.log_debug("AutoPaste#flush_server(#{server.displayname})")
         connection.queue_with_lock do |queues| # lock and check queue
-          queues.each do |user,queue| # for each user
-            if user.is_a?(Ricer::Irc::User)
-              if queue.length >= limit # should flush?
-                flush_user(user, queue)
+          unless queues.nil?
+            queues.each do |user,queue| # for each user
+              if user.is_a?(Ricer::Irc::User)
+                if queue.length >= limit # should flush?
+                  flush_user(user, queue)
+                end
               end
             end
           end

@@ -4,9 +4,9 @@ require "uri"
 module Ricer::Plugins::Links
   class Links < Ricer::Plugin
     
-    def plugin_revision; 2; end
+    def plugin_revision; 4; end
 
-    def upgrade_2; Model::Link.upgrade_1; end
+    def upgrade_4; Model::Link.upgrade_1; end
 
     def on_privmsg
       line.scan(/(.+:\/\/.+)/).each do |match|
@@ -16,14 +16,6 @@ module Ricer::Plugins::Links
     
     def add_link(url)
       
-      entry = Model::Link.new(
-        url: url,
-        user_id: sender.id,
-        channel_id: (channel.id rescue nil),
-        mime_type: nil,
-        added: 0
-      )
-            
       Ricer::Thread.execute do
         request_redir(url) 
       end
@@ -34,7 +26,6 @@ module Ricer::Plugins::Links
       uri = URI.parse(url)
       
       http = Net::HTTP.new(uri.host, uri.port)
-      url = uri.request_uri
       request = Net::HTTP::Get.new(uri.request_uri)
       request["open_timeout"] = 10
       response = http.request(request)
@@ -43,13 +34,19 @@ module Ricer::Plugins::Links
       when Net::HTTPRedirection then
         location = response['location']
         return request_redir(location, redirects - 1)
+      when Net::HTTPError
+        bot.log_debug("Error in fetching url: #{response.code}")
+        return
       end
 
       mime = response["content-type"].substr_to(";") || response["content-type"]
       
-       byebug        
-     case mime.substr_to("/")
+      write_image = false
+      
+      case mime.substr_to("/")
       when "image"
+        title = url.rsubstr_from('/')
+        write_image = true
       when "text"
         case mime
         when "text/html"
@@ -60,13 +57,32 @@ module Ricer::Plugins::Links
           bot.log_error("Woops... weird mime #{mime}")
         end
       else
-        
       end
-      byebug        
+
+      entry = Model::Link.create!(
+        url: url,
+        title: title,
+        user_id: sender.id,
+        channel_id: (channel.id rescue nil),
+        mime_type: mime,
+        added: 1
+      )
+      
+      entry.save_image(response.body) if write_image
+      
     end
     
     def extract_html_title(html)
-      /title *> *([^<]+) */.match(html)
+      begin
+        title = /title *> *([^<]+) */.match(html)[1]
+      rescue => e
+        begin
+          title = /h[1-6] *> *([^<]+) */.match(html)[1]
+        rescue => e
+          title = ""
+        end
+      end
+      title
     end
 
   end
