@@ -9,17 +9,21 @@ module Ricer::Plugins::Links
     def upgrade_4; Model::Link.upgrade_1; end
 
     def on_privmsg
-      line.scan(/(.+:\/\/.+)/).each do |match|
-        add_link(match[0])
+      matches = /[^\s]+:\/\/[^\s]+/.match(line)
+      if matches
+        matches.to_a.each do |match|
+          match.trim!('()') if match.start_with?('(')
+          match.trim!('[]') if match.start_with?('[')
+          match.trim!('{}') if match.start_with?('{')
+          add_link(match[0])
+        end
       end
     end
     
     def add_link(url)
-      
       Ricer::Thread.execute do
         request_redir(url) 
       end
-
     end
     
     def request_redir(url, redirects=10)
