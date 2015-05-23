@@ -11,12 +11,11 @@ module Ricer::Plugins::Links
     def on_privmsg
       matches = /[^\s]+:\/\/[^\s]+/.match(line)
       if matches
-        byebug
         matches.to_a.each do |match|
           match.trim!('()') if match.start_with?('(')
           match.trim!('[]') if match.start_with?('[')
           match.trim!('{}') if match.start_with?('{')
-          add_link(match[0])
+          add_link(match)
         end
       end
     end
