@@ -16,6 +16,7 @@ module Ricer::Plug::Extender::HasUsage
       # Allow pattern as function and nil pattern      
       pattern, function = function, :execute if pattern.nil? && function.is_a?(String)
       pattern = '' if pattern.nil?
+      pattern = pattern.to_s
       pattern.trim!
   
       # Options

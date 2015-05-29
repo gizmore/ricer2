@@ -16,12 +16,53 @@ en:
         badphp:
           description: 'http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/ -'
 
+        decide:
+          trigger: 'decide'
+          description: "Let %{bot} decide of a question or set of choices. Example: %{trigger} Should i get up or stay in bed?."
+          "yes": "Yes!"
+          "no": "No"
+          "or": "or"
+
         happy_hour:
           description: 'Used by gizmore to inititate happy hour mode in #wechall.'
 
         hirsch:
           description: 'Rööööhr'
           msg_hirsch: 'Röööööööööööööööhr! HIRSCH!'
+          
+        porndice:
+          trigger: "porndice"
+          description: "Dice how to pleasure your chatfriend. NSFW!"
+          verb:
+            - "tickle"
+            - "kiss"
+            - "lick"
+          both:
+            - "ass"
+            - "hips"
+            - "armpits"
+            - "peehole"
+          female:
+            - "left tit"
+            - "right tit"
+            - "left boob"
+            - "right boob"
+            - "boobs"
+            - "left tit"
+            - "right tit"
+            - "cunt"
+            - "pussy"
+            - "slot"
+            - "perl"
+          male:
+            - "junk"
+            - "cock"
+            - "rod"
+            - "breast"
+            - "left breast"
+            - "right breast"
+            - "breasts"
+            
 
         ronja:
           description: 'Wer oder was ist Ronja?'
