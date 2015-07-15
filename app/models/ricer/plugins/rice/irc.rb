@@ -35,6 +35,7 @@ module Ricer::Plugins::Rice
     end
     
     def connect_irc!
+      @attempt += 1
       begin
         if server.ssl?
           connect_ssl!
@@ -64,13 +65,17 @@ module Ricer::Plugins::Rice
               server.process(message)
             else
               disconnect
-              sleep 5
             end
           else
+            sleep connect_timeout
             connect_irc!
           end
         end
       }
+    end
+    
+    def connect_timeout
+      ((@attempt-1) * 4).clamp(3, 600);
     end
     
     def queue_with_lock(&block)

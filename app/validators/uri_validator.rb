@@ -31,8 +31,8 @@ class UriValidator < ActiveModel::EachValidator
   def schemes; options[:schemes] || UriColumn.schemes; end
   
   def pings
-    line = exec("ping -W 1.0 -c 1", @uri.host, "| grep '1 received'")
-    puts line.inspect
+    output = `ping -W 1.0 -c 1 #{Shellwords.escape(@uri.host)}`
+    return output.index("1 received") > 0
   end
   def exists
     case scheme

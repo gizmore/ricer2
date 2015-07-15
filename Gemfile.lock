@@ -22,7 +22,7 @@ GIT
 
 GIT
   remote: https://github.com/opennorth/tf-idf-similarity
-  revision: 90767da3d5c139c7ec6f09c3b8d4ad4f3210e021
+  revision: 96dcf4f24b35ac1f38ed5791138233a844f5ec1e
   specs:
     tf-idf-similarity (0.1.4)
       unicode_utils (~> 1.4)
@@ -62,17 +62,17 @@ GEM
     bcrypt (3.1.10)
     buftok (0.2.0)
     builder (3.2.2)
-    byebug (4.0.5)
+    byebug (5.0.0)
       columnize (= 0.9.0)
     columnize (0.9.0)
-    dusen (0.5.3)
+    dusen (0.6.1)
       activerecord (>= 3.0)
       edge_rider (>= 0.2.5)
     easy_translate (0.5.0)
       json
       thread
       thread_safe
-    edge_rider (0.3.0)
+    edge_rider (0.3.1)
       activerecord
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
@@ -87,18 +87,18 @@ GEM
       faraday (>= 0.7.4, < 0.10)
     foreigner (1.7.4)
       activerecord (>= 3.0.0)
-    geocoder (1.2.8)
-    hashie (3.4.1)
+    geocoder (1.2.9)
+    hashie (3.4.2)
     hpricot (0.8.6)
     http (0.6.4)
       http_parser.rb (~> 0.6.0)
     http_parser.rb (0.6.0)
     i18n (0.7.0)
-    json (1.8.2)
+    json (1.8.3)
     kaminari (0.16.3)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
-    libv8 (3.16.14.7)
+    libv8 (3.16.14.11)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -106,8 +106,8 @@ GEM
       thread_safe (~> 0.3, >= 0.3.1)
     mime-types (1.25.1)
     mini_portile (0.6.2)
-    minitest (5.6.1)
-    multi_json (1.11.0)
+    minitest (5.7.0)
+    multi_json (1.11.2)
     multipart-post (2.0.0)
     mysql2 (0.3.18)
     naught (1.0.0)
@@ -116,7 +116,7 @@ GEM
     open4 (1.3.4)
     os (0.9.6)
     polyglot (0.3.5)
-    rack (1.5.3)
+    rack (1.5.5)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.1.1)
@@ -139,7 +139,7 @@ GEM
     roauth (0.0.8)
     ruby-git (0.2.2)
     ruby-prof (0.15.8)
-    sass (3.4.13)
+    sass (3.4.15)
     sass-rails (5.0.3)
       railties (>= 4.0.0, < 5.0)
       sass (~> 3.1)
@@ -147,9 +147,9 @@ GEM
       sprockets-rails (>= 2.0, < 4.0)
       tilt (~> 1.1)
     simple_oauth (0.3.1)
-    sprockets (3.1.0)
+    sprockets (3.2.0)
       rack (~> 1.0)
-    sprockets-rails (2.3.1)
+    sprockets-rails (2.3.2)
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
@@ -190,7 +190,7 @@ GEM
       roauth (>= 0.0.2)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    tzinfo-data (1.2015.4)
+    tzinfo-data (1.2015.5)
       tzinfo (>= 1.0.0)
     uglifier (2.7.1)
       execjs (>= 0.3.0)
@@ -230,3 +230,6 @@ DEPENDENCIES
   tzinfo-data
   uglifier
   validate_as_email!
+
+BUNDLED WITH
+   1.10.5

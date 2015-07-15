@@ -22,8 +22,8 @@ module Ricer::Plugins::Cvs
         t.integer :user_id,  :null => false
         t.boolean :public,   :null => false
         t.boolean :enabled,  :null => false, :default => 1
-        t.string  :pubkey,   :null => true
         t.string  :username, :null => true
+        t.string  :pubkey,   :null => true
         t.string  :password, :null => true
         t.string  :revision, :null => true
         t.timestamps
@@ -97,7 +97,7 @@ module Ricer::Plugins::Cvs
       I18n.t 'ricer.plugins.cvs.msg_show_item', repo_id:self.id, name:self.name, path:self.uri.path
     end
     
-    def display_list_item
+    def display_list_item(num)
       I18n.t 'ricer.plugins.cvs.msg_show_list_item', repo_id:self.id, name:self.name
     end
     

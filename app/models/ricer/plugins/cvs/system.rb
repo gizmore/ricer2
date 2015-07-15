@@ -43,7 +43,7 @@ module Ricer::Plugins::Cvs
     def working?; stub('working?'); end
     def checkout; stub('checkout'); end
     def revision; stub('revision'); end
-    def update; stub('update'); end
+    def update(max_updates); stub('update'); end
 
     private
     def stub(name)

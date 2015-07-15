@@ -84,7 +84,7 @@ module Ricer::Plugins::Cvs
       result
     end
     
-    def update
+    def update(max_updates)
       
       updated = true
       result = []
@@ -118,7 +118,10 @@ module Ricer::Plugins::Cvs
       begin
         while true # old_revision != next_revision
           repo_update = get_update(n)
+          break if repo_update.nil?
           break if repo_update.revision == repo.revision
+          break if repo_update.revision == result[0].revision if result[0]
+          break if n >= (max_updates)
           result.unshift(repo_update)
           n = n + 1
         end
@@ -130,28 +133,28 @@ module Ricer::Plugins::Cvs
     
     private
     def get_update(n)
-      
-      command = "cd #{repo.dir_arg} && git --no-pager log --reverse --format=medium -#{n} | head -n 30"
+      command = "cd #{repo.dir_arg} && git --no-pager log --reverse --format=medium -#{n} | head -n 8"
       out = `#{command}`
-      
-      puts out
-      
-      i = 0
-      i = 1 unless out.index('Merge:').nil?
-      
-      out = out.split("\n", 5+i)
-      puts out
-      
-      comment = out[4+i]
-      comment = out[4+i].substr_to("\ncommit ") if n > 1
-            
-      return RepoUpdate.new(
-        out[0].substr_from(' '),
-        out[1+i].substr_from(' '),
-        DateTime.parse(out[2+i].substr_from(' ')),
-        comment.strip,
-      )
-      
+      out = out.split("\n")
+      revision = commiter = comment = date = nil
+      out.each do |line|
+        if line.empty? or line.start_with?('Merge: ')
+          # skipper
+        elsif line.start_with?('commit')
+          revision = line.substr_from('commit').trim
+        elsif line.start_with?('Author:')
+          commiter = line.substr_from('Author:').trim
+        elsif line.start_with?('Date:')
+          date = DateTime.parse(line.substr_from('Date:').trim)
+        elsif line.start_with?(' ')
+          comment = line.trim
+        end
+        break if revision and commiter and comment and date
+      end
+      if revision and commiter and comment and date
+        return RepoUpdate.new(revision, commiter, date, comment)
+      end
+      return nil
     end
     
   end

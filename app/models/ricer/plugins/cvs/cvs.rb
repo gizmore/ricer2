@@ -3,7 +3,10 @@ module Ricer::Plugins::Cvs
     
     has_files
     
+    def plugin_revision; 1; end
+
     def upgrade_1; plugin_dir_path; Repo.upgrade_1; Permission.upgrade_1; end
+    # def upgrade_2; RepoUpdate.upgrade_2; end
 
     has_subcommand :abbo
     has_subcommand :abbos
@@ -26,7 +29,7 @@ module Ricer::Plugins::Cvs
     def check_repo(repo)
 #      begin
         system = System.get_system(repo.system).new(repo, self, 10.seconds)
-        updates = system.update
+        updates = system.update(10)
         unless updates.empty?
           announce(repo, updates)
           repo.revision = updates[-1].revision

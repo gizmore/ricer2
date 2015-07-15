@@ -1,6 +1,8 @@
 module Ricer::Plugins::Cvs
   class RepoUpdate
     
+    # self.table_name = :cvs_repo_updates
+
     attr_accessor :revision, :comment, :commiter, :date
     
     def initialize(revision, commiter, date, comment)
