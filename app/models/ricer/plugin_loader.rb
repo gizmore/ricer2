@@ -32,9 +32,8 @@ module Ricer
       load_i18n_dir('app/models/ricer/plug/')
       
       @plugins = []
-      @plugdirs.each do |path|
-        load_path(path)
-      end
+      
+      load_plugins
       
       @plugins.each do |plugin|
         plugin.plugin_load
@@ -48,9 +47,12 @@ module Ricer
     end
     
     def with_plugdirs(&block)
+      byebug
       @plugdirs.each do |plugdir|
         Dir[plugdir].each do |dir|
-          yield(dir) unless blacklisted_path?(dir)
+          if File.directory?(dir)
+            yield(dir) unless blacklisted_path?(dir)
+          end
         end
       end
     end
@@ -62,7 +64,7 @@ module Ricer
       with_plugdirs{|dir|load_model_dir dir} # Then models (Cross plugin)
     end
     
-    def load_path(path)
+    def load_plugins()
       plugins = []
       with_plugdirs do |dir|
         # Plugins

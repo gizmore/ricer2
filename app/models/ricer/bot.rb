@@ -39,11 +39,15 @@ module Ricer
     def after_init
       self.class.instance_variable_define('@instance', self)
       @loader = PluginLoader.new(self)
-      @loader.add_plugin_dir("app/models/ricer/plugins/*")
+      add_plugin_dir("app/models/ricer/plugins/*")
       @botlog = BotLog.new
       @servers = Ricer::Irc::Server.all
       @_utf8 ||= Ricer::Encoding.find(1)
       @start_at = Time.now
+    end
+    
+    def add_plugin_dir(dir)
+      @loader.add_plugin_dir(dir)
     end
     
     def plugins
@@ -56,11 +60,24 @@ module Ricer
     
     def init
       ActiveRecord::Base.logger = paddy_queries ? Logger.new(STDOUT) : nil
-      after_init
-      init_random
       @running = false
       @needs_restart = false
+      after_init
+      init_random
+      initialize_ricer_gems
       # @loader.init 
+    end
+    
+    def initialize_ricer_gems
+      Ricer::Plugins.constants.each do |constant|
+        begin
+          modulename = constant.to_s.camelize
+          log_info("Initializing ricer gem #{modulename}")
+          Ricer::Plugins.const_get(constant).initialize_ricer_gem(self)
+        rescue StandardError => e
+          log_error("#{modulename} seems to be a ricer plugin gem, but it does not feature the static 'initialize_ricer_gem' method.");
+        end
+      end
     end
     
     ### Seed the random generator with seed from config
@@ -69,7 +86,6 @@ module Ricer
       seed = randseed
       @rand = Random.new(seed)
       log_info "Seeded random generator with #{seed}"
-      after_init
     end
     
     ### Extend Plugin with all extender/
