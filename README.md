@@ -58,11 +58,14 @@ Install the bot. This calls rails migrations and seed
 
 Install a server/protocol/network via ricer tasks
 IRC => What we love
-> bundle exec rake ricer:irc[irc://irc.freenode.net:6667,ricerbot,,1]"
+> bundle exec rake ricer:irc[irc://irc.freenode.net:6667,ricerbot,,1]
+
 TCP => Use, eg, netcat to talk to the bot
-> bundle exec rake ricer:tcp[1,31336,0.0.0.0,ricer,1]"
+> bundle exec rake ricer:tcp[1,31336,0.0.0.0,ricer,1]
+
 Websockets => yay
 > bundle exec rake ricer:websocket[1,31337,0.0.0.0,ricer,1]
+
 Violet is the libpurple connector for ICQ, Yahoo, XMPP and more
 > bundle exec rake ricer:violet[icq,1,276657844,password,ricer,1]
 
