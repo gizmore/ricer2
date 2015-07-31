@@ -40,29 +40,33 @@ Install gems
 
 Edit the configuration.
 > cp config/environments/development.example.rb config/environments/development.rb
+
 > nano config/environments/development.rb
 
 Configure your database settings
 > cp config/database.example.yml config/database.yml
+
 > nano config/database.yml
 
 Configure some secret settings
 > cp config/secrets.yml.example config/secrets.yml
+
 > nano config/secrets.yml
 
 Install the bot. This calls rails migrations and seed
 > bundle exec rake ricer:install
 
 Install a server/protocol/network via ricer tasks
-> ### IRC => What we love
-> # bundle exec rake ricer:irc[irc://irc.freenode.net:6667,ricerbot,,1]"
-> ### TCP => Use, eg, netcat to talk to the bot
-> # bundle exec rake ricer:tcp[1,31336,0.0.0.0,ricer,1]"
-> ### Websockets => yay
-> # bundle exec rake ricer:websocket[1,31337,0.0.0.0,ricer,1]
-> ### Violet is the libpurple connector for ICQ, Yahoo, XMPP and more
-> # bundle exec rake ricer:violet[icq,1,276657844,password,ricer,1]
-> # bundle exec rake ricer:violet[yahoo,1,guessmoor@yahoo.de,password,ricer,1]
+IRC => What we love
+> bundle exec rake ricer:irc[irc://irc.freenode.net:6667,ricerbot,,1]"
+TCP => Use, eg, netcat to talk to the bot
+> bundle exec rake ricer:tcp[1,31336,0.0.0.0,ricer,1]"
+Websockets => yay
+> bundle exec rake ricer:websocket[1,31337,0.0.0.0,ricer,1]
+Violet is the libpurple connector for ICQ, Yahoo, XMPP and more
+> bundle exec rake ricer:violet[icq,1,276657844,password,ricer,1]
+
+> bundle exec rake ricer:violet[yahoo,1,guessmoor@yahoo.de,password,ricer,1]
 
 Start the bot...  The first start takes a while, as plugins install their database tables.
 > bundle exec rake ricer:start 
