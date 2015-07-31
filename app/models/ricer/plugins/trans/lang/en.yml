@@ -4,9 +4,11 @@ en:
       trans:
 
         trans:
-          trigger: trans
-          description: ""
-
+          trigger: t
+          description: "Translate a text to multiple languages with translate.google.com. Example: %{T} en,de,fr Hola senoritas!"
+          msg_translation: "In %{language}: %{text}"
+          
         interpreter:
           trigger: interpreter
-          description: ""
+          description: "Switch this channel to permanent autotranslation for the given languages. Example: %{t} en,de,fr."
+          msg_translation: "[%{iso}]: %{text}"

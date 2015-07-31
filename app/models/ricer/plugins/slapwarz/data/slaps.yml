@@ -1,0 +1,57 @@
+adverbs:
+  hardly: 20
+  softly: 15
+  slowly: 20
+  mistakenly: 25
+  totally: 30
+  quickly: 50
+  angrily: 60
+  repeadiatly: 70
+  silently: 90
+  furiously: 99
+
+verbs:
+  greets: 0
+  whizzles: 8
+  rap_battles: 9
+  slaps: 10
+  violates: 15
+  blats: 18
+  spanks: 18
+  scrubs: 18
+  punches: 20
+  bangs: 21
+  shoots: 22
+  exploits: 23
+  debugs: 25
+  bangs: 27
+  rapes: 30
+  kicks: 30
+  blasts: 40
+  endangers: 40
+  kills: 50
+  destroys: 60
+  eleminates: 60
+  
+  
+adjectives:
+  microscopic: 10
+  fine: 15
+  tiny: 11
+  small: 10
+  big: 10
+  multiple: 28
+  plenty: 30
+  nice: 12
+  modern: 17
+  old: 12
+  fantastic: 20
+  rotten: 9
+  broken: 5
+  bizzare: -10
+  healing: -20
+  expensive: 11
+  cheap: 9
+ 
+objects:
+  gum: 8

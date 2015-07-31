@@ -3,8 +3,6 @@ module Ricer::Plugins::Todo
     
     trigger_is 'todo add'
     
-    abbonementable_by([Ricer::Irc::User, Ricer::Irc::Channel])
-
     has_usage '<..string..>'
     def execute(todo_text)
       entry = Ricer::Plugins::Todo::Model::Entry.new({
@@ -14,12 +12,17 @@ module Ricer::Plugins::Todo
       })
       entry.save!
       reply(entry.display_item(entry.id))
-      byebug
-      servers.each do |server|
-        server.channels.each do |channel|
-          channel.localize!.send_privmsg(entry.display_item(entry.id))
+      announce_new_todo(entry)
+    end
+    
+    def announce_new_todo(entry)
+      announce = get_plugin("Todo/Announce")
+      announce.announce_targets do |target|
+        if target != user && target != channel
+          target.localize!.send_privmsg(entry.display_item(entry.id))
         end
       end
     end
+
   end
 end

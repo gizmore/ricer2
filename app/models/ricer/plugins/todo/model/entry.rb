@@ -12,9 +12,14 @@ module Ricer::Plugins::Todo
         t.integer   :priority,   :default => 0
         t.integer   :worker_id,  :null => false, :default => 0
         t.integer   :creator_id, :null => false
+#        t.timestamp :done_at, :null => true,  :default => nil
         t.timestamp :deleted_at, :null => true,  :default => nil
         t.timestamps
       end
+    end
+    def self.upgrade_2
+      m = ActiveRecord::Migration
+      m.add_column self.table_name, :done_at, :datetime, :null => true, :null => true,  :default => nil, :after => :creator_id
     end
 
     scope :open, -> { where("#{table_name}.deleted_at IS NULL")}
@@ -48,7 +53,7 @@ module Ricer::Plugins::Todo
     end
 
     def displaytime
-      lib.human_age(self.deleted_at)
+      lib.human_age(self.done_at)
     end
 
     def show_item()
@@ -86,7 +91,12 @@ module Ricer::Plugins::Todo
     end
     
     def display_take(number=1)
-      key = self.deleted_at.nil? ? 'taken' : 'solved'
+      if self.deleted_at; key = 'deleted'
+      elsif self.done_at; key = 'solved'
+      elsif self.worker_id; key = 'taken'
+      else; key = 'created'
+      end
+      # key = self.done_at.nil? ? 'taken' : 'solved'
       I18n.t("ricer.plugins.todo.#{key}_item",
         n: self.id,
         id: self.id,
