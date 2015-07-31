@@ -16,7 +16,7 @@ en:
           err_translate: "Cannot translate to %{to}. Detected language is %{from}."
           
         interpreter:
-          trigger: "interpreter"
+          trigger: "translator"
           no_isos_yet: "no languages at all"
           interpreter_on: "on"
           interpreter_off: "off"

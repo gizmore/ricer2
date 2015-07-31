@@ -19,7 +19,7 @@ module Ricer::Plugins::Todo
     end
     def self.upgrade_2
       m = ActiveRecord::Migration
-      m.add_column self.table_name, :done_at, :datetime, :null => true, :null => true,  :default => nil, :after => :creator_id
+      m.add_column self.table_name, :done_at, :datetime, :null => true, :default => nil, :after => :creator_id
     end
 
     scope :open, -> { where("#{table_name}.deleted_at IS NULL")}
