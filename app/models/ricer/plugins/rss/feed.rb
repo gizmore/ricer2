@@ -71,24 +71,28 @@ module Ricer::Plugins::Rss
     
     def working?
       begin
-        open(url) do |rss|
+        open(url, open_options) do |rss|
           feed = RSS::Parser.parse(rss)
           Ricer::Bot.instance.log_debug feed
           self.title = feed_title(feed)
           self.description = feed_descr(feed)
           self.checked_at = feed_date(feed)
         end
-        return (self.title != nil) && (self.checked_at != nil)
+        (self.title != nil) && (self.checked_at != nil)
       rescue StandardError => e
         puts e
         puts e.backtrace
-        return false
+        false
       end
+    end
+    
+    def open_options
+      { ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE }
     end
     
     def check_feed(plugin)
       begin
-        open(url) do |rss|
+        open(url, open_options) do |rss|
           feed = RSS::Parser.parse(rss)
           collect = []
           feed.items.each do |item|
