@@ -49,6 +49,6 @@ gem 'simple_oauth', '~> 0.3.0'
 
 
 # Ricer plugins :)
-group :development do
-  gem 'ricer-ignore', path: "../ricer-ignore"
-end
+#group :development do
+#  gem 'ricer-ignore', path: "../ricer-ignore"
+#end

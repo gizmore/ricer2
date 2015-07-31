@@ -10,7 +10,7 @@ module Ricer::Plugins::Admin
     def execute_upgrade
       rply :msg_pulling
       Ricer::Thread.execute do
-        reply `git pull`
+        reply `git reset --hard origin/master && git pull`
       end
     end
 
