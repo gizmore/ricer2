@@ -1,17 +1,20 @@
 ricer2
 =====
-ricer is an IRC bot written in ruby on rails. It is developed in ruby2 and RoR4.
+ricer2 is an (IRC) chat-bot written in ruby (on rails). It is developed in ruby2 and RoR4.
+
 
 Main Features
 =============
-- Global ORM Cache (ActiveRecord patch is minimal, but with a performance hit instead gain)
+- Global ORM Cache (ActiveRecord minimal patch with some bigger performance hit)
 - Multilanguage support
 - Multi network support
-- Code reloading at runtime
+- Multi protocol support (irc, icq, netcat, websocket, libpurple)
+- Code reload at runtime
 - Threadsafe? (not tested with JRuby)
-- Easy plugin creation
-- Great debugging and error catching
-- Almost 100% plugin driven
+- Easy plugin creation (not really :P)
+- Nice debugging and error catching
+- Almost 100% plugin driven (protocols are plugins too)
+
 
 Notable plugins
 ===============
@@ -19,10 +22,13 @@ Notable plugins
 - Cvs: Manage git and svn repositories (it´s a todo)
 - Purple: The bot features integration with libpurple 
 
+
 Future plans
 ============
 - Plugins should be able to offer http features
 - It should be possible to chain and pipe commands, like !hex abc | urlencode # => %34%31%34%32%34%33
+- Default webpages for various plugins (show data, maybe rails/php/admin?)
+
 
 Install guide
 =============
@@ -33,29 +39,42 @@ Install gems
 > bundle install
 
 Edit the configuration.
-Check for your default irc server and other stuff! More servers can be added via irc commands later.
 > cp config/environments/development.example.rb config/environments/development.rb
+
 > nano config/environments/development.rb
 
 Configure your database settings
 > cp config/database.example.yml config/database.yml
+
 > nano config/database.yml
 
 Configure some secret settings
 > cp config/secrets.yml.example config/secrets.yml
+
 > nano config/secrets.yml
 
-Create the database scheme
-> bundle exec rake db:migrate
+Install the bot. This calls rails migrations and seed
+> bundle exec rake ricer:install
 
-Fill your DB with initial values
-> bundle exec rake db:seed
+Install a server/protocol/network via ricer tasks
+IRC => What we love
+> bundle exec rake ricer:irc[irc://irc.freenode.net:6667,ricerbot,,1]
 
-Start the bot...
-The first start takes a while, as plugins install their databases.
-> bundle exec rake ricer:start
+TCP => Use, eg, netcat to talk to the bot
+> bundle exec rake ricer:tcp[1,31336,0.0.0.0,ricer,1]
 
-Rice Up!
+Websockets => yay
+> bundle exec rake ricer:websocket[1,31337,0.0.0.0,ricer,1]
+
+Violet is the libpurple connector for ICQ, Yahoo, XMPP and more
+> bundle exec rake ricer:violet[icq,1,276657844,password,ricer,1]
+
+> bundle exec rake ricer:violet[yahoo,1,guessmoor@yahoo.de,password,ricer,1]
+
+Start the bot...  The first start takes a while, as plugins install their database tables.
+> bundle exec rake ricer:start 
+
+!Rice!Up!
 
 Usage guide
 ===========
@@ -71,14 +90,12 @@ Elevate your priviledges
 Change this powerful password
 > /msg ricer confb super magicword newpassword
 
-Also change the superword (it lifts to owner permissions, and is not really dangerous to know, i.e. no code exec)
+Also change the superword.
+It lifts to owner permissions, and is not totally dangerous to know, i.e.: at least no code exec.
 > /msg ricer confb super superword newpassword
 
 Make it join a channel
 > /msg ricer join #somechannel
-
-Lift your priviledges there too
-> /msg ricer super newpassword
 
 
 What now
@@ -101,3 +118,4 @@ For building mysql2 gem on windows, see http://stackoverflow.com/questions/36082
 > gem install mysql2 -- '--with-mysql-lib="c:\Program Files\MySQL\MySQL Server 5.5\lib" --with-mysql-include="c:\Program Files\MySQL\MySQL Server 5.5\include"'
 
 For building purple_ruby on windows, ...
+.... To be concluded
