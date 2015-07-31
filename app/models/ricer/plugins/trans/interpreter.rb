@@ -36,7 +36,7 @@ module Ricer::Plugins::Trans
       line = current_message.privmsg_line
       
       # Ignore some messages
-      return if line.length < 5
+      return if line.length < 12
       return if channel && current_message.is_triggered? # Channel commands ignored
       return unless is_interpreting? # Disabled
       return if channel.nil? && plugins_for_line(line).length > 0 # ignore commands
