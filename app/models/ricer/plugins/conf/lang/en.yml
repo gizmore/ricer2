@@ -46,12 +46,18 @@ en:
           msg_triggers: 'Available: %{triggers}.'
           msg_event_info: '%{name}: %{info}'
 
+        server_lang:
+          description: 'Show or set server language settings.'
+          msg_set: 'You have changed the server language setting from %{old} to %{new}.'
+          msg_show: 'The servers default language is set to %{iso}. Available iso codes: %{available}.'
+
         server_set:
           description: 'Set or show raw server values like triggers, throttle or cooldown.'
           msg_set: 'The setting for %{varname} on %{server} is now "%{value}" (was "%{old_value}").' 
           msg_show: 'The setting for %{varname} on %{server} is "%{value}".'
 
-        userlang:
+        user_lang:
           description: 'Show or set your language preference.'
           msg_set: 'You have changed your language preference from %{old} to %{new}.'
           msg_show: 'Your language is set to %{iso}. Available iso codes: %{available}.'
+

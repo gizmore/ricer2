@@ -211,7 +211,7 @@ module Ricer::Irc
       end # .plugins_for_event
       nil
     end # def process_event
-
+    
     #################################
     ### Mu-Mu-Mu-Multiiii Balllll ### (thx Hirsch)
     #################################
@@ -303,18 +303,14 @@ module Ricer::Irc
     ### Cache ###
     #############
     def load_user(nickname)
-      unless user = Ricer::Irc::User.global_cache["#{nickname.downcase}:#{self.id}"]
-        user = Ricer::Irc::User.where({server_id: self.id, nickname: nickname}).first
-      end
-      user
+      Ricer::Irc::User.global_cache["#{nickname.downcase}:#{self.id}"] ||
+      Ricer::Irc::User.where({server_id: self.id, nickname: nickname}).first
     end
     
     def load_channel(channel_name)
-      return nil unless Ricer::Irc::Lib.instance.channelname_valid?(channel_name)
-      unless channel = Ricer::Irc::Channel.global_cache["#{channel_name.downcase}:#{self.id}"]
-        channel = Ricer::Irc::Channel.where(:name => channel_name, :server_id => self.id).first
-      end
-      channel
+      #return nil unless Ricer::Irc::Lib.instance.channelname_valid?(channel_name)
+      Ricer::Irc::Channel.global_cache["#{channel_name.downcase}:#{self.id}"] ||
+      Ricer::Irc::Channel.where(:name => channel_name, :server_id => self.id).first
     end
     
     #####################

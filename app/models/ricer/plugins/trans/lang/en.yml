@@ -1,14 +1,28 @@
 en:
   ricer:
+    plug:
+      params:
+        lang_iso:
+          error: "Unknown language iso code."
+          iso_error: "Unknown language iso code: %{code}."
+
     plugins:
       trans:
-
         trans:
-          trigger: t
-          description: "Translate a text to multiple languages with translate.google.com. Example: %{T} en,de,fr Hola senoritas!"
-          msg_translation: "In %{language}: %{text}"
+          trigger: "t"
+          description: "Translate a text to multiple languages with translate.google.com. Example: $TRIGGER$ en,de,fr Hola senoritas!"
+          msg_translated: "[%{from}=>%{to}] %{text}"
+          err_same: "This text alrady seems to be composed in %{to}."
+          err_translate: "Cannot translate to %{to}. Detected language is %{from}."
           
         interpreter:
-          trigger: interpreter
-          description: "Switch this channel to permanent autotranslation for the given languages. Example: %{t} en,de,fr."
-          msg_translation: "[%{iso}]: %{text}"
+          trigger: "interpreter"
+          no_isos_yet: "no languages at all"
+          interpreter_on: "on"
+          interpreter_off: "off"
+          description: "Switch this channel to permanent autotranslation for the given languages. Example: $TRIGGER$ en,de,fr."
+          err_no_isos: "Please enable the interpreter with some language isos first. Example: $TRIGGER$ en,de,fr."
+          msg_enabled: "Interpreter has been enabled for %{isos}."
+          msg_disabled: "Interpreter has been disabled."
+          msg_status: "Interpreter is turned %{onoff} for %{isos}."
+          msg_interpreted: "[%{iso}] %{text}"

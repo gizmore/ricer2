@@ -14,7 +14,7 @@ module Ricer
     end
     
     def self.by_iso(iso)
-      global_cache[iso] || find_by(:iso => iso)
+      global_cache[iso.to_s] || find_by(:iso => iso)
     end
     
     def to_label

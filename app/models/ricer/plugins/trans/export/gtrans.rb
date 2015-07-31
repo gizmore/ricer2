@@ -1,10 +1,15 @@
 require "net/http"
 require "uri"
-
+require 'cgi'
+#
+# Code thankfully converted from "Nimda3" (noother´s highperformance PHP bot)
+# @SEE https://github.com/noother/nimda3 
+# Thanks my friend :)
+#
 class Ricer::GTrans
   
   AUTO = 'auto'
-  ISOS = 
+  ISOS = # translate.google.com supported
   [ 'af', 'ar', 'az', 'be', 'bg', 'bn', 'ca', 'cs', 'cy', 'da', 
     'de', 'el', 'en', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga',
     'gl', 'gu', 'hi', 'hr', 'ht', 'hu', 'hy', 'id', 'is', 'it',
@@ -13,38 +18,34 @@ class Ricer::GTrans
     'sr', 'sv', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur',
     'vi', 'yi'
   ]
-    
+  # Thx nufer ;)
   def useragent
     "Mozilla/5.0 (X11; Linux x86_64; rv:14.0) Gecko/20100101 Firefox/14.0.1"
   end
+
+  
+  def initialize(text="", iso=AUTO)
+    check_iso!(iso)
+    @text, @iso = text, iso
+  end
   
   def valid_iso?(iso, allow_auto=true)
-    (allow_auto && iso == AUTO) ||
-    ISOS.include?(iso)
+    (allow_auto && iso == AUTO) || ISOS.include?(iso.to_s)
   end
   
   def check_iso!(iso, allow_auto=true)
-    throw "GTrans does not know ISO #{iso}." unless valid_iso?(iso)
-    true
-  end
-  
-  def initialize(text, iso=AUTO)
-    @text = text
-    @iso = iso if check_iso!(iso)
-  end
-  
-  def source_locale=(locale)
-    @source = locale
+    valid_iso?(iso) or raise "The Google translator does not know this language iso2 code: #{iso}." 
   end
   
   def detect_iso
-    iso = to('en').source_iso
+    iso = to('en')[:iso]
     @iso = iso if @iso == AUTO
   end
   
   def to(iso)
+    check_iso!(iso)
     @cache ||= {}
-    return @cache[iso] if @cache[iso] && check_iso!(iso) 
+    return @cache[iso] if @cache[iso]
     uri = URI.parse("https://translate.google.com/?sl=#{@iso}&tl=#{iso}&q=#{URI::encode(@text)}")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
@@ -52,18 +53,33 @@ class Ricer::GTrans
     response = http.request(request)
     @cache[iso] = {
       text: fetch_translation(response.body),
-      source_iso: fetch_iso(response.body),
+      iso: fetch_iso(response.body),
+      source_iso: @iso,
       target_iso: iso
     }
- end
+    store_detected_iso_as_cache
+    @cache[iso]
+  end
  
- private
- def fetch_iso(response)
-   Regexp.new("<a id=gt-otf-switch href=.+?&sl=(.+?)&").match(response)[1]
- end
+  private
  
- def fetch_translation(response)
-   Regexp.new("<span id=result_box[^>]*><span[^>]*>([^<]+)</span>").match(response)[1]
- end
+  def store_detected_iso_as_cache
+    @cache[@iso] = { text: @text, iso: @iso, source_iso: @iso, target_iso: @iso } unless @cache[@iso]
+  end
+ 
+  def fetch_iso(response)
+    begin
+      # THX NUFER!
+      iso = Regexp.new("<a id=gt-otf-switch href=.+?&sl=(.+?)&").match(response)[1]
+      @iso = iso if @iso == AUTO
+    rescue StandardError => e
+      nil
+    end
+  end
+ 
+  # THX NUFER!
+  def fetch_translation(response)
+    CGI.unescapeHTML(Regexp.new("<span id=result_box[^>]*><span[^>]*>([^<]+)</span>").match(response)[1]) rescue nil
+  end
   
 end
