@@ -47,7 +47,6 @@ module Ricer
     end
     
     def with_plugdirs(&block)
-      byebug
       @plugdirs.each do |plugdir|
         Dir[plugdir].each do |dir|
           if File.directory?(dir)
