@@ -35,49 +35,51 @@ module Ricer
       old_message.forked! if old_message && old_message.plugin
       # Start thread
       new do |t|
-        # copy the network message
-        Thread.current[:ricer_message] = old_message 
-        # Count global thread counter up, for debugging purposes
-        guid = 0
-        @@mutex.synchronize do
-          @@fork_counter += 1
-          guid = @@fork_counter
-          if sender
-            @@limits[sender] ||= 0
-            @@limits[sender] += 1
+        # Assume we need a connection. This wrap closes the connection later.
+        ActiveRecord::Base.connection_pool.with_connection do
+          # copy the network message
+          Thread.current[:ricer_message] = old_message 
+          # Count global thread counter up, for debugging purposes
+          guid = 0
+          @@mutex.synchronize do
+            @@fork_counter += 1
+            guid = @@fork_counter
+            if sender
+              @@limits[sender] ||= 0
+              @@limits[sender] += 1
+            end
           end
-        end
-        # Try to exec
-        begin
-          bot.log_debug "[#{guid}] Started thread at #{display_proc(proc)}"
-          yield proc
-          bot.log_debug "[#{guid}] Stopped thread at #{display_proc(proc)}"
-        rescue Ricer::ExecutionException => e
-          bot.log_debug "[#{guid}] Killed thread at #{display_proc(proc)}"
-        rescue StandardError => e
-          bot.log_exception(e)
-          bot.log_debug "[#{guid}] Killed thread at #{display_proc(proc)}"
-        ensure
-          if sender; record_user_thread_limits(sender, -1); end
-          if old_message && old_message.plugin
-            old_message.joined!
-            #bot.log_debug("JOINED THREAD!")
-            if old_message.forked?
-              #bot.log_debug("STILL SOMETHING LEFT TO DO!")
-            elsif old_message.pipe?
-              #bot.log_debug("PIPING OUTPUT!")
-              old_message.pipe!
-            elsif old_message.chained?
-              #bot.log_debug("CHAINING!")
-              old_message.chain!
-            else
-              #bot.log_debug("EXECUTION DONE!")
-              old_message.plugin.process_event('ricer_after_execution')
+          # Try to exec
+          begin
+            bot.log_debug "[#{guid}] Started thread at #{display_proc(proc)}"
+            yield proc
+            bot.log_debug "[#{guid}] Stopped thread at #{display_proc(proc)}"
+          rescue Ricer::ExecutionException => e
+            bot.log_debug "[#{guid}] Killed thread at #{display_proc(proc)}"
+          rescue StandardError => e
+            bot.log_exception(e)
+            bot.log_debug "[#{guid}] Killed thread at #{display_proc(proc)}"
+          ensure
+            if sender; record_user_thread_limits(sender, -1); end
+            if old_message && old_message.plugin
+              old_message.joined!
+              #bot.log_debug("JOINED THREAD!")
+              if old_message.forked?
+                #bot.log_debug("STILL SOMETHING LEFT TO DO!")
+              elsif old_message.pipe?
+                #bot.log_debug("PIPING OUTPUT!")
+                old_message.pipe!
+              elsif old_message.chained?
+                #bot.log_debug("CHAINING!")
+                old_message.chain!
+              else
+                #bot.log_debug("EXECUTION DONE!")
+                old_message.plugin.process_event('ricer_after_execution')
+              end
             end
           end
         end
       end
-      
     end
     
     def self.record_user_thread_limits(user, add=1)
