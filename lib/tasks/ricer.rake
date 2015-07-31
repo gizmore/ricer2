@@ -76,7 +76,7 @@ namespace :ricer do
   # end
   
   ### BEGIN PURPLE
-  desc "Add a purple account. E.g.: bundle exec rake ricer:violet[icq,276657844,foobabaz]"
+  desc "Add a purple account. E.g.: bundle exec rake ricer:violet[icq,1,276657844,password,nickname,botid1]"
   task(:violet, [:connector, :pos, :login, :pass, :nick, :botid] => :environment) do |t, args|
     bot = ricer_rake_init(args, true)
     bot.log_info("Configure violet #{args.connector} for #{args.login}")

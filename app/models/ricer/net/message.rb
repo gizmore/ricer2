@@ -68,7 +68,7 @@ module Ricer::Net
     end
     
     def hostmask
-      bot.log_info("Message#hostmask returns #{prefix.rsubstr_from('@')}")
+      #bot.log_debug("Message#hostmask returns #{prefix.rsubstr_from('@')}")
       prefix.rsubstr_from('@')
     end
     
