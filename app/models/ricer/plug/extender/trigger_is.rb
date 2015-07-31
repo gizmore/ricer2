@@ -101,9 +101,11 @@ module Ricer::Plug::Extender::TriggerIs
       end
       
       def reply_backtrace(e)
-        # Report error in plugins first, then ricer, then just the first line.
+        # Report error in plugins first.
         e.backtrace.each{|line| return line if line.index(plugin_dir) }
+        # Next choice would be a cause in ricer.
         e.backtrace.each{|line| return line if line.index('/models/ricer/') }
+        # Not a ricer problem
         e.backtrace[0]
       end
       
