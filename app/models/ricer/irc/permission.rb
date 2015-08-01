@@ -25,6 +25,7 @@ module Ricer::Irc
     OWNER  =        new(priv:'x', symbol:'',  char:'',  bit:0x0400,  :name => :owner,         :modeable => true,  :hierarchic => false, :authenticated => false)
     RESPONSIBLE =   new(priv:'y', symbol:'',  char:'',  bit:0x0800,  :name => :responsible,   :modeable => false, :hierarchic => false, :authenticated => false)
     ALL = [ PUBLIC, REGISTERED, AUTHENTICATED, VOICE, HALFOP, OPERATOR, MODERATOR, STAFF, ADMIN, FOUNDER, IRCOP, OWNER, RESPONSIBLE ]
+    def self.all_granted(authenticated=true); by_permission(0x0800, authenticated); end
     
     def self.all_symbols
       back = ''
@@ -113,7 +114,7 @@ module Ricer::Irc
     end
     
     def self.by_permission(permissions, authenticated=false)
-      #bot.log_debug("Permission#by_permission(#{permissions}) AUTHED: #{authenticated.inspect}")
+      #bot.log_debug("Permission#by_permission(#{permissions}) AUTHED: #{authenticated}")
       priv = 'p'
       symbol = ''
       char = ''
@@ -143,6 +144,11 @@ module Ricer::Irc
       sumbits = 0; ALL.map{|p| sumbits |= p.bit if self.bit >= p.bit }; sumbits
     end
     
+    # Compute the hierarchic bits from this permission bitobject, like voice, halfop, op.
+    # These can be topped in permission checks by higher bits like ircop or admin.
+    #
+    # @param respect_auth [Permission] the authenticated permissions to filter with. E.g.: Permission::ALL, Permission::REGISTERED
+    # @return [Integer] the computed bitmask.
     def hierarchic_bits(respect_auth=REGISTERED)
       sumbits = 0
       ALL.map{|p| sumbits += p.bit if (self.bit >= p.bit) && p.hierarchic }
@@ -150,6 +156,11 @@ module Ricer::Irc
       sumbits
     end
 
+    # Compute the group bits from this permission bitobject
+    # Group bits are not hierarchic, i.e. they cannot be topped by other bits
+    #
+    # @param respect_auth [Permission] the authenticated permissions to filter with. E.g.: Permission::ALL, Permission::REGISTERED
+    # @return [Integer] the computed bitmask.
     def group_bits(respect_auth=REGISTERED)
       return self.bit & REGISTERED.bit if (respect_auth) && (!self.authenticated)
       sumbits = 0
@@ -157,13 +168,20 @@ module Ricer::Irc
       sumbits
     end
 
+    # Compute the bitmask against an authentication filter permission object
+    #
+    # @param respect_auth [Permission] the authenticated permissions to filter with. E.g.: Permission::ALL, Permission::REGISTERED
+    # @return [Integer] the computed bitmask.
     def all_bits(respect_auth=REGISTERED)
       hierarchic_bits(respect_auth) | group_bits(respect_auth)
     end
-    
+
+    # Check if this permission object fulfils the parameter permission object filtered by an authentication permission object.
+    #
+    # @param permission [Permission] the permission to check.
+    # @param respect_auth [Permission] the authenticated permissions to filter with. E.g.: Permission::ALL, Permission::REGISTERED
+    # @return [Boolean] if the permission check has passed.
     def has_permission?(permission, respect_auth=REGISTERED)
-#      permission = PUBLIC if permission.nil?
-      #bot.log_debug("Checking my permission #{bit} against #{permission.bit}")
       group_bits = permission.group_bits(nil)
       (self.hierarchic_bits(respect_auth) >= permission.hierarchic_bits(nil)) &&
       ((group_bits == 0) || ((self.group_bits(respect_auth) & group_bits) == group_bits))

@@ -141,13 +141,22 @@ module Ricer::Irc
     end
     
     # Check by permission object
-    def has_permission?(permission)
-      self.permission.has_permission?(permission)
+    def has_permission?(permission, theoretically=false)
+      respect_auth = theoretically ? Permission.all_granted : Permission::REGISTERED
+      self.permission.has_permission?(permission, respect_auth)
     end
 
     # Check by privchar (prlvhosmafixy)
-    def has_permission_char?(permchar)
-      has_permission?(Ricer::Irc::Permission.by_char(permchar))
+    def has_permission_char?(permchar, theoretically=false)
+      has_permission?(Ricer::Irc::Permission.by_char(permchar), theoretically)
+    end
+    
+    # Check by symbol
+    #
+    # @param permsymbol [Symbol] the permission to check. :voice, :registered, :authenticated,….
+    # @return [Boolean] true if user has server permission with Symbol name.
+    def has_permission_name?(permsymbol, theoretically=false)
+      has_permission?(Ricer::Irc::Permission.by_name(permsymbol), theoretically)
     end
     
     ################
