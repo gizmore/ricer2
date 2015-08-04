@@ -32,20 +32,24 @@ module Ricer::Plugins::Cvs
       Ricer::Thread.execute do
         start_service
         begin
-          system = System.new(repo, self, setting(:default_delay))
-          system_name = system.detect
-          return rply :err_system if system_name.nil?
-          system = System.get_system(system_name).new(repo, self, setting(:default_delay))
-          return rply :err_system if system.nil?
-          repo.system = system_name
-          repo.revision = system.revision
-          repo.save!
-          rply :msg_repo_added, name:repo.name, url:repo.url, type:repo.system
+          execute_csv_add(repo, name, url, public, pubkey)
         rescue StandardError => e
           reply_exception e
         end
         stopped_service
       end
+    end
+    
+    def execute_csv_add(repo, name, url, public, pubkey)
+      system = System.new(repo, self, setting(:default_delay))
+      system_name = system.detect
+      return rply :err_system if system_name.nil?
+      system = System.get_system(system_name).new(repo, self, setting(:default_delay))
+      return rply :err_system if system.nil?
+      repo.system = system_name
+      repo.revision = system.revision
+      repo.save!
+      rply :msg_repo_added, name:repo.name, url:repo.url, type:repo.system
     end
     
   end
