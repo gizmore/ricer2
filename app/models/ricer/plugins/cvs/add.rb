@@ -44,7 +44,7 @@ module Ricer::Plugins::Cvs
         rescue StandardError => e
           reply_exception e
         end
-        finished_service
+        stopped_service
       end
     end
     

@@ -6,7 +6,7 @@ en:
     plugins:
       cvs:
         err_permission: 'You are not allowed to do that.'
-        msg_show_item: '%{repo_id}-%{name}(%{path})'
+        msg_show_item: '%{repo_id}-%{name}(%{path}) origin: %{url}'
         msg_show_list_item: '%{repo_id}-%{name}'
         cvs:
           trigger: 'repo'

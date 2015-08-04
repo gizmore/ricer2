@@ -3,7 +3,7 @@ module Ricer::Plugins::Todo
     
     is_list_trigger :search,
       :for => Ricer::Plugins::Todo::Model::Entry,
-      # :pagination_pattern => false,
+      :pagination_pattern => false,
       :per_page => 5
     
     def execute(entry)

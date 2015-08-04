@@ -32,7 +32,7 @@ module Ricer::Plugins::Todo
     ##################
     search_syntax do
       search_by :text do |scope, phrases|
-        columns = [:text]
+        columns = [:id, :text]
         scope.where_like(columns => phrases)
       end
     end
@@ -78,7 +78,10 @@ module Ricer::Plugins::Todo
         priority: self.priority
       )
     end
-
+    
+    def display_show_item(number)
+      display_item(number)
+    end
     def display_item(number)
       I18n.t('ricer.plugins.todo.display_item',
         n: number,

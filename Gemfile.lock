@@ -27,11 +27,6 @@ GIT
     tf-idf-similarity (0.1.4)
       unicode_utils (~> 1.4)
 
-PATH
-  remote: ../ricer-ignore
-  specs:
-    ricer-ignore (1.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -224,7 +219,6 @@ DEPENDENCIES
   os
   purple_ruby!
   rails (= 4.1.1)
-  ricer-ignore!
   ruby-git
   ruby-prof
   sass-rails
@@ -238,4 +232,4 @@ DEPENDENCIES
   validate_as_email!
 
 BUNDLED WITH
-   1.10.5
+   1.10.6
