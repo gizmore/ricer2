@@ -22,7 +22,6 @@ module Ricer::Plugins::Cvs
       repo.rmdir
       SYSTEMS.each do |name|
         result = get_system(name).new(@repo, @plugin).working?
-        return nil if result.nil?
         return name if result
         repo.rmdir
       end
