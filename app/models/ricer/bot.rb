@@ -1,3 +1,5 @@
+require "resolv-replace.rb"
+
 module Ricer
   class Bot < ActiveRecord::Base
     
