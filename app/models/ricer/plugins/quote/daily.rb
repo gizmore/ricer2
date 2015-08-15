@@ -10,7 +10,8 @@ module Ricer::Plugins::Quote
       sleep 42.seconds
       Ricer::Thread.execute {
         loop {
-          announce_quote && sleep(1.hour)
+          announce_quote
+          sleep(1.hour)
         }
       }
     end
