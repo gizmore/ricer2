@@ -41,7 +41,6 @@ gem 'tf-idf-similarity', git: 'https://github.com/opennorth/tf-idf-similarity'
 # TODO: Make more gems for the ricer project :)
 gem 'purple_ruby', github: 'gizmore/purple_ruby' 
 gem 'hpricot'
-
 gem 'em-websocket'
 gem 'mime-types'
 gem 'twitter', '~> 5.13'
