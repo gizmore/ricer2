@@ -47,8 +47,6 @@ module Ricer::Plugins::Cvs
       
       self.class.loading = true
       
-      result = true
-      
       status = Open4::popen4(clone_cmd) do |pid, stdin, stderr, stdout|
 
         stdin.close
@@ -65,7 +63,6 @@ module Ricer::Plugins::Cvs
             
             if errbuf.read
               @plugin.reply errbuf.to_s
-              result = false
             end
             
           end
@@ -75,13 +72,13 @@ module Ricer::Plugins::Cvs
           result = false
         end
       end
-      
+
       # Last line
       finalize
 
       self.class.loading = false
 
-      result
+      status.to_i == 0
     end
     
     def update(max_updates)
