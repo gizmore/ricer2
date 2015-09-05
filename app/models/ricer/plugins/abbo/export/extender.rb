@@ -90,7 +90,6 @@ module Ricer::Plug::Extender::AbboTriggers
       is_list_trigger trigger||:abbos, options
       def visible_relation(relation)
         return Ricer::Plugins::Abbo::Abbonement.for_target(abbo_target)
-        #(:abbo_target => ) #relation.abbonemented_by(current_message.reply_target)
       end
     end
   end
