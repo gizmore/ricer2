@@ -111,22 +111,6 @@ module Ricer::Irc
       bot.log_info "Next nickname is #{@nickname.name}"
     end
     
-    # def mainloop
-      # if @connection.connected?
-        # message = @connection.get_message
-        # if message.nil?
-          # disconnect!
-          # sleep 5.seconds
-        # else
-          # message.server = message.sender = self
-          # process message
-        # end
-      # else
-        # sleep 5.seconds
-        # try_to_connect
-      # end
-    # end
-    
     def fake_message
       @_fake_message ||= Ricer::Net::Message.fake_message(self)
     end
@@ -160,6 +144,8 @@ module Ricer::Irc
     end
     
     def process_event(event, message)
+      
+#     bot.log_debug("[#{self.displayname}] process_event(#{event})");
       
       unless self.enabled
         bot.log_warning("Disabled server #{self.id} got process_event") and return nil

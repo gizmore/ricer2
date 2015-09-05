@@ -98,7 +98,7 @@ module Ricer
       end
     end
     
-    ### XXX: Horrible slow? because online attribute is in the db?
+    ### Horrible slow? because online attribute is in the db?
     ### but this way we get ActiveRecord syntax and maybe later
     ### there is a nice fast solution.
     def save_all_offline
