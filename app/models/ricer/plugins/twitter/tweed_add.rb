@@ -14,7 +14,7 @@ module Ricer::Plugins::Twitter
         name: twitter_screen_name,
         user_id: sender.id,
       })
-      service_thread {
+      command_thread {
         add_hashtag(follow) if follow.is_hashtag?
         add_tweeted(follow) if follow.is_tweeted?
         add_tweeter(follow) if follow.is_tweeter?
@@ -86,7 +86,7 @@ module Ricer::Plugins::Twitter
           date: I18n.l(follow.last_tweeted),
         )
       else
-        rply(:msg_added,
+        rply(:msg_added_new_tweeter,
           tweeter: follow.name,
           friends: follow.friends,
           followers: follow.followers,

@@ -66,7 +66,7 @@ module Ricer::Plugins::Twitter
     def hashtag_message(follow, tweet)
       case follow.tweet_type
       when Model::Follow::TWEETAG; key = :msg_new_tweetag
-      when Model::Follow::TWEETED; key = :msg_new_tweeted
+      when Model::Follow::TWEETAT; key = :msg_new_tweetat
       when Model::Follow::TWEETER; key = :msg_new_tweeter
       end
       t(key,

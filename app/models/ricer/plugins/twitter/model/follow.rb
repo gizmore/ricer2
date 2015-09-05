@@ -32,7 +32,7 @@ module Ricer::Plugins::Twitter
     before_save :strip_mb4
     
     def strip_mb4
-      self.last_tweet = self.last_tweet.each_char.select{|c| c.bytes.count < 4 }.join('')
+      self.last_tweet = self.last_tweet.each_char.select{|c| c.bytes.count < 4 }.join('') rescue nil
     end
     
     scope :active, -> { where("#{table_name}.deleted_at IS NULL")}

@@ -63,6 +63,20 @@ module Ricer::Plug::Extender::DenialOfServiceProtected
           end
         }
       end
+
+      # Call this conviniently for a protected thread 
+      def command_thread(&block)
+        start_service
+        Ricer::Thread.execute {
+          begin
+            yield
+          rescue StandardError => e
+            reply_exception(e)
+          ensure
+            stopped_service
+          end
+        }
+      end
       
       protected
       
