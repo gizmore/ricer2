@@ -1,7 +1,7 @@
 module Ricer::Plugins::Links
   class Search < Ricer::Plugin
     
-    trigger_is "links"
+    is_list_trigger "search", :for => Model::Link
     
   end
 end

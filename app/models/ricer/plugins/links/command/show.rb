@@ -1,12 +1,7 @@
 module Ricer::Plugins::Links
   class Show < Ricer::Plugin
     
-    trigger_is "link"
-    
-    has_usage "<id>"
-    def execute(id)
-      
-    end
+    is_list_trigger "show", :for => Model::Link, :search_pattern => '<id>'
     
   end
 end

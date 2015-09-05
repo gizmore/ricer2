@@ -1,6 +1,6 @@
 module Ricer::Plugins::Quote
   class Subscribe < Ricer::Plugin
-
+    
     is_announce_trigger :subscribe
 
     # Static subscribe

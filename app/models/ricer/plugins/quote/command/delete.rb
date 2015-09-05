@@ -7,7 +7,6 @@ module Ricer::Plugins::Quote
 
     has_usage '<id>'
     def execute(id)
-      byebug
       quote = Model::Quote.find(id)
       quote.delete
       rply :msg_deleted, :id => quote.id

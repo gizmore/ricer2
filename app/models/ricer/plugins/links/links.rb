@@ -4,9 +4,10 @@ require "uri"
 module Ricer::Plugins::Links
   class Links < Ricer::Plugin
     
-    def plugin_revision; 4; end
+    revision_is 4
+    author_is "gizmore@wechall.net"
 
-    def upgrade_4; Model::Link.upgrade_1; end
+    def upgrade_5; Model::Link.upgrade_1; end
 
     def on_privmsg
       matches = /[^\s]+:\/\/[^\s]+/.match(line)
@@ -56,7 +57,7 @@ module Ricer::Plugins::Links
         when "text/html"
           title = extract_html_title(response.body)
         when "text/plain"
-          title = response.body.substr.to("\n")
+          title = response.body.substr_to("\n")
         else
           bot.log_error("Woops... weird mime #{mime}")
         end
@@ -74,6 +75,7 @@ module Ricer::Plugins::Links
       
       entry.save_image(response.body) if write_image
       
+      announce_new_link
     end
     
     def extract_html_title(html)
@@ -87,6 +89,10 @@ module Ricer::Plugins::Links
         end
       end
       title
+    end
+    
+    def announce_new_link
+      
     end
 
   end

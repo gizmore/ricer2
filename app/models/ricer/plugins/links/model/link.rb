@@ -17,13 +17,14 @@ module Ricer::Plugins::Links
         t.string    :title,        :null => true
         t.integer   :user_id,      :null => false
         t.integer   :channel_id,   :null => true
+        t.string    :hash,         :null => false, :length => Ricer::Hash.LENGTH
         t.string    :mime_type,    :null => false, :length => 128, :charset => :ascii
         t.integer   :added,        :null => false, :default => 0
         t.timestamps
       end
       self.mkdir
     end
-    
+
     #################
     ### Directory ###
     #################

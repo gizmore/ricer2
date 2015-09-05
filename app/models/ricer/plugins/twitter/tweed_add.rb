@@ -22,7 +22,6 @@ module Ricer::Plugins::Twitter
     end
 
     def add_hashtag(follow)
-      byebug
       hashtag = follow.name
       tweet = twitter_client.search(follow.search_term).first
       return rply :err_unpopular_tag unless tweet

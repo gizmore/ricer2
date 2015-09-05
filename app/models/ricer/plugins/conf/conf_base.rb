@@ -17,6 +17,7 @@ module Ricer::Plugins::Conf
     def conflicting?(settings)
       count = 0
       settings.each do |options|
+#        count += 1 if Ricer::Irc::Scope.matching?(options[:scope], config_scope, channel)
         count += 1 if Ricer::Irc::Scope.matching?(options[:scope], config_scope, channel)
       end
       count != 1

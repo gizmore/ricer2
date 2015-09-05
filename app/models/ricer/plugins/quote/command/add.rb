@@ -14,10 +14,10 @@ module Ricer::Plugins::Quote
         channel: channel,
         message: text,
       })
+      rply :msg_added, :quote_id => quote.id
+
       # Use publish/subscribe to react on new quotes.
       publish('ricer/quote/added', quote)
-      # We are done :)
-      rply :msg_added, :quote_id => quote.id
     end
 
   end

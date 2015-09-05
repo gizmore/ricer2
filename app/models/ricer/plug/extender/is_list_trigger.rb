@@ -8,7 +8,7 @@ module Ricer::Plug::Extender::IsListTrigger
     search_pattern: '<search_term>', # falsy to disable
     pagination_pattern: '<page>', # falsy to disable
   }
-
+  
   def is_list_trigger(trigger_name, options={})
     class_eval do |klass|
 

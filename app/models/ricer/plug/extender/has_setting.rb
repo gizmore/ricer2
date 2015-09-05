@@ -224,9 +224,6 @@ module Ricer::Plug::Extender::HasSetting
       # end
       
       def db_setting_for(name, scopes=[:user, :channel, :server, :bot], create=true)
-        byebug if scopes.nil?
-        # cached = db_setting_cache_for(name, Array(scopes).first)
-        # return cached if cached && cached.persisted?
         first, cached = nil, nil
         Array(scopes).each{|scope|
           key = build_key(name, scope)

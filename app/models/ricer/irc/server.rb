@@ -229,7 +229,6 @@ module Ricer::Irc
     def quoteparam_parser(message, argline)
       back = ""
       while argline.length > 0
-        # byebug
         part = argline.substr_to('"')
         if part.nil? # no more quotes
           back += quoteparam_part(argline)
