@@ -15,7 +15,7 @@ module Ricer::Base::Base
   def class_module; self.class.class_module; end
   
   ###
-  # XXX: These would work fine, but should be avoided.
+  # These would work fine, but should be avoided.
   # def channels; Ricer::Irc::Channel; end
   # def servers; Ricer::Irc::Server; end
   # def users; Ricer::Irc::User; end

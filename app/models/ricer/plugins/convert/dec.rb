@@ -7,7 +7,7 @@ module Ricer::Plugins::Convert
     def execute(text)
       out = []
       text.each_char do |char|
-        out.push(char.unpack('L*')[0])
+        out.push(char.unpack('C')[0])
       end
       reply lib.join(out)
     end

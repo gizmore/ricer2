@@ -6,8 +6,11 @@ en:
         show_item: 'Note from %{from} at %{date}: %{text}'
         list_item: '%{unread}%{id}-%{from}{%unread}'
         
+        help:
+          trigger: "notes help"
+        
         list:
-          trigger: 'inbox'
+          trigger: 'notes inbox'
           description: 'Browse messages from other users in your inbox.'
         
         note:
@@ -17,17 +20,17 @@ en:
             other: 'You have %{count} unread notes. Use "$TRIGGER$note unread" to read it.'
         
         send:
-          trigger: 'send'
+          trigger: 'note send'
           description: 'Send a message to a user that can be read later.'
           err_send_self: 'You cannot send yourself messages.'
           msg_instant: 'Your message has been delivered instantly.'
           msg_stored: 'Your message will be delivered when the user joins and/or authenticates.'
         
         sent:
-          trigger: 'outbox'
+          trigger: 'note outbox'
           description: 'Browse sent messages to other users in your outbox.'
         
         unread:
-          trigger: 'unread'
+          trigger: 'notes unread'
           description: 'Read the oldest note that is still unread.'
           err_all_read: 'There are no unread notes for you. Try "$TRIGGER$notes inbox" or "$TRIGGER$notes outbox" to search in old notes.'

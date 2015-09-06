@@ -84,7 +84,7 @@ module Ricer
     end
 
     def mailed_recently?
-      (Time.now.to_i - @last_mail_time) >= 30.seconds
+      (Time.now.to_i - @last_mail_time) <= 30.seconds
     end
 
     ################

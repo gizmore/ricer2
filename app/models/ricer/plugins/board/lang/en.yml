@@ -5,9 +5,22 @@ en:
         
         entry: "%{url} - %{title} - by %{user}"
 
+        abbo:
+          trigger: "board abbo"
+          
+        abbos:
+          trigger: "board abbos"
+          
         add:
+          trigger: "+board"
           err_test: "Board has not been added: %{reason}."
           msg_added: "Board #%{id} has been added as %{name}. %{entry}."
         
         board:
           msg_announce: "[%{name}] New post: %{entry}."
+          
+        list:
+          trigger: "boards"
+
+        unabbo:
+          trigger: "board unabbo"

@@ -2,6 +2,7 @@ en:
   ricer:
     plugins:
       rss:
+ 
         show_item: 'Feed#%{id}: %{name} %{title} %{description}'
         list_item: 'Feed#%{id}: %{name}'
         err_feed: 'This feed is unknown.'
@@ -10,15 +11,25 @@ en:
         msg_rem_abbo: 'The %{name} feed will not be announced here anymore.'
         msg_abbos: '%{count} feeds abbonemented: %{out}.'
         msg_got_news: '[%{name}] %{title} - %{link}'
+ 
         rss:
           trigger: 'feed'
           description: 'Manage RSS Feeds.'
+ 
         list:
           trigger: 'feeds'
+ 
         add:
+          trigger: 'feed add'
           usage: '<name> <url>'
           description: 'Add an rss news feed to the $BOT$ database.'
           err_dup_url: 'This feed already is in the database as %{name}.'
           err_dup_name: 'This feed name is already taken.'
           err_test: 'The feed does not seem to work or network is down.'
           msg_added: 'Feed#%{id} has been added as %{name}: %{title} - %{description}'
+
+        abbo:
+          trigger: "rss abbo"
+ 
+        abbos:
+          trigger: "rss abbos"

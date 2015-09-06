@@ -2,5 +2,23 @@ en:
   ricer:
     plugins:
       links:
-        test: "test"
+        
+        links:
+          trigger: "all_links"
+        
+        list:
+          trigger: "links"
+          
+        search:
+          trigger: "link search"
+          
+        show:
+          trigger: "link"
+          
+        vote_down:
+          trigger: "link--"
+
+        vote_up:
+          trigger: "link++"
+            
         

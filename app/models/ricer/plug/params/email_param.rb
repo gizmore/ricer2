@@ -7,8 +7,8 @@ module Ricer::Plug::Params
         failed_input unless (email.domain) && (email.address == input) && (email.__send__(:tree).domain.dot_atom_text.elements.length > 1)
         email
       rescue StandardError => e
+        failed_input
       end
-      failed_input
     end
     
     def convert_out!(email, message)

@@ -37,3 +37,10 @@ en:
           trigger: "quote subscribe"
           description: "Get informed when a new quote has been added by subscribing with this function."
           msg_announce: "Quote#%{id} has been added in %{channel}: \"%{message}\" - %{user}"
+          
+        vote_down:
+          trigger: "quote--"
+
+        vote_up:
+          trigger: "quote++"
+          

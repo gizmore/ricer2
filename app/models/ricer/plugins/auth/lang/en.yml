@@ -14,6 +14,7 @@ en:
           msg_show_chan: '%{user} has %{bitstring} in %{channel}. Detected channelmodes: %{chanmode}.'
           
         email:
+          trigger: "email"
           description: 'Manage or show your email address.'
           msg_show: 'Your email address is set to %{email}.'
           msg_none: 'You don´t have an email address set yet.'

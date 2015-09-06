@@ -1,7 +1,7 @@
 module Ricer::Plugins::Quote
   class Subscribe < Ricer::Plugin
     
-    is_announce_trigger :subscribe
+    is_announce_trigger "subscribe"
 
     # Static subscribe
     subscribe('ricer/quote/added') do |quote|

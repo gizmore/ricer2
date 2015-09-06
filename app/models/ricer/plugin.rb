@@ -33,16 +33,19 @@ module Ricer
     def line; args[1]; end
     def privmsg_line; current_message.privmsg_line; end
     def argline
-#      return @_argline unless @argline.nil?
-      back = line
-      subcommand_depth.times do
-        back = back.substr_from(' ').ltrim(' ') rescue ''
-      end
-      back
-#      @_argline = back
-      ## .ping a , d1, s1 
-      # return nil if line.count(' ') < subcommand_depth
-      # return line.split(/ +/, subcommand_depth+1)[-1]
+      line.substr_from(trigger).trim(' ') rescue ''
+# #      return @_argline unless @argline.nil?
+      # back = line
+      # subcomm
+#       
+      # subcommand_depth.times do
+        # back = back.substr_from(' ').ltrim(' ') rescue ''
+      # end
+      # back
+# #      @_argline = back
+      # ## .ping a , d1, s1 
+      # # return nil if line.count(' ') < subcommand_depth
+      # # return line.split(/ +/, subcommand_depth+1)[-1]
     end
     
     def core_plugin?; false; end
@@ -155,11 +158,11 @@ module Ricer
     end
     
     def trigger
-      if _pc = parent_command
-        _pc.trigger + ' ' + i18n_trigger
-      else
+      # if _pc = parent_command
+        # _pc.trigger + ' ' + i18n_trigger
+      # else
         i18n_trigger        
-      end
+      # end
     end
         
     def triggered_by?(argline)
@@ -241,6 +244,9 @@ module Ricer
     end
     
     def exec_plugin
+      
+      bot.log_debug("Executing plugin #{self.plugin_name}")
+      
       begin
         self.class.get_exec_functions.each do |func|
           send(func)

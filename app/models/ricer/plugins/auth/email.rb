@@ -25,7 +25,7 @@ module Ricer::Plugins::Auth
       confirmation = EmailConfirmation.create!(
         user: user,
         code: Ricer::Plug::Pin.random_pin.to_value,
-        email: address,
+        email: address.to_s,
         expires: valid_until
       )
       # Send mail
@@ -35,7 +35,7 @@ module Ricer::Plugins::Auth
     end
     
     def execute_confirm(address, pin)
-      confirmation = EmailConfirmation.not_expired.where(user:user, email:address, code:pin.to_value).first
+      confirmation = EmailConfirmation.not_expired.where(user:user, email:address.to_s, code:pin.to_value).first
       return rply :err_code if confirmation.nil?
       user.email = confirmation.email
       user.save!

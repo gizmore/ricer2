@@ -13,25 +13,34 @@ en:
           description: 'Manage cvs repositories.'
           msg_announce: '[%{repo_name}] Commit %{revision} from %{commiter}: %{comment}'
         add:
-          trigger: 'add'
+          trigger: 'repo add'
           description: 'Checkout a repository from a version control system.'
           err_dup_name: 'This repository name is already taken.'
           err_dup_url: 'This repository URI already exists.'
           err_system: 'Could not detect the underlying cvs system for your repository.'
           msg_repo_added: 'Successfully added new %{type} repository as %{name} from %{url}.'
         show:
-          trigger: 'show'
+          trigger: 'repo show'
         delete:
-          trigger: 'delete'
+          trigger: 'repo delete'
           description: 'Purge a repository and mark it deleted.'
         find:
-          trigger: 'find'
+          trigger: 'repo find'
           description: 'Search for a file with a given name in a repository.'
         ifind:
-          trigger: 'findi'
+          trigger: 'repo findi'
           description: 'Search for a file with a given name, case insensitive, in a repository.'
+        list:
+          trigger: "repos"
         abbo:
+          trigger: 'repo abbo'
+        abbos:
+          trigger: 'repo abbos'
         unabbo:
+          trigger: 'repo unabbo'
         info:
+          trigger: 'repo info'
         status:
+          trigger: 'repo status'
         grant:
+          trigger: 'repo grant'

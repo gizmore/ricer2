@@ -101,7 +101,7 @@ module Ricer
     end
     
     def load_command_dir(parent_plugin)
-      bot.log_debug(parent_plugin.inspect);
+      bot.log_debug("plugin_loader.load_command_dir(#{parent_plugin.plugin_name})")
       plugdir, all_loaded = parent_plugin.plugin_dir, []
       modulename = parent_plugin.plugin_module
       # For all dirs that are named command...
