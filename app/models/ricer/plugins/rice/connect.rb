@@ -16,7 +16,7 @@ module Ricer::Plugins::Rice
     end
     
     def ricer_on_server_connected
-      bot.log_debug "Ricer::Plugins::Rice::Connect.ricer_on_server_handshake()"
+      bot.log_debug "Ricer::Plugins::Rice::Connect.ricer_on_server_connected()"
       if server.persisted?
         server.online = true
         server.save!

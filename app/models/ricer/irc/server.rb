@@ -83,11 +83,6 @@ module Ricer::Irc
           false
         end
       end
-      # if @connection.connect!
-        # process_event('ricer_on_server_handshake', fake_message) and true
-      # else
-        # process_event('ricer_on_connection_error', fake_message) and false
-      # end
     end
     
     def login(message)
@@ -121,6 +116,7 @@ module Ricer::Irc
     
     def disconnect!(message=nil)
       self.online = false
+      @initial = true
       if self.persisted?
         self.save!
       end
