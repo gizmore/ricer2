@@ -36,8 +36,10 @@ module Ricer::Plugins::Channel
     
     # Re-enable autojoin
     def on_join
-      update_password(channel)
-      save_channel_setting(channel, :autojoin, true)
+      if channel
+        update_password(channel)
+        save_channel_setting(channel, :autojoin, true)
+      end
     end
     
     def update_password(channel)
