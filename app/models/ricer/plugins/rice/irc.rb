@@ -45,7 +45,7 @@ module Ricer::Plugins::Rice
         connected
         true
       rescue StandardError => e
-        bot.log_exception(e)
+        bot.log_exception(e, false)
         server.process_event('ricer_on_connection_error', fake_message)
         sleep 5
         false

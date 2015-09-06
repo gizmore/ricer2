@@ -51,8 +51,8 @@ module Ricer
     def log_error(msg); loge(:error, msg); end
     def log_fatal(msg); loge(:fatal, msg); end
 
-    def log_exception(e)
-      mail_exception(e) if @mail_enabled
+    def log_exception(e, allow_mail=true)
+      mail_exception(e) if @mail_enabled && allow_mail
       log_fatal("#{e.class.name}: #{e.to_s}")
       e.backtrace.each{|line|log_fatal(line)} if e.backtrace
     end
