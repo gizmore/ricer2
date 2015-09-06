@@ -97,7 +97,7 @@ module Ricer::Plugins::Rss
       begin
         bot.log_info("rss.feed.check_feed(#{url})")
         open(url, open_options) do |rss|
-          feed = RSS::Parser.parse(rss)
+          feed = RSS::Parser.parse(rss ,false)
           collect = []
           feed.items.each do |item|
 #            puts item
