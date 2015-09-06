@@ -52,7 +52,7 @@ module Ricer::Plugins::Twitter
     end
     
     def poll_tweed(follow)
-      bot.log_debug("polling tweed for #{follow.name}...")
+      bot.log_info("Twitter.poll_tweed(#{follow.name})...")
       client.search(follow.search_term, :since_id => follow.last_tweet_id).reverse_each do |tweet|
         follow.abbonements.find_each do |abbo_target|
           abbo_target.target.localize!.send_message(hashtag_message(follow, tweet))
