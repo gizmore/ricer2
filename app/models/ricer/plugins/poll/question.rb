@@ -1,9 +1,9 @@
 module Ricer::Plugins::Poll
   class Question < ActiveRecord::Base
     
-    MAXLEN = 180
-    POLL = 1; MULTI = 2
-    RATE = 3; QUESTION = 4
+    MAXLEN ||= 180
+    POLL ||= 1; MULTI ||= 2
+    RATE ||= 3; QUESTION ||= 4
     
     self.table_name = 'poll_questions'
 

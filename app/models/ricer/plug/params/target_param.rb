@@ -1,7 +1,7 @@
 module Ricer::Plug::Params
   class TargetParam < BaseOnline
     
-    DEFAULT_OPTIONS = { channels:'1', users:'1', connectors:'*', online: nil, multiple: '1' }
+    DEFAULT_OPTIONS ||= { channels:'1', users:'1', connectors:'*', online: nil, multiple: '1' }
     
     def default_options; DEFAULT_OPTIONS; end
 

@@ -1,6 +1,6 @@
 class AsciiControlBuffer
   
-  BUFSIZE = 4.kilobytes
+  BUFSIZE ||= 4.kilobytes
   
   def initialize(io, bufsize=BUFSIZE)
     io.sync = true

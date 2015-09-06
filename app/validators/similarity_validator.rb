@@ -2,12 +2,12 @@ class SimilarityValidator < ActiveModel::EachValidator
 
   def check_validity!
     # byebug
-    puts "BB"
+    # puts "BB"
   end
   
   def validate_each(record, attribute, value)
     # byebug
-    puts "AA"
+    # puts "AA"
   end
 
 end

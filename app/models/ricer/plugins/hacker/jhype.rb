@@ -3,7 +3,7 @@ module Ricer::Plugins::Hacker
     
     require 'net/http'
     
-    DIR = 'http://sabrefilms.co.uk/store/'
+    DIR ||= 'http://sabrefilms.co.uk/store/'
 
     trigger_is :jhype
 

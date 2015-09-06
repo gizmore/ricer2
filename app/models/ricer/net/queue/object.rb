@@ -5,11 +5,11 @@ module Ricer::Net::Queue
     
     attr_reader :lines
     
-    MAX_WEIGHT = 2987654321 # Empty queue is not wanted to process at all
+    MAX_WEIGHT ||= 2987654321 # Empty queue is not wanted to process at all
     
-    WEIGHT_USER = 9
-    WEIGHT_CHANNEL = 4
-    WEIGHT_REDUCE = 10
+    WEIGHT_USER ||= 9
+    WEIGHT_CHANNEL ||= 4
+    WEIGHT_REDUCE ||= 10
     
     def initialize(to)
       @lines = []

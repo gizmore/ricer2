@@ -18,8 +18,8 @@ module Ricer::Irc
     include Ricer::Base::Base
     include Ricer::Base::Translates
     
-    NOTICE = 'n'
-    PRIVMSG = 'p'
+    NOTICE ||= 'n'
+    PRIVMSG ||= 'p'
     
     belongs_to :server
     belongs_to :locale

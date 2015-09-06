@@ -4,8 +4,8 @@
 module Ricer::Net::Queue
   class Frame
     
-    SECONDS = 3.0
-    MIN_SLEEP = 0.01
+    SECONDS ||= 3.0
+    MIN_SLEEP ||= 0.01
     
     def initialize(server)
       @server = server

@@ -8,13 +8,13 @@ module Ricer::Irc
     end
     
     # Trigger scopes
-    USER       = new(char:'u', bit:0x08000000, :name => :user)
-    CHANNEL    = new(char:'c', bit:0x04000000, :name => :channel)
-    EVERYWHERE = new(char:'e', bit:0x0C000000, :name => :everywhere)
+    USER       ||= new(char:'u', bit:0x08000000, :name => :user)
+    CHANNEL    ||= new(char:'c', bit:0x04000000, :name => :channel)
+    EVERYWHERE ||= new(char:'e', bit:0x0C000000, :name => :everywhere)
     # Additional Setting scopes
-    BOT        = new(char:'b', bit:0x02000000, :name => :bot)    # For settings only
-    SERVER     = new(char:'s', bit:0x01000000, :name => :server) # For settings only
-    ALL        = new(char:'a', bit:0x0F000000, :name => :all)    # For settings only
+    BOT        ||= new(char:'b', bit:0x02000000, :name => :bot)    # For settings only
+    SERVER     ||= new(char:'s', bit:0x01000000, :name => :server) # For settings only
+    ALL        ||= new(char:'a', bit:0x0F000000, :name => :all)    # For settings only
     @@all = { user:USER, channel:CHANNEL, everywhere:EVERYWHERE, bot:BOT, server:SERVER, all:ALL }
 
     def self.by_arg(arg)

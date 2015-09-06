@@ -1,7 +1,7 @@
 module Ricer::Plugins::Rice
   class Irc < Ricer::Net::Connection    
   
-    MAXLEN = 510
+    MAXLEN ||= 460
     
     require 'uri'
     require 'socket'

@@ -1,7 +1,7 @@
 module Ricer::Plugins::Poll
   class Option < ActiveRecord::Base
     
-    MAXLEN = 48
+    MAXLEN ||= 48
     
     self.table_name = 'poll_options'
     

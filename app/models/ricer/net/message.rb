@@ -3,8 +3,8 @@ module Ricer::Net
     
     include Ricer::Base::Base
     
-    SCOPES_CHANNEL = [:bot, :server, :channel, :user]
-    SCOPES_PRIVATE = [:bot, :server, :user]
+    SCOPES_CHANNEL ||= [:bot, :server, :channel, :user]
+    SCOPES_PRIVATE ||= [:bot, :server, :user]
     
     attr_reader :raw, :time
     

@@ -3,7 +3,7 @@
 ### Useful for functions a user may not do too often
 ###
 module Ricer::Plug::Extender::HasCheatingDetection
-  OPTIONS = {
+  OPTIONS ||= {
     max_attempts: 1
   }
   def has_cheating_detection(options={})

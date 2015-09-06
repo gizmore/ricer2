@@ -1,6 +1,6 @@
 module Ricer::Plug::Extender::ForcesAuthentication
   
-  OPTIONS = {
+  OPTIONS ||= {
     always: true
   }
   

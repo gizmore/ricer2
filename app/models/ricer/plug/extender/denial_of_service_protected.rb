@@ -9,7 +9,7 @@
 ###
 module Ricer::Plug::Extender::DenialOfServiceProtected
   
-  OPTIONS = {
+  OPTIONS ||= {
     scope: :user,
     max: 1,
   }

@@ -1,11 +1,11 @@
 class UriColumn
 
-  SHEMES = [:ssh, :git, :ftp, :http, :https, :irc]
-  DEFAULT_MAXLEN = @maxlen = 255
-  DEFAULT_SHEMES = @schemes = [:http, :https]
-  DEFAULT_PING = @ping = false
-  DEFAULT_EXIST = @exist = false
-  DEFAULT_CONNECT = @connect = true
+  SHEMES ||= [:ssh, :git, :ftp, :http, :https, :irc]
+  DEFAULT_MAXLEN ||= @maxlen = 255
+  DEFAULT_SHEMES ||= @schemes = [:http, :https]
+  DEFAULT_PING ||= @ping = false
+  DEFAULT_EXIST ||= @exist = false
+  DEFAULT_CONNECT ||= @connect = true
   
   def self.maxlen; @maxlen; end
   def self.schemes(); @schemes; end

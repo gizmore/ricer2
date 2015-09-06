@@ -8,8 +8,8 @@ require 'cgi'
 #
 class Ricer::GTrans
   
-  AUTO = 'auto'
-  ISOS = # translate.google.com supported
+  AUTO ||= 'auto'
+  ISOS ||= # translate.google.com supported
   [ 'af', 'ar', 'az', 'be', 'bg', 'bn', 'ca', 'cs', 'cy', 'da', 
     'de', 'el', 'en', 'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga',
     'gl', 'gu', 'hi', 'hr', 'ht', 'hu', 'hy', 'id', 'is', 'it',

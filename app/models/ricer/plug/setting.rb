@@ -6,7 +6,7 @@ module Ricer::Plug
     
     attr_accessor :options
 
-    SCOPES = [ :bot, :server, :channel, :user ]
+    SCOPES ||= [ :bot, :server, :channel, :user ]
     def self.scope_enum(scope); SCOPES.find_index(scope.to_sym); end
 
     belongs_to :plugin, :class_name => Ricer::Plugin.name, :dependent => :destroy

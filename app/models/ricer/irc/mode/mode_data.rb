@@ -4,28 +4,28 @@ module Ricer::Irc::Mode
     include Ricer::Base::Base
     extend  Ricer::Base::BaseExtend
     
-    BAN = 'b'
-    MODERATED = 'm'
-    USER_INVISBLE = 'i'
-    CHANNEL_INVISIBLE = 'i'
+    BAN ||= 'b'
+    MODERATED ||= 'm'
+    USER_INVISBLE ||= 'i'
+    CHANNEL_INVISIBLE ||= 'i'
 
-    UNKNOWN_K = 'k'
-    UNKNOWN_L = 'l'
-    UNKNOWN_N = 'n'
-    UNKNOWN_O = 'o'
-    UNKNOWN_P = 'p'
-    UNKNOWN_S = 's'
-    UNKNOWN_T = 't'
-    UNKNOWN_V = 'v'
-    UNKNOWN_W = 'w'
+    UNKNOWN_K ||= 'k'
+    UNKNOWN_L ||= 'l'
+    UNKNOWN_N ||= 'n'
+    UNKNOWN_O ||= 'o'
+    UNKNOWN_P ||= 'p'
+    UNKNOWN_S ||= 's'
+    UNKNOWN_T ||= 't'
+    UNKNOWN_V ||= 'v'
+    UNKNOWN_W ||= 'w'
    
     
-    SERVERS = {
+    SERVERS ||= {
       :inspircd => /inspirc/i,
       :generic => '',
     }
     
-    PERMISSIONS = {
+    PERMISSIONS ||= {
       :generic => {
         '+' => Ricer::Irc::Permission::VOICE,
         '%' => Ricer::Irc::Permission::HALFOP,
@@ -35,7 +35,7 @@ module Ricer::Irc::Mode
       }
     }
     
-    PERMISSION_MAP = {
+    PERMISSION_MAP ||= {
       :generic => {
         'v' => '+',
         'h' => '%',
@@ -43,7 +43,7 @@ module Ricer::Irc::Mode
       }
     }
     
-    USERMODES = {
+    USERMODES ||= {
       :generic => {
         'i' => USER_INVISBLE,
         'o' => UNKNOWN_O,
@@ -52,7 +52,7 @@ module Ricer::Irc::Mode
       }
     }
 
-    CHANMODES = {
+    CHANMODES ||= {
       :generic => {
         'b' => BAN,
         'i' => CHANNEL_INVISIBLE,

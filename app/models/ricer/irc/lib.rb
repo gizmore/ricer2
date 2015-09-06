@@ -7,9 +7,9 @@ module Ricer::Irc
     include ActionView::Helpers::NumberHelper
     include ActionView::Helpers::SanitizeHelper
 
-    ACTION = "\x01"
-    BOLD   = "\x02"
-    ITALIC = "\x03"
+    ACTION ||= "\x01"
+    BOLD   ||= "\x02"
+    ITALIC ||= "\x03"
     
     def green(text)
       text

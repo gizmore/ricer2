@@ -7,7 +7,7 @@
 ### announce_targets{|target| ... }
 ###
 module Ricer::Plug::Extender::IsAnnounceTrigger
-  DEFAULT_OPTIONS = {
+  DEFAULT_OPTIONS ||= {
     user: :public,
     user_default: false,
     channel: :operator,

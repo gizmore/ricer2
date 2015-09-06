@@ -4,10 +4,10 @@ module Ricer::Plugins::Rss
     require 'rss'
     require 'open-uri'
     
-    URL_LEN = 32
-    NAME_LEN = 32
-    TITLE_LEN = 96
-    DESCR_LEN = 255
+    URL_LEN ||= 32
+    NAME_LEN ||= 32
+    TITLE_LEN ||= 96
+    DESCR_LEN ||= 255
     
     abbonementable_by([Ricer::Irc::User, Ricer::Irc::Channel])
 

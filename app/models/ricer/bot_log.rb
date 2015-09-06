@@ -1,12 +1,12 @@
 module Ricer
   class BotLog
     
-    PUTS_MUTEX = Mutex.new
+    PUTS_MUTEX ||= Mutex.new
     
     attr_reader   :log_level,   :put_level
     attr_accessor :log_enabled, :put_enabled, :mail_enabled
 
-    LEVELS = [:debug, :info, :warn, :error, :fatal]
+    LEVELS ||= [:debug, :info, :warn, :error, :fatal]
     
     ############
     ### Init ###

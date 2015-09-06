@@ -3,10 +3,10 @@ module Ricer::Plugins::Slapwarz
     
     self.table_name = :slap_words
     
-    ADVERB = 1
-    VERB = 2
-    ADJECTIVE = 3
-    OBJECT = 4
+    ADVERB ||= 1
+    VERB ||= 2
+    ADJECTIVE ||= 3
+    OBJECT ||= 4
     
     def self.upgrade_1
       m = ActiveRecord::Migration

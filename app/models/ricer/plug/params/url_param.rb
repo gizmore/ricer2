@@ -1,7 +1,7 @@
 module Ricer::Plug::Params
   class UrlParam < Base
     
-    ALL_SCHEMES = [] # TODO
+    ALL_SCHEMES ||= [] # TODO
 
     def schemes
       ['http', 'https']

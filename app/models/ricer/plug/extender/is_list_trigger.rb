@@ -1,6 +1,6 @@
 module Ricer::Plug::Extender::IsListTrigger
 
-  DEFAULT_OPTIONS = {
+  DEFAULT_OPTIONS ||= {
     :for => nil,
     per_page: 5,
     order: 'created_at',

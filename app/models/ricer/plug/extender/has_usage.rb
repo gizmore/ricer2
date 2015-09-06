@@ -1,6 +1,6 @@
 module Ricer::Plug::Extender::HasUsage
   
-  DEFAULT_OPTIONS = {
+  DEFAULT_OPTIONS ||= {
     usage_on_error: true,
     allow_trailing: false,
     force_throwing: false,

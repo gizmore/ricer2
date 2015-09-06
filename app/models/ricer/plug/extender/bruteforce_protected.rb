@@ -9,7 +9,7 @@
 ### @option timeout - the timeout which will unlock this plugin.
 ###
 module Ricer::Plug::Extender::BruteforceProtected
-  OPTIONS = {
+  OPTIONS ||= {
     always: true,
     timeout: 7.seconds,
   }

@@ -3,9 +3,9 @@ module Ricer::Plugins::Twitter
     
     self.table_name = 'tweed_follows'
     
-    TWEETAG = 1
-    TWEETAT = 2
-    TWEETER = 3
+    TWEETAG ||= 1
+    TWEETAT ||= 2
+    TWEETER ||= 3
     
     abbonementable_by([Ricer::Irc::User, Ricer::Irc::Channel])
 

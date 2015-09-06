@@ -11,20 +11,20 @@ module Ricer::Irc
     def hierarchical?; @hierarchic; end
     def authenticated=(bool); @authenticated = bool; end 
 
-    PUBLIC =        new(priv:'p', symbol:'',  char:'',  bit:0x0000,  :name => :public,        :modeable => false, :hierarchic => true,  :authenticated => false)
-    REGISTERED =    new(priv:'r', symbol:'',  char:'',  bit:0x0001,  :name => :registered,    :modeable => false, :hierarchic => false, :authenticated => false)
-    AUTHENTICATED = new(priv:'l', symbol:'',  char:'',  bit:0x0002,  :name => :authenticated, :modeable => false, :hierarchic => false, :authenticated => false)
-    VOICE =         new(priv:'v', symbol:'+', char:'v', bit:0x0004,  :name => :voice,         :modeable => true,  :hierarchic => true,  :authenticated => false)
-    HALFOP =        new(priv:'h', symbol:'%', char:'h', bit:0x0008,  :name => :halfop,        :modeable => true,  :hierarchic => true,  :authenticated => false)
-    OPERATOR =      new(priv:'o', symbol:'@', char:'o', bit:0x0010,  :name => :operator,      :modeable => true,  :hierarchic => true,  :authenticated => false)
-    MODERATOR =     new(priv:'m', symbol:'',  char:'',  bit:0x0020,  :name => :moderator,     :modeable => true,  :hierarchic => false, :authenticated => false)
-    STAFF =         new(priv:'s', symbol:'',  char:'',  bit:0x0040,  :name => :staff,         :modeable => true,  :hierarchic => false, :authenticated => false)
-    ADMIN =         new(priv:'a', symbol:'',  char:'',  bit:0x0080,  :name => :admin,         :modeable => true,  :hierarchic => false, :authenticated => false)
-    FOUNDER =       new(priv:'f', symbol:'~', char:'~', bit:0x0100,  :name => :founder,       :modeable => true,  :hierarchic => true,  :authenticated => false)
-    IRCOP =         new(priv:'i', symbol:'!', char:'!', bit:0x0200,  :name => :ircop,         :modeable => true,  :hierarchic => true,  :authenticated => false)
-    OWNER  =        new(priv:'x', symbol:'',  char:'',  bit:0x0400,  :name => :owner,         :modeable => true,  :hierarchic => false, :authenticated => false)
-    RESPONSIBLE =   new(priv:'y', symbol:'',  char:'',  bit:0x0800,  :name => :responsible,   :modeable => false, :hierarchic => false, :authenticated => false)
-    ALL = [ PUBLIC, REGISTERED, AUTHENTICATED, VOICE, HALFOP, OPERATOR, MODERATOR, STAFF, ADMIN, FOUNDER, IRCOP, OWNER, RESPONSIBLE ]
+    PUBLIC ||=        new(priv:'p', symbol:'',  char:'',  bit:0x0000,  :name => :public,        :modeable => false, :hierarchic => true,  :authenticated => false)
+    REGISTERED ||=    new(priv:'r', symbol:'',  char:'',  bit:0x0001,  :name => :registered,    :modeable => false, :hierarchic => false, :authenticated => false)
+    AUTHENTICATED ||= new(priv:'l', symbol:'',  char:'',  bit:0x0002,  :name => :authenticated, :modeable => false, :hierarchic => false, :authenticated => false)
+    VOICE ||=         new(priv:'v', symbol:'+', char:'v', bit:0x0004,  :name => :voice,         :modeable => true,  :hierarchic => true,  :authenticated => false)
+    HALFOP ||=        new(priv:'h', symbol:'%', char:'h', bit:0x0008,  :name => :halfop,        :modeable => true,  :hierarchic => true,  :authenticated => false)
+    OPERATOR ||=      new(priv:'o', symbol:'@', char:'o', bit:0x0010,  :name => :operator,      :modeable => true,  :hierarchic => true,  :authenticated => false)
+    MODERATOR ||=     new(priv:'m', symbol:'',  char:'',  bit:0x0020,  :name => :moderator,     :modeable => true,  :hierarchic => false, :authenticated => false)
+    STAFF ||=         new(priv:'s', symbol:'',  char:'',  bit:0x0040,  :name => :staff,         :modeable => true,  :hierarchic => false, :authenticated => false)
+    ADMIN ||=         new(priv:'a', symbol:'',  char:'',  bit:0x0080,  :name => :admin,         :modeable => true,  :hierarchic => false, :authenticated => false)
+    FOUNDER ||=       new(priv:'f', symbol:'~', char:'~', bit:0x0100,  :name => :founder,       :modeable => true,  :hierarchic => true,  :authenticated => false)
+    IRCOP ||=         new(priv:'i', symbol:'!', char:'!', bit:0x0200,  :name => :ircop,         :modeable => true,  :hierarchic => true,  :authenticated => false)
+    OWNER ||=         new(priv:'x', symbol:'',  char:'',  bit:0x0400,  :name => :owner,         :modeable => true,  :hierarchic => false, :authenticated => false)
+    RESPONSIBLE ||=   new(priv:'y', symbol:'',  char:'',  bit:0x0800,  :name => :responsible,   :modeable => false, :hierarchic => false, :authenticated => false)
+    ALL ||= [ PUBLIC, REGISTERED, AUTHENTICATED, VOICE, HALFOP, OPERATOR, MODERATOR, STAFF, ADMIN, FOUNDER, IRCOP, OWNER, RESPONSIBLE ]
     def self.all_granted(authenticated=true); by_permission(0x0800, authenticated); end
     
     def self.all_symbols

@@ -13,7 +13,7 @@ module Ricer
     include Ricer::Base::Events
     include Ricer::Base::Translates
     
-    DEFAULT_PRIORITY = 50
+    DEFAULT_PRIORITY ||= 50
     
     attr_accessor :plugin_module, :plugin_dir, :module_dir
     

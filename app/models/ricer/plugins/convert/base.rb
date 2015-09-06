@@ -3,7 +3,7 @@ module Ricer::Plugins::Convert
 
     trigger_is :base
     
-    BASE64_CHARSET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-'
+    BASE64_CHARSET ||= '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-'
     
     has_setting name: :input_charset, permission: :public, scope: :user, type: :string, min: 64, max: 64, default: BASE64_CHARSET
     has_setting name: :output_charset, permission: :public, scope: :user, type: :string, min: 64, max: 64, default: BASE64_CHARSET

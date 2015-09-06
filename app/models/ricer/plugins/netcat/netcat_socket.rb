@@ -3,8 +3,8 @@ module Ricer::Plugins::Netcat
     
     include Ricer::Base::Base
     
-    IP_TRIES = {}
-    IP_COOLDOWN = 10
+    IP_TRIES ||= {}
+    IP_COOLDOWN ||= 10
     
     def initialize(connection, socket)
       @user = nil

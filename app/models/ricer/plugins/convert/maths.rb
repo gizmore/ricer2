@@ -26,8 +26,8 @@ module Ricer::Plugins::Convert
     def plugin_init; @@variables = {}; end
     def v; @@variables[sender] ||= []; end
 
-    PHI = 0.61803398874989
-    MATH_CONSTANTS = {
+    PHI ||= 0.61803398874989
+    MATH_CONSTANTS ||= {
       'e' => Math::E,
       'pi' => Math::PI,
       'tau' => 2*Math::PI,
@@ -38,9 +38,9 @@ module Ricer::Plugins::Convert
       'phi' => 1+PHI,  # Golden ratio
     } 
     
-    MATH_SYMBOLS = ['+', '-', '*', '/', '%', '^', '&', '(', ')', '|', '=', '$', ';']
+    MATH_SYMBOLS ||= ['+', '-', '*', '/', '%', '^', '&', '(', ')', '|', '=', '$', ';']
     
-    MATH_FUNCTIONS = [
+    MATH_FUNCTIONS ||= [
     # math.rb from kernel mappings
     'acos', 'acosh',
     'asin', 'asinh',

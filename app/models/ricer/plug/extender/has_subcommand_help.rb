@@ -1,6 +1,6 @@
 module Ricer::Plug::Extender::HasSubcommandHelp
   
-  OPTIONS = {
+  OPTIONS ||= {
     trigger: :help
   }
   

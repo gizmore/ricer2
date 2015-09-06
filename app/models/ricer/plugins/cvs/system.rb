@@ -3,7 +3,7 @@ module Ricer::Plugins::Cvs
     
     attr_reader :repo, :plugin
     
-    SYSTEMS = [:Git, :Svn]
+    SYSTEMS ||= [:Git, :Svn]
 
     def initialize(repo, plugin, delay=2.0)
       @repo = repo

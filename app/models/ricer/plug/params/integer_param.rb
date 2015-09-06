@@ -1,7 +1,8 @@
 module Ricer::Plug::Params
   class IntegerParam < Base
     
-    INT_MIN, INT_MAX = -2123123123, 2123123123
+    INT_MIN ||= -2123123123
+    INT_MAX ||= 2123123123
 
     def default_options
       { min: INT_MIN, max: INT_MAX }

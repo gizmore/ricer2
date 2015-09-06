@@ -1,5 +1,5 @@
 module Ricer::Plug::Extender::RequiresConfirmation
-  OPTIONS = {
+  OPTIONS ||= {
     always: true,
     random: false,
   }

@@ -1,6 +1,6 @@
 # Threadcount statistics
 module Ricer
-  class Thread < Thread
+  class Thread < ::Thread
     
     extend Ricer::Base::BaseExtend
     
