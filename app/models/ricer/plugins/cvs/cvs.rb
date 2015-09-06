@@ -17,17 +17,17 @@ module Ricer::Plugins::Cvs
     def ricer_on_global_startup
       Ricer::Thread.execute do
         loop do
-          sleep 15.seconds
           Repo.working.each do |repo|
-            check_repo repo
             sleep 15.seconds
+            check_repo repo
           end
         end
       end
     end
     
     def check_repo(repo)
-#      begin
+      begin
+        bot.log_info("Cvs.check_repo(#{repo.url})")
         system = System.get_system(repo.system).new(repo, self, 10.seconds)
         updates = system.update(10)
         unless updates.empty?
@@ -35,9 +35,9 @@ module Ricer::Plugins::Cvs
           repo.revision = updates[-1].revision
           repo.save!
         end
-#      rescue StandardError => e
-#        bot.log_exception e
-#      end
+      rescue StandardError => e
+        bot.log_exception e
+      end
     end
     
     def announce(repo, updates)
