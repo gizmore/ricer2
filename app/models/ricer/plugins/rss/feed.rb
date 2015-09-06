@@ -36,6 +36,10 @@ module Ricer::Plugins::Rss
       m.add_index :feeds, :name, :name => :feeds_name_index
       m.add_foreign_key :feeds, :users
     end
+    
+    def bot
+      Ricer::Bot.instance
+    end
 
     search_syntax do
       search_by :text do |scope, phrases|
@@ -80,8 +84,7 @@ module Ricer::Plugins::Rss
         end
         (self.title != nil) && (self.checked_at != nil)
       rescue StandardError => e
-        puts e
-        puts e.backtrace
+        bot.log_exception(e)
         false
       end
     end
@@ -92,6 +95,7 @@ module Ricer::Plugins::Rss
     
     def check_feed(plugin)
       begin
+        bot.log_info("rss.feed.check_feed(#{url})")
         open(url, open_options) do |rss|
           feed = RSS::Parser.parse(rss)
           collect = []
