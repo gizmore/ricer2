@@ -3,6 +3,7 @@ module Ricer::Plugins::Auth
     
     trigger_is :register
     connector_is :irc
+    scope_is :user
 
     bruteforce_protected :always => false
     
