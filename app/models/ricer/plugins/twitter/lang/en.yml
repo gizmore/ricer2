@@ -7,7 +7,7 @@ en:
         list_item: 'Tweed#%{id}: %{name}'
 
         tweed_add:
-          trigger: 'tweed add'
+          trigger: 'twitter add'
           description: 'Add a twitter account to get watched by $BOT$.'
           err_unpopular_tag: "This tag has no tweets, and thus has not been added."
           err_unknown_user: "This user does not exist, or has no tweets yet."

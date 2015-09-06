@@ -36,7 +36,7 @@ module Ricer::Plugins::Twitter
     end
     
     scope :active, -> { where("#{table_name}.deleted_at IS NULL")}
-
+    
     def user
       Ricer::Irc::User.find(self.user_id)
     end

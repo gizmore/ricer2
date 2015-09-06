@@ -1,7 +1,7 @@
 module Ricer::Plugins::Twitter
   class TweedAdd < Ricer::Plugin
     
-    trigger_is 'tweed add'
+    trigger_is 'twitter add'
     permission_is :voice
     
     denial_of_service_protected

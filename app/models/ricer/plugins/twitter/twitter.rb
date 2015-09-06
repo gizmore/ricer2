@@ -36,8 +36,10 @@ module Ricer::Plugins::Twitter
       bot.log_debug("Twitter::poll_tweeds")
       Ricer::Plugins::Twitter::Model::Follow.all.active.find_each do |follow|
         begin
-          poll_tweed(follow)
-          sleep(5.seconds)
+          if follow.abbonements.length > 0
+            poll_tweed(follow)
+            sleep(5.seconds)
+          end
         rescue Object::Twitter::Error::Unauthorized => error
           bot.log_error("Twitter Error: #{error}")
           sleep(15.minutes)
