@@ -33,7 +33,7 @@ module Ricer
     def log_info(s); @botlog.log_info(s); end
     def log_warn(s); @botlog.log_warn(s); end
     def log_error(s); @botlog.log_error(s); end
-    def log_exception(e); @botlog.log_exception(e); end
+    def log_exception(e, allow_mail=true); @botlog.log_exception(e, allow_mail); end
     
     # after_initialize :after_init
     def after_init

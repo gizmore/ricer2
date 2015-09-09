@@ -38,6 +38,7 @@ module Ricer::Plugins::Links
         response = http.request(request)
       rescue => e
         bot.log_error(e.message)
+        return
       end
 
       case response
