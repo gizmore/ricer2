@@ -33,6 +33,7 @@ module Ricer::Plugins::Links
       http = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Get.new(uri.request_uri)
       request["open_timeout"] = 10
+      http.use_ssl = (uri.scheme == "https")
       response = http.request(request)
 
       case response
