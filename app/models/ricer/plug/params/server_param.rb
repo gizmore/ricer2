@@ -1,9 +1,7 @@
 module Ricer::Plug::Params
   class ServerParam < BaseOnline
 
-    DEFAULT_OPTIONS ||= { online: nil, multiple: '0', connectors: '*' }
-
-    def default_options; DEFAULT_OPTIONS; end
+    def default_options; { online: nil, multiple: '0', connectors: '*' }; end
 
     def connector_options
       conn = options[:connectors]

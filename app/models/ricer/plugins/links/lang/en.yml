@@ -3,6 +3,9 @@ en:
     plugins:
       links:
         
+        display_show_item: "[%{id}]%{title} – %{url}"
+        display_list_item: "[%{number}]%{url}"
+        
         links:
           trigger: "all_links"
         

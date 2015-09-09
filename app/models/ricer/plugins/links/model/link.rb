@@ -82,5 +82,15 @@ module Ricer::Plugins::Links
       end
     end
     
+    ###############
+    ### Display ###
+    ###############
+    def display_list_item(number)
+      I18n.t('ricer.plugins.links.display_list_item', {number: number, id: self.id, url: url, title: title})
+    end
+    def display_show_item(number)
+      I18n.t('ricer.plugins.links.display_show_item', {number: number, id: self.id, url: url, title: title})
+    end
+    
   end
 end

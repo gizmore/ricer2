@@ -16,6 +16,7 @@ module Ricer::Plugins::Links
           match.trim!('()') if match.start_with?('(')
           match.trim!('[]') if match.start_with?('[')
           match.trim!('{}') if match.start_with?('{')
+          match.rtrim!("])}\x01")
           add_link(match)
         end
       end
@@ -28,13 +29,16 @@ module Ricer::Plugins::Links
     end
     
     def request_redir(url, redirects=10)
-      uri = URI.parse(url)
-      
-      http = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request["open_timeout"] = 10
-      http.use_ssl = (uri.scheme == "https")
-      response = http.request(request)
+      begin
+        uri = URI.parse(url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        request = Net::HTTP::Get.new(uri.request_uri)
+        request["open_timeout"] = 10
+        http.use_ssl = (uri.scheme == "https")
+        response = http.request(request)
+      rescue => e
+        bot.log_error(e.message)
+      end
 
       case response
       when Net::HTTPRedirection then

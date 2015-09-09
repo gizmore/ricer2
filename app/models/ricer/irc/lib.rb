@@ -20,7 +20,7 @@ module Ricer::Irc
     end
 
     def channelname_valid?(channelname)
-      !!/^[&#][^\x00-\x1F,\x7F]{1,199}$/iu.match(channelname)
+      !!/^[&#]#?[^\x00-\x1F,\x7F]{1,199}$/iu.match(channelname)
     end
     
     def bold(text)

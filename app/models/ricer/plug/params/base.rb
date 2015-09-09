@@ -21,10 +21,8 @@ module Ricer::Plug::Params
     def is_eater?; false; end # Override to force <..eater..mode..>
     def is_array?; options_multiple; end
     
-    DEFAULT_OPTIONS ||= { multiple: '0' }
-
     def options; @options || default_options; end
-    def default_options; DEFAULT_OPTIONS; end
+    def default_options; { multiple: '0' }; end
     def default_value; nil; end # DO NOT TOUCH!
     
     def options_multiple; options[:multiple] == '1'; end

@@ -1,9 +1,7 @@
 module Ricer::Plug::Params
   class JoinedChannelParam < ChannelParam
     
-    DEFAULT_OPTIONS ||= { online: '1', channels: '1', users: '0', connectors: '*', multiple: '0' }
-    
-    def default_options; DEFAULT_OPTIONS; end
+    def default_options; { online: '1', channels: '1', users: '0', connectors: '*', multiple: '0' }; end
     
   end
 end

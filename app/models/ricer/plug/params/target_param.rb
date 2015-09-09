@@ -1,9 +1,7 @@
 module Ricer::Plug::Params
   class TargetParam < BaseOnline
     
-    DEFAULT_OPTIONS ||= { channels:'1', users:'1', connectors:'*', online: nil, multiple: '1' }
-    
-    def default_options; DEFAULT_OPTIONS; end
+    def default_options; { channels: '1', users: '1', connectors: '*', online: nil, multiple: '1' }; end
 
     def do_channels; options[:channels] == '1'; end
     def do_users; options[:users] == '1'; end
@@ -12,7 +10,7 @@ module Ricer::Plug::Params
       
       input = input.gsub(/\s+/, '').gsub(';',',').downcase
       dc, du = do_channels, do_users
-      
+
       @server_param ||= ServerParam.new(options)
       
       users = Ricer::Irc::User
