@@ -78,7 +78,7 @@ module Ricer
       unless mailed_recently?
         @last_mail_time = Time.now.to_i
         Ricer::Thread.execute {
-          BotMailer.exception(exception).deliver
+          BotMailer.exception(exception, Ricer::Bot.instance.current_message).deliver
         }
       end
     end

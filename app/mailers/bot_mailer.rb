@@ -11,9 +11,9 @@ class BotMailer < ActionMailer::Base
     mail(:from => ricer_from, :to => to, :subject => subject)
   end
   
-  def exception(e)
-    byebug
+  def exception(e, message)
     @exception = e
+    @message = message
     mail(:from => ricer_from, :to => 'gizmore@gizmore.org', :subject => "[#{Ricer::Bot.instance.name} #{Rails.env}] Exception")
   end
   

@@ -9,6 +9,7 @@ module Ricer::Plugins::Conf
     has_usage :show_vars, '<plugin>'
 
     def config_scope; [:user]; end
+    def config_object; sender; end 
 
   end
 end

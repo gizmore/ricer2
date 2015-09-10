@@ -2,11 +2,15 @@ module Ricer::Plugins::Conf
   class ConfBase < Ricer::Plugin
   
     def description; tt("ricer.plugins.conf.conf.description"); end
+    
+    def config_channel
+      channel
+    end
   
     def config_settings(plugin)
       back = {}
       plugin.memory_settings.each do |options|
-        if Ricer::Irc::Scope.matching?(options[:scope], config_scope, channel)
+        if Ricer::Irc::Scope.matching?(options[:scope], config_scope, config_channel)
           back[options[:name]] ||= []
           back[options[:name]].push(options)
         end
@@ -17,8 +21,7 @@ module Ricer::Plugins::Conf
     def conflicting?(settings)
       count = 0
       settings.each do |options|
-#        count += 1 if Ricer::Irc::Scope.matching?(options[:scope], config_scope, channel)
-        count += 1 if Ricer::Irc::Scope.matching?(options[:scope], config_scope, channel)
+        count += 1 if Ricer::Irc::Scope.matching?(options[:scope], config_scope, config_channel)
       end
       count != 1
     end
@@ -35,10 +38,14 @@ module Ricer::Plugins::Conf
       settings = config_settings(plugin)
       vars = []
       settings.each do |key,value|
-        vars.push("#{key}(#{plugin.setting(key, config_scope).to_label})")
+        vars.push("#{key}(#{plugin.scope_setting(config_scope, config_object, key).to_label})")
       end
       return msg_no_trigger(plugin) if settings.empty?
       rplyp :msg_overview, :trigger => plugin.trigger, :vars => vars.join(', ')
+    end
+    
+    def show_all_vars
+      
     end
     
     def show_var(plugin, varname)
@@ -46,11 +53,11 @@ module Ricer::Plugins::Conf
       return rplyp :err_no_such_var if settings.nil?
       out = ''
       settings.each do |options|
-        setting = plugin.setting(varname, options[:scope])
+        setting = plugin.scope_setting(options[:scope], config_object, varname)
         b = setting.persisted? ? "\x02" : ''
         out += " #{setting.scope.to_label}=#{b}#{setting.to_label}#{b}"
       end
-      setting = plugin.setting(varname, config_scope)
+      setting = plugin.scope_setting(config_scope, config_object, varname)
       out += " = #{setting.to_label}"
       rplyp :msg_show_var, trigger: plugin.trigger, varname: varname, values: out.ltrim, hint: setting.to_hint
     end
@@ -62,7 +69,7 @@ module Ricer::Plugins::Conf
       return rplyp :err_conflicting if conflicting?(settings)
 
       options = settings[0]
-      setting = plugin.setting(varname, options[:scope])
+      setting = plugin.scope_setting(options[:scope], config_object, varname)
       
       return rplyp :err_no_such_var if setting.nil?
       return rplyp :err_permission unless change_permitted?(setting)

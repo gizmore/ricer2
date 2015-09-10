@@ -2,6 +2,17 @@ Hi there,
 
 Some exception occured in the ricer bot.
 
+<% if @message %>
+Message: <%= @message.raw %>
+
+On: <%= @message.server.url %>
+
+<% end %>
+Exception:
+
 <%= @exception.to_s %>
+(<%= @exception.class.name %>)
+
+Stacktrace:
 
 <%= @exception.backtrace.join("\n")  %>
