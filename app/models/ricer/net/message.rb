@@ -109,6 +109,7 @@ module Ricer::Net
     end
     
     def is_triggered?
+      return false if privmsg_line == ""
       return true if is_query?
 #      return false unless is_channel?
       return (receiver.triggers||server.triggers).include?(privmsg_line[0])

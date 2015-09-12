@@ -16,7 +16,7 @@ module Ricer::Plugins::Twitter
       Ricer::Thread.execute {
         loop {
           bot.log_debug("Sleeping 10 seconds and then...")
-          sleep 10.seconds
+          sleep 30.seconds
           check_connection
           poll_tweeds
         }
@@ -49,6 +49,11 @@ module Ricer::Plugins::Twitter
           delay = error.rate_limit.reset_in > 0 ? error.rate_limit.reset_in : 900;
           sleep(delay + 10)
           retry
+        rescue Object::Twitter::Error::ServiceUnavailable
+          sleep(10.minutes)
+          retry
+        rescue StandardError => e
+          bot.log_exception(e)
         end
       end
     end
