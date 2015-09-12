@@ -11,7 +11,7 @@ en:
         cvs:
           trigger: 'repo'
           description: 'Manage cvs repositories.'
-          msg_announce: '[%{repo_name}] Commit %{revision} from %{commiter}: %{comment}'
+          msg_announce: '[%{repo_name}] Commit %{revision} from %{commiter}: %{comment} (%{url})'
         add:
           trigger: 'repo add'
           description: 'Checkout a repository from a version control system.'

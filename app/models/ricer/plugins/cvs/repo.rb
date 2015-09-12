@@ -101,5 +101,13 @@ module Ricer::Plugins::Cvs
       I18n.t 'ricer.plugins.cvs.msg_show_list_item', repo_id:self.id, name:self.name
     end
     
+    def revision_url(revision)
+      if url.index("github") > 0
+        url.trim("/") + "/commit/" + revision
+      else
+        ""
+      end
+    end
+    
   end
 end
