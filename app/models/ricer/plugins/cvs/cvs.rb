@@ -49,7 +49,7 @@ module Ricer::Plugins::Cvs
     end
     
     def announce_msg(repo, update)
-      t :msg_announce, repo_name:repo.name, revision:update.display_revision, commiter:update.commiter, comment:update.comment
+      t :msg_announce, repo_name:repo.name, revision:update.display_revision, commiter:update.commiter, comment:update.comment, url: repo.revision_url(update.revision)
     end
     
   end
