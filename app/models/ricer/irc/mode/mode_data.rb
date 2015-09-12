@@ -76,6 +76,8 @@ module Ricer::Irc::Mode
     def self.perm_maps; PERMISSION_MAP[current_ircd] || PERMISSION_MAP[:generic]; end
     def self.usermodes; USERMODES[current_ircd] || USERMODES[:generic]; end
     def self.chanmodes; CHANMODES[current_ircd] || CHANMODES[:generic]; end
+    def self.chan_mode?(char); chanmodes[char] != nil; end
+    def self.user_mode?(char); usermodes[char] != nil; end
     
     def self.detect_server(server, signature)
       bot.log_debug("ModeData::detect_server(#{server.displayname}): #{signature}")

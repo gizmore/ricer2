@@ -150,12 +150,18 @@ module Ricer::Plugins::Rice
           positive = false
         else
           mode = args[1][i]
-          user = server.load_user(args[nextuser])
-          nextuser += 1
-          if (user)
-            chanmode = user.chanperm_for(channel).chanmode
-            if positive; chanmode.set_mode(mode)
-            else; chanmode.remove_mode(mode); end
+          if Ricer::Irc::Mode::ModeData.chan_mode?(mode)
+            bot.log_info("Cannot set chanmode because not implemented!")
+          elsif Ricer::Irc::Mode::ModeData.user_mode?(mode)
+            user = server.load_user(args[nextuser])
+            nextuser += 1
+            if (user)
+              chanmode = user.chanperm_for(channel).chanmode
+              if positive; chanmode.set_mode(mode)
+              else; chanmode.remove_mode(mode); end
+            end
+          else
+            raise Ricer::ExecutionException("Unknown modechar set!")
           end
         end
         i += 1
