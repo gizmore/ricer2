@@ -52,6 +52,7 @@ module Ricer::Plugins::Purple
       bot.log_debug("Violet#watch_incoming_im with #{account.username}, #{sender}, #{text}")
       sender = sender.substr_to('/') || sender # discard anything after '/'
       text = (Hpricot(text)).to_plain_text
+      text[0] = text[0].downcase
       user = create_user(sender)
       message = Ricer::Net::Message.new(text)
       message.sender = user
