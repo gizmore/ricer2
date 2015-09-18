@@ -9,6 +9,8 @@ module Ricer::Irc::Mode
     USER_INVISBLE ||= 'i'
     CHANNEL_INVISIBLE ||= 'i'
 
+    UNKNOWN_A ||= 'a'
+    UNKNOWN_H ||= 'h'
     UNKNOWN_K ||= 'k'
     UNKNOWN_L ||= 'l'
     UNKNOWN_N ||= 'n'
@@ -40,15 +42,22 @@ module Ricer::Irc::Mode
         'v' => '+',
         'h' => '%',
         'o' => '@',
+        'a' => '~',
       }
     }
     
     USERMODES ||= {
       :generic => {
         'i' => USER_INVISBLE,
-        'o' => UNKNOWN_O,
+        # 'o' => UNKNOWN_O,
         's' => UNKNOWN_S,
         'w' => UNKNOWN_W,
+        
+        'v' => UNKNOWN_V,
+        'h' => UNKNOWN_H,
+        'o' => UNKNOWN_O,
+        'a' => UNKNOWN_A,
+        
       }
     }
 
@@ -60,7 +69,7 @@ module Ricer::Irc::Mode
         'l' => UNKNOWN_L,
         'm' => MODERATED,
         'n' => UNKNOWN_N,
-        'o' => UNKNOWN_O,
+        # 'o' => UNKNOWN_O,
         'p' => UNKNOWN_P,
         's' => UNKNOWN_S,
         't' => UNKNOWN_T,

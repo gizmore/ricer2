@@ -111,7 +111,9 @@ module Ricer::Irc
     end
     
     def send_quit(text)
-      @connection.send_quit(fake_message, text)
+      if @connection
+        @connection.send_quit(fake_message, text)
+      end
     end
     
     def disconnect!(message=nil)

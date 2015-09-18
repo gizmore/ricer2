@@ -161,7 +161,7 @@ module Ricer::Plugins::Rice
               else; chanmode.remove_mode(mode); end
             end
           else
-            raise Ricer::ExecutionException("Unknown modechar set!")
+            raise Ricer::ExecutionException.new("Unknown modechar set!")
           end
         end
         i += 1
