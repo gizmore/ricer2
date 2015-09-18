@@ -10,15 +10,19 @@ module Ricer::Plugins::Links
     def upgrade_5; Model::Link.upgrade_1; end
 
     def on_privmsg
-      matches = /[^\s]+:\/\/[^\s]+/.match(line)
-      if matches
-        matches.to_a.each do |match|
-          match.trim!('()') if match.start_with?('(')
-          match.trim!('[]') if match.start_with?('[')
-          match.trim!('{}') if match.start_with?('{')
-          match.rtrim!("])}\x01")
-          add_link(match)
+      begin
+        matches = /[^\s]+:\/\/[^\s]+/.match(line)
+        if matches
+          matches.to_a.each do |match|
+            match.trim!('()') if match.start_with?('(')
+            match.trim!('[]') if match.start_with?('[')
+            match.trim!('{}') if match.start_with?('{')
+            match.rtrim!("])}\x01")
+            add_link(match)
+          end
         end
+      rescue ArgumentError => e
+        bot.log_exception(e, false)
       end
     end
     
@@ -94,7 +98,7 @@ module Ricer::Plugins::Links
           title = ""
         end
       end
-      title
+      HTMLEntities.new.decode(title)
     end
     
     def announce_new_link
