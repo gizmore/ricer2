@@ -62,6 +62,7 @@ module Ricer::Plugins::Quote::Model
         by: self.user.displayname,
         ago: self.display_ago,
         likes: self.get_likes.count,
+        message: self.message,
       )
     end
     

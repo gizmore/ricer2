@@ -35,6 +35,13 @@ en:
           msg_list_item_page: '%{classname}, page %{page}/%{pages}: %{out}.'
           err_no_list_items: 'There could be no %{classname} found.'
           err_not_found: 'There is no such %{classname}.'
+          
+        is_search_trigger:
+          stats:
+            none: "There are no %{classname}s in the database yet."
+            one: "There is one %{classname} in the database."
+            other: "There are %{count} %{classname}s in the database."
+            description: "Search the %{classname} database."
 
         is_show_trigger:
           description:

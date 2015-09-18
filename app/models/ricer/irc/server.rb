@@ -144,7 +144,7 @@ module Ricer::Irc
 #     bot.log_debug("[#{self.displayname}] process_event(#{event})");
       
       unless self.enabled
-        bot.log_warning("Disabled server #{self.id} got process_event") and return nil
+        bot.log_warn("Disabled server #{self.id} got process_event") and return nil
       end
       
       # Debug

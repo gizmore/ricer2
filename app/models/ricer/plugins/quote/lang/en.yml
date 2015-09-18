@@ -3,7 +3,7 @@ en:
     plugins:
       quote:
 
-        display_list_item: 'Quote#%{id} by %{by} %{ago} ago(+%{likes})'
+        display_list_item: 'Quote#%{id}: %{message}'
         display_show_item: 'Quote#%{id}: "%{message}" - added by %{by} on %{date} - Liked %{likes} times.'
 
         add:
@@ -24,6 +24,10 @@ en:
         search:
           trigger: 'quotes'
           description: 'Search the quote database.'
+          
+        show:
+          trigger: "quote"
+          description: "Display a single quote by ID."
 
         stats:
           trigger: "quote stats"
