@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'rails', '4.1.1'
-gem 'mysql2'
+gem 'rails'
+gem 'mysql2', '~> 0.3.18'
 
 gem 'exception_notification', git: 'git://github.com/alanjds/exception_notification.git'
 
@@ -19,6 +19,7 @@ gem 'open4'
 gem 'ruby-git'
 gem 'easy_translate'
 gem 'ruby-prof'
+gem 'htmlentities'
 
 group :development do
   gem 'byebug'
