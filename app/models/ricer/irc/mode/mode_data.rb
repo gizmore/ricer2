@@ -16,6 +16,7 @@ module Ricer::Irc::Mode
     UNKNOWN_N ||= 'n'
     UNKNOWN_O ||= 'o'
     UNKNOWN_P ||= 'p'
+    UNKNOWN_Q ||= 'q'
     UNKNOWN_S ||= 's'
     UNKNOWN_T ||= 't'
     UNKNOWN_V ||= 'v'
@@ -57,6 +58,7 @@ module Ricer::Irc::Mode
         'h' => UNKNOWN_H,
         'o' => UNKNOWN_O,
         'a' => UNKNOWN_A,
+        'q' => UNKNOWN_Q,
         
       }
     }
