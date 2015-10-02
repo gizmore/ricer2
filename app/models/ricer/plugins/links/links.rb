@@ -98,7 +98,7 @@ module Ricer::Plugins::Links
           title = ""
         end
       end
-      HTMLEntities.new.decode(title)
+      HTMLEntities.new.decode(title.force_encoding('UTF-8'))
     end
     
     def announce_new_link
