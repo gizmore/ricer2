@@ -163,7 +163,8 @@ module Ricer::Plugins::Rice
     end
     
     def send_queued(message)
-      to = message.sender || message.server
+      return unless @connected
+      to = message.sender # || message.server
       @queue_lock.synchronize do 
         @queue[to] ||= Ricer::Net::Queue::Object.new(to)
         @queue[to].push(message)
