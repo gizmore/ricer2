@@ -165,6 +165,7 @@ module Ricer::Plugins::Rice
     def send_queued(message)
       to = message.sender
       @queue_lock.synchronize do 
+        @queue ||= {}
         @queue[to] ||= Ricer::Net::Queue::Object.new(to)
         @queue[to].push(message)
       end
@@ -193,9 +194,9 @@ module Ricer::Plugins::Rice
       Ricer::Thread.execute do
         while connected?
           sleep(Ricer::Net::Queue::Frame::SECONDS * 2)
-#          @queue_lock.synchronize do
+          @queue_lock.synchronize do
             @queue.each{|to, queue| queue.reduce_penalty }
-#          end
+          end
         end
       end
     end
@@ -205,7 +206,9 @@ module Ricer::Plugins::Rice
       Ricer::Thread.execute do
         while connected?
           @queue_lock.synchronize do 
+            @queue ||= {}
             @queue = Hash[@queue.sort_by{|to,queue|queue.penalty}]
+            @queue ||= {}
             @queue.each do |to, queue|
               break if queue.empty? || @frame.exceeded?
               send_line queue.pop
