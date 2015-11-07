@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails'
-gem 'mysql2', '~> 0.3.18'
+gem 'mysql2', '~> 0.3.20'
 
 gem 'exception_notification', git: 'git://github.com/alanjds/exception_notification.git'
 
@@ -44,8 +44,8 @@ gem 'purple_ruby', github: 'gizmore/purple_ruby'
 gem 'hpricot'
 gem 'em-websocket'
 gem 'mime-types'
-gem 'twitter', '~> 5.13'
-gem 'simple_oauth', '~> 0.3.0'
+gem 'twitter'#, '~> 5.13'
+gem 'simple_oauth'#, '~> 0.3.0'
 
 
 # Ricer plugins :)

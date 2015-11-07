@@ -241,7 +241,7 @@ DEPENDENCIES
   htmlentities
   kaminari
   mime-types
-  mysql2 (~> 0.3.18)
+  mysql2 (~> 0.3.20)
   nokogiri
   open4
   os
@@ -250,11 +250,11 @@ DEPENDENCIES
   ruby-git
   ruby-prof
   sass-rails
-  simple_oauth (~> 0.3.0)
+  simple_oauth
   strip_attributes
   tf-idf-similarity!
   therubyracer
-  twitter (~> 5.13)
+  twitter
   tzinfo-data
   uglifier
   validate_as_email!
