@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails'
+gem 'rails', '~> 4.1.13'
 gem 'mysql2', '~> 0.3.20'
 
 gem 'exception_notification', git: 'git://github.com/alanjds/exception_notification.git'
