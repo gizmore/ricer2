@@ -10,7 +10,7 @@ module Ricer::Plugins::Convert
     denial_of_service_protected
     
     # Users can choose their own precision
-    has_setting name: :precision, scope: :user, permission: :public, type: :integer, default: 4, min: 1, max: 12
+    has_setting name: :precision, scope: :user, permission: :public, type: :integer, default: 256, min: 1, max: 2048
 
     # Own description function for function description    
     def description
