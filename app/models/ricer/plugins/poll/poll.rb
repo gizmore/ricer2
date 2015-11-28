@@ -14,7 +14,7 @@ module Ricer::Plugins::Poll
 
     # Its some real plugin to call
     # Toggles Announce on/off
-    is_announce_trigger :poll, :user => :public, :channel => :halfop, :channel_default => true
+    is_announce_trigger :poll, :user => :public, :channel => :halfop, :channel_default => false
 
     # Install the plugin
     def upgrade_1; Answer.upgrade_1; Option.upgrade_1; Question.upgrade_1; end
